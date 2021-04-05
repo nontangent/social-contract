@@ -1,19 +1,5 @@
-import { CommerceRecord, CommerceResult, History, PlayerId } from './models';
-
-export interface InitialState {
-  balances: Record<PlayerId, number>;
-}
-
-export interface Rewards {
-  seller: {
-    success: number,
-    failure: number,
-  },
-  buyer: {
-    success: number,
-    failure: number,
-  },
-}
+import { PlayerId } from '../player';
+import { Transaction, Result, History, Rewards, InitialState } from './system.interface';
 
 export abstract class BaseCommerceSystem {
   getRewards(sellerId: PlayerId, buyerId: PlayerId): Rewards {
@@ -130,7 +116,7 @@ export class CommerceSystem extends BaseCommerceSystem {
   }
 
   private getSuccessRate(playerId: PlayerId, opportunityId: PlayerId): [number, number] {
-    const results: CommerceResult[] = [];
+    const results: Result[] = [];
     for (const record of Object.values(this.history)) {
       if (record.sellerId === playerId && record.buyerId === opportunityId) {
         results.push(record.result);
@@ -142,7 +128,7 @@ export class CommerceSystem extends BaseCommerceSystem {
 
     const count = results.length;
     const successRate: number = count 
-      ? results.map(r => r === CommerceResult.SUCCESS ? 1 : 0).reduce((p, c) => p + c, 0 as number) / count
+      ? results.map(r => r === Result.SUCCESS ? 1 : 0).reduce((p, c) => p + c, 0 as number) / count
       : 0;
     
     return [successRate, count];
@@ -159,11 +145,11 @@ export class CommerceSystem extends BaseCommerceSystem {
     }), {} as Record<PlayerId, number>);
   }
 
-  getRecord(t: number): CommerceRecord {
+  getRecord(t: number): Transaction {
     return this.history[t];
   }
 
-  setRecord(record: CommerceRecord) {
+  setRecord(record: Transaction) {
     this.history[record.t] = record;
   }
 }

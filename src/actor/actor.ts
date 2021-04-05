@@ -1,13 +1,6 @@
-export type ActorId = number;
+import { ActorId, IActor, Message } from './actor.interface';
 
-export interface Message<T, K> {
-  senderId?: ActorId,
-  receiverId?: ActorId,
-  type: T;
-  data: K;
-}
-
-export class Actor<MessageType> {
+export class Actor<MessageType> implements IActor<MessageType> {
   messageHandlers!: Map<MessageType, Function>;
 
   constructor(public id: ActorId) { }

@@ -1,16 +1,8 @@
-import { PlayerStrategy, PlayerId, History, CommerceRecord, CommerceResult } from './models';
-import { CommerceSystem } from './system';
-import { Action, Actor, Message as _Message } from './actor';
+import { CommerceSystem, Transaction, History, Result } from '../system';
+import { Action, Actor, Message as _Message } from '../actor';
+import { IPlayer, PlayerId, PlayerStrategy, Message, MessageType, Reports } from './player.interface';
 
-export enum MessageType {
-  GOODS = 'GOODS',
-  RESULT = 'RESULT',
-}
-
-export type Message<K> = _Message<MessageType, K>;
-export type Reports = Record<PlayerId, History>;
-
-export class Player extends Actor<MessageType> {
+export class Player extends Actor<MessageType> implements IPlayer<MessageType> {
   t: number = 0;
   private reports: Reports = {};
 
@@ -23,29 +15,29 @@ export class Player extends Actor<MessageType> {
   }
 
   // 商取引ゲームでsellerの場合に商品を送るメソッド
-  sendGoods(buyer: Player): Message<CommerceRecord[]> {
+  sendGoods(buyer: Player): Message<Transaction[]> {
     return this.sendReportedRecords(buyer);
   }
 
-  reportResult(seller: Player, escrows: Player[]): Message<CommerceRecord> {
+  reportResult(seller: Player, escrows: Player[]): Message<Transaction> {
     return this._reportResult(seller, escrows);
   }
 
   @Action(MessageType.GOODS)
-  receiveGoods(records: CommerceRecord[], senderId: PlayerId): Record<number, History> {
-    return this.addRecords(records.map(r => ({...r, reporterId: senderId})));
+  receiveGoods(records: Transaction[], senderId: PlayerId): Record<number, History> {
+    return this.addTransactions(records.map(r => ({...r, reporterId: senderId})));
   }
 
   @Action(MessageType.RESULT)
-  receiveResult(record: CommerceRecord, senderId: PlayerId) {
-    return this.addRecord({...record, reporterId: senderId});
+  receiveResult(record: Transaction, senderId: PlayerId) {
+    return this.addTransaction({...record, reporterId: senderId});
   }
 
   // 時刻t-n(n-1)から時刻t-1までに報告されたRecordをbuyerに送信
-  private sendReportedRecords(buyer: Player): Message<CommerceRecord[]> {
+  private sendReportedRecords(buyer: Player): Message<Transaction[]> {
     const n = this.system.n;
     const records = this.getReportedRecords(n * (n - 1));
-    const message: Message<CommerceRecord[]> = {
+    const message: Message<Transaction[]> = {
       type: MessageType.GOODS,
       data: records
     }
@@ -58,7 +50,7 @@ export class Player extends Actor<MessageType> {
   // たぶん、ここのアルゴリズムが難しい。
   // ①自分が支持するレコードと前回、送信されたレコードが一致しているか
   // ②自分が支持するレコードと違う結果を報告したPlayerであるか
-  private _reportResult(seller: Player, escrows: Player[]): Message<CommerceRecord> {
+  private _reportResult(seller: Player, escrows: Player[]): Message<Transaction> {
     const n = this.system.n;
 
     // 支持する歴史を決定
@@ -68,21 +60,21 @@ export class Player extends Actor<MessageType> {
     const result = this.determineResult(seller.id, this.t - n * (n - 1));
 
     // 全体に結果を報告
-    const message: Message<CommerceRecord> = {
+    const message: Message<Transaction> = {
       type: MessageType.RESULT,
       data: this.buildRecord(seller.id, result)
     };
-    this.broadcastMessage<CommerceRecord>(escrows, message);
+    this.broadcastMessage<Transaction>(escrows, message);
 
     // MEMO: テストのために商取引の結果を返す
     return message;
   }
 
-  private getReportedRecords(size: number): CommerceRecord[] {
+  private getReportedRecords(size: number): Transaction[] {
     return [...Array(size)].map((_, i) => this.reports?.[this.id]?.[i]).filter(r => !!r);
   }
 
-  private buildRecord(sellerId: PlayerId, result: CommerceResult): CommerceRecord {
+  private buildRecord(sellerId: PlayerId, result: Result): Transaction {
     return { 
       t: this.t, 
       sellerId, 
@@ -105,36 +97,36 @@ export class Player extends Actor<MessageType> {
     }
   }
 
-  private determineResult(sellerId: PlayerId, t: number): CommerceResult {
-    return CommerceResult.SUCCESS
+  private determineResult(sellerId: PlayerId, t: number): Result {
+    return Result.SUCCESS
   }
 
-  private determineSupportedRecord(t: number): CommerceRecord {
+  private determineSupportedRecord(t: number): Transaction {
     let flagScore = 0;
 
     for (let i = 0; i < this.system.n; i++) {
       // TODO: ここのscoreってどの時刻のscore?
       const score = this.system.getBalance(i);
       const record = this.reports[i][t];
-      flagScore += (record.result === CommerceResult.SUCCESS ? 1 : -1) * score;
+      flagScore += (record.result === Result.SUCCESS ? 1 : -1) * score;
     }
  
     return {
       t: t,
       sellerId: 0,
       buyerId: 0,
-      result: flagScore > 0 ? CommerceResult.SUCCESS : CommerceResult.FAILED
+      result: flagScore > 0 ? Result.SUCCESS : Result.FAILED
     }
   }
 
-  private addRecords(records: CommerceRecord[]) {
-    for (let record of records) this.addRecord(record);
+  private addTransactions(transactions: Transaction[]) {
+    for (let transaction of transactions) this.addTransaction(transaction);
     return this.reports;
   }
 
-  private addRecord(record: CommerceRecord) {
-    this.reports[record.reporterId!] = this.reports[record.reporterId!] || {};
-    this.reports[record.reporterId!][record.t] = record;
+  private addTransaction(transaction: Transaction) {
+    this.reports[transaction.reporterId!] = this.reports[transaction.reporterId!] || {};
+    this.reports[transaction.reporterId!][transaction.t] = transaction;
   }
 
 }
