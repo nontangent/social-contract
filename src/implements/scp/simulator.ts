@@ -1,5 +1,5 @@
-import { Player } from '../player';
-import { Presenter } from '../presenter';
+import { IPlayer, MessageType } from '../player';
+import { IPresenter } from '../presenter';
 import { ISimulator } from './simulator.interface';
 import { permutation } from '../helpers';
 
@@ -11,8 +11,8 @@ export class Simulator implements ISimulator<any> {
   }
 
   constructor(
-    public players: Player[] = [],
-    public presenter: Presenter = new Presenter(),
+    public players: IPlayer<MessageType>[] = [],
+    public presenter: IPresenter,
   ) { }
 
   async run(maxCount: number = 10) {
@@ -21,7 +21,8 @@ export class Simulator implements ISimulator<any> {
     const combinations = this.generateCombinations();
     while (count < maxCount) {
       for (const [sellerId, buyerId] of combinations) {
-        // console.debug(`${t}: transaction[seller(${sellerId}), buyer(${buyerId})]`);
+        // console.debug(`${this.t}: transaction[seller(${sellerId}), buyer(${buyerId})]`);
+
         this.presenter.render(this);
 
         const seller = this.players[sellerId];
@@ -34,7 +35,7 @@ export class Simulator implements ISimulator<any> {
         // buyerはエスクローに結果を報告する。
         buyer.reportResult(seller, escrows);
         this.t += 1;
-        await this.sleep(0);
+        await this.sleep(0.01);
       }
 
       count += 1;

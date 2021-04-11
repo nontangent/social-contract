@@ -19,3 +19,5 @@ export function permutation<T>(arr: T[], k: number): T[][] {
   }
   return ans;
 }
+
+export const sum = (arr: number[]) => arr.reduce((pv, cv) => pv + cv, 0);

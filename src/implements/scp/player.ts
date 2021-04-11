@@ -8,18 +8,18 @@ export class Player extends Actor<MessageType> implements IPlayer<MessageType> {
 
   constructor (
     public id: PlayerId,
-    private system: CommerceSystem,
+    public system: CommerceSystem,
     private strategy: PlayerStrategy = [1, 2],
   ) {
     super(id);
   }
 
   // 商取引ゲームでsellerの場合に商品を送るメソッド
-  sendGoods(buyer: Player): Message<Transaction[]> {
+  sendGoods(buyer: IPlayer<MessageType>): Message<Transaction[]> {
     return this.sendReportedRecords(buyer);
   }
 
-  reportResult(seller: Player, escrows: Player[]): Message<Transaction> {
+  reportResult(seller: IPlayer<MessageType>, escrows: IPlayer<MessageType>[]): Message<Transaction> {
     return this._reportResult(seller, escrows);
   }
 
@@ -34,7 +34,7 @@ export class Player extends Actor<MessageType> implements IPlayer<MessageType> {
   }
 
   // 時刻t-n(n-1)から時刻t-1までに報告されたRecordをbuyerに送信
-  private sendReportedRecords(buyer: Player): Message<Transaction[]> {
+  private sendReportedRecords(buyer: IPlayer<MessageType>): Message<Transaction[]> {
     const n = this.system.n;
     const records = this.getReportedRecords(n * (n - 1));
     const message: Message<Transaction[]> = {
@@ -50,7 +50,7 @@ export class Player extends Actor<MessageType> implements IPlayer<MessageType> {
   // たぶん、ここのアルゴリズムが難しい。
   // ①自分が支持するレコードと前回、送信されたレコードが一致しているか
   // ②自分が支持するレコードと違う結果を報告したPlayerであるか
-  private _reportResult(seller: Player, escrows: Player[]): Message<Transaction> {
+  private _reportResult(seller: IPlayer<MessageType>, escrows: IPlayer<MessageType>[]): Message<Transaction> {
     const n = this.system.n;
 
     // 支持する歴史を決定
@@ -83,7 +83,7 @@ export class Player extends Actor<MessageType> implements IPlayer<MessageType> {
     };
   }
 
-  private broadcastMessage<K>(players: Player[], message: Message<K>) {
+  private broadcastMessage<K>(players: IPlayer<MessageType>[], message: Message<K>) {
     for (const player of players) this.sendMessage(player, message);
   }
 
@@ -104,10 +104,10 @@ export class Player extends Actor<MessageType> implements IPlayer<MessageType> {
   private determineSupportedRecord(t: number): Transaction {
     let flagScore = 0;
 
-    for (let i = 0; i < this.system.n; i++) {
+    for (const playerId of this.system.playerIds) {
       // TODO: ここのscoreってどの時刻のscore?
-      const score = this.system.getBalance(i);
-      const record = this.reports[i][t];
+      const score = this.system.getBalance(playerId, this.t);
+      const record = this.reports[playerId][t];
       flagScore += (record.result === Result.SUCCESS ? 1 : -1) * score;
     }
  

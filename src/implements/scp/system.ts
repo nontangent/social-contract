@@ -1,7 +1,7 @@
 import { PlayerId } from '../player';
-import { Transaction, Result, History, Rewards, InitialState } from './system.interface';
+import { Transaction, Result, History, Rewards, InitialState, Balances, ICommerceSystem } from './system.interface';
 
-export abstract class BaseCommerceSystem {
+export abstract class BaseCommerceSystem implements ICommerceSystem {
   getRewards(sellerId: PlayerId, buyerId: PlayerId): Rewards {
     const [sellerW, buyerW] = this.getBurdenWeights(sellerId, buyerId);
     const E = this.getEscrowCost(sellerId, buyerId);
@@ -20,6 +20,9 @@ export abstract class BaseCommerceSystem {
 
   abstract getBurdenWeights(sellerId: PlayerId, buyerId: PlayerId): [number, number];
   abstract getEscrowCost(sellerId: PlayerId, buyerId: PlayerId): number;
+  abstract getBalances(t: number): Balances;
+  abstract getBalance(playerId: PlayerId, t: number): number;
+
   abstract get price(): number;
 }
 
@@ -38,8 +41,27 @@ export class CommerceSystem extends BaseCommerceSystem {
     return 1;
   }
 
+  get t(): number {
+    return Math.max(...Object.keys(this.history).map(k => parseInt(k)));
+  }
+
   private get historyLength(): number {
     return Object.keys(this.history).length;
+  }
+
+  get playerIds(): PlayerId[] {
+    return Object.keys(this.initialState.balances).map(k => parseInt(k, 10));
+  }
+
+  getBalances(t: number): Balances {
+    return this.playerIds.reduce((pre, playerId: PlayerId) => ({
+      ...pre, [playerId]: this.getBalance(playerId, t) 
+    }), {} as Balances);
+  }
+
+  getBalance(playerId: PlayerId, t: number): number {
+    // TODO: implements
+    return this.initialState.balances?.[playerId] || 1;
   }
 
   getBurdenWeights(sellerId: PlayerId, buyerId: PlayerId): [number, number] {
@@ -53,10 +75,6 @@ export class CommerceSystem extends BaseCommerceSystem {
       unadjustedBuyerBurdenWeight / (unadjustedSellerBurdenWeight + unadjustedBuyerBurdenWeight),
       unadjustedSellerBurdenWeight / (unadjustedSellerBurdenWeight + unadjustedBuyerBurdenWeight),
     ];
-  }
-
-  getBalance(playerId: PlayerId): number {
-    return 0;
   }
 
   getEscrowCost(sellerId: PlayerId, buyerId: PlayerId): number {
@@ -73,8 +91,7 @@ export class CommerceSystem extends BaseCommerceSystem {
   }
 
   private get allPlayerIds(): PlayerId[] {
-    // TODO: implements
-    return [];
+    return Object.keys(this.initialState).map(id => parseInt(id));
   }
 
   private getTrust(playerId: PlayerId, excludeIds: PlayerId[]) {
@@ -107,7 +124,7 @@ export class CommerceSystem extends BaseCommerceSystem {
     allIds: PlayerId[] = this.allPlayerIds, 
     excludeIds: PlayerId[] = []
   ) {
-    return this.getBalance(playerId) / this.getTotalBalance(allIds.filter(id => excludeIds.includes(id)));
+    return this.getBalance(playerId, this.t) / this.getTotalBalance(allIds.filter(id => excludeIds.includes(id)));
   }
 
   calculateTotalBalance(playerIds: PlayerId[], excludeIds: PlayerId[] = []): number {
@@ -138,11 +155,11 @@ export class CommerceSystem extends BaseCommerceSystem {
     return (w: number) => w;
   }
 
-  getEscrowWeights(escrowIds: PlayerId[]): Record<PlayerId, number> {
+  getEscrowWeights(escrowIds: PlayerId[]): EscrowWeights {
     return escrowIds.reduce((p, id) => ({
       ...p,
       id: this.getReputationWeight(id, escrowIds)
-    }), {} as Record<PlayerId, number>);
+    }), {} as EscrowWeights);
   }
 
   getRecord(t: number): Transaction {
@@ -153,3 +170,5 @@ export class CommerceSystem extends BaseCommerceSystem {
     this.history[record.t] = record;
   }
 }
+
+type EscrowWeights = Record<PlayerId, number>;
