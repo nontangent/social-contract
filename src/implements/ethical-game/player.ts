@@ -15,20 +15,20 @@ export class Player extends Actor<MessageType> implements IPlayer {
     super(id);
   }
 
-  @Action(MessageType.SEND_GOODS)
-  receiveGoods(goods: boolean): Result {
-    switch(this.strategy[1]) {
-      case 1: return goods ? Result.FAILED : Result.SUCCESS;
-      case 2: return goods ? Result.FAILED : Result.SUCCESS;
-      case 3: return goods ? Result.FAILED : Result.SUCCESS;
-      case 4: return goods ? Result.FAILED : Result.SUCCESS;
-    }
-  }
-
   sendGoods(receiver: IPlayer): any {
     switch(this.strategy[0]) {
       case 1: return this.sendMessage(receiver, {type: MessageType.SEND_GOODS, data: true});
       case 2: return this.sendMessage(receiver, {type: MessageType.SEND_GOODS, data: false});
+    }
+  }
+
+  @Action(MessageType.SEND_GOODS)
+  receiveGoods(goods: boolean): Result {
+    switch(this.strategy[1]) {
+      case 1: return goods ? Result.SUCCESS : Result.FAILED;
+      case 2: return goods ? Result.SUCCESS : Result.SUCCESS;
+      case 3: return goods ? Result.FAILED : Result.SUCCESS;
+      case 4: return goods ? Result.FAILED : Result.FAILED;
     }
   }
 
