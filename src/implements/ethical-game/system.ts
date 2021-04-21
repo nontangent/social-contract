@@ -15,7 +15,10 @@ export abstract class BaseCommerceSystem implements ICommerceSystem {
 
   getRewards(t: number, sellerId: PlayerId, buyerId: PlayerId): Rewards {
     const [sellerW, buyerW] = this.getBurdenWeights(t, sellerId, buyerId);
+    console.debug('sellerW:', sellerW);
+    console.debug('buyerW:', buyerW);
     const E = this.getEscrowCost(t, sellerId, buyerId);
+    console.debug('E:', E);
 
     return {
       seller: {
@@ -38,16 +41,16 @@ export abstract class BaseCommerceSystem implements ICommerceSystem {
   }
 
   getBalances(t: number): Balances {
-    console.debug('t:', t);
     if (t === 0) return this.initialState.balances;
 
     const balances = this.getBalances(t-1);
-    const transaction = this.history?.[t] || null;
+    const transaction = this.history?.[t-1] || null;
 
     if (!transaction) return balances;
 
     const {sellerId, buyerId, result} = transaction;
-    const rewards = this.getRewards(t, sellerId, buyerId);
+    const rewards = this.getRewards(t-1, sellerId, buyerId);
+    console.debug('rewards:', rewards);
     balances[sellerId] += result === Result.SUCCESS ? rewards.seller.success : rewards.seller.failure;
     balances[buyerId] += result === Result.SUCCESS ? rewards.buyer.success : rewards.buyer.failure;
 
@@ -74,19 +77,14 @@ export abstract class BaseCommerceSystem implements ICommerceSystem {
     return Object.keys(this.history).length;
   }
 
-  get playerIds(): PlayerId[] {
-    return Object.keys(this.initialState.balances).map(k => parseInt(k, 10));
-  }
-
   protected get allPlayerIds(): PlayerId[] {
-    return Object.keys(this.initialState).map(
-      id => parseInt(id, 10
-      ));
+    return Object.keys(this.initialState.balances).map(id => parseInt(id, 10));
   }
 
   protected getTotalBalance(t: number, excludeIds: PlayerId[] = []): number {
     const balances = this.getBalances(t);
-    return sum(excludeIds.map(id => balances[id]));
+    const playerIds = this.allPlayerIds.filter(id => !excludeIds.includes(id));
+    return sum(playerIds.map(id => balances[id]));
   }
 
   abstract getBurdenWeights(t: number, sellerId: PlayerId, buyerId: PlayerId): [number, number];
@@ -99,6 +97,9 @@ export class CommerceSystem extends BaseCommerceSystem {
   getBurdenWeights(t: number, sellerId: PlayerId, buyerId: PlayerId): [number, number] {
     const sellerT = this.getTrust(t, sellerId, [buyerId]);
     const buyerT = this.getTrust(t, buyerId, [sellerId]);
+
+    console.debug('sellerT:', sellerT);
+    console.debug('buyerT:', buyerT);
 
     const unadjustedSellerBurdenWeight = this.burdenWeightFunction(sellerT);
     const unadjustedBuyerBurdenWeight = this.burdenWeightFunction(buyerT);
@@ -128,6 +129,7 @@ export class CommerceSystem extends BaseCommerceSystem {
 
   private getTrust(t: number, playerId: PlayerId, excludeIds: PlayerId[]) {
     let trust = this.getReputationWeight(t, playerId);
+    console.debug('trust:', trust);
     const opportunityIds = new Set<PlayerId>();
     for (const record of Object.values(this.history)) {
       if (record.sellerId === playerId) {
@@ -152,6 +154,13 @@ export class CommerceSystem extends BaseCommerceSystem {
     allIds: PlayerId[] = this.allPlayerIds, 
     excludeIds: PlayerId[] = []
   ) {
+    // ここでループしている。
+    const b = this.getBalance(playerId, t);
+    console.debug('b:', b);
+
+    const c = this.getTotalBalance(t, allIds.filter(id => !excludeIds.includes(id)));
+    console.debug('c:', c);
+
     return this.getBalance(playerId, t) / this.getTotalBalance(t, allIds.filter(id => excludeIds.includes(id)));
   }
 
@@ -178,4 +187,17 @@ export class CommerceSystem extends BaseCommerceSystem {
     return (w: number) => w;
   }
 
+}
+
+export class MemoCommerceSystem extends CommerceSystem {
+  private balancesCache = new Map<number, Balances>();
+
+  getBalances(t: number): Balances {
+    const cached = this.balancesCache.get(t);
+    if (cached) return cached;
+
+    const balances = super.getBalances(t);
+    this.balancesCache.set(t, balances);
+    return balances;
+  }
 }

@@ -1,14 +1,13 @@
-import { IPlayer, CommerceSystem, Simulator, Player } from '@social-contract/implements/ethical-game';
-
-export const initialState = {
-  balances: {
-    0: 1
-  }
-}
+import { IPlayer, MemoCommerceSystem, Simulator, Player } from '@social-contract/implements/ethical-game';
+import { initialStateFactory } from '@social-contract/core/factories';
 
 function main() {
-  const players: IPlayer[] = [...Array(16)].map((_, i) => new Player(i, [1, 1]));
-  const system = new CommerceSystem(initialState);
+  const N = 2;
+  const initialState = initialStateFactory(N);
+  console.debug('initialState:', initialState);
+  const players: IPlayer[] = [...Array(N)].map((_, i) => new Player(i, [1, 1]));
+  // const system = new CommerceSystem(initialState);
+  const system = new MemoCommerceSystem(initialState);
   const simulator = new Simulator(players, system);
   simulator.run();
 }

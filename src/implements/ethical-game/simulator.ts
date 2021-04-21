@@ -12,12 +12,15 @@ export class Simulator implements ISimulator<MessageType> {
   ) { }
 
   run() {
+    const maxT = 2;
     const combinations = this.generateCombinations();
 
     console.debug('combinations:', combinations);
 
-    while (this.t < 10 * combinations.length) {
+    while (this.t < maxT * combinations.length) {
       for (const [sellerId, buyerId] of combinations) {
+        console.debug('simulator.t:', this.t);
+
         this.t += 1;
         const seller = this.players.find(p => p.id === sellerId)!;
         const buyer = this.players.find(p => p.id === buyerId)!;
@@ -34,7 +37,7 @@ export class Simulator implements ISimulator<MessageType> {
     const result = seller.sendGoods(buyer);
 
     // 商取引システムに結果を記録
-    this.system.setTransaction({t: this.t, sellerId: seller.id, buyerId: buyer.id, result: result});
+    this.system.setTransaction({t: this.t, sellerId: seller.id, buyerId: buyer.id, result});
   }
 
   // playersから商取引ゲームの順番を決める。

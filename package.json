@@ -7,7 +7,7 @@
     "tsc": "tsc",
     "ts-node": "ts-node -P ./tsconfig.json -r tsconfig-paths/register",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "npm run test:watch -- --watch"
   },
   "author": "",
   "license": "ISC",
@@ -18,26 +18,11 @@
     "ts-jest": "^26.5.4",
     "ts-node": "^9.1.1",
     "tsconfig-paths": "^3.9.0",
+    "tsconfig-paths-jest": "0.0.1",
     "typescript": "^4.2.3"
   },
-  "jest": {
-    "moduleFileExtensions": [
-      "ts",
-      "js"
-    ],
-    "transform": {
-      "^.+\\.ts$": "ts-jest"
-    },
-    "globals": {
-      "ts-jest": {
-        "tsconfig": "tsconfig.json"
-      }
-    },
-    "testMatch": [
-      "**/src/*.spec.ts"
-    ]
-  },
   "dependencies": {
-    "ascii-table": "0.0.9"
+    "ascii-table": "0.0.9",
+    "log4js-extend": "^0.2.1"
   }
 }
