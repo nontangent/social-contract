@@ -14,19 +14,15 @@ export class Simulator implements IContractSimulator {
     public presenter: IPresenter,
   ) { }
 
-  async run(maxT: number = 10) {
+  async run(maxT: number = 10, sleep: number = 10) {
     // sellerとbuyerの一周の順番を決める(n * (n-1))。
     const combinations = this.generateCombinations();
 
     while (this.t < combinations.length * maxT) {
       for (const [sellerId, buyerId] of combinations) {
-        logger.debug('Flag 1');
-
         // 時刻を進める
         this.t += 1;
         for (const player of this.players) player.t = this.t;
-
-        logger.debug('Flag 2');
 
         // seller,buyer,escrowsを取得
         const seller = this.getPlayer(sellerId);
@@ -34,27 +30,22 @@ export class Simulator implements IContractSimulator {
         // const escrows = this.players.filter(player => ![sellerId, buyerId].includes(player.id));
         const escrows = this.players;
 
-        logger.debug('Flag 3');
-
         // sellerは商品である過去の履歴を渡す
         seller.sendGoods(buyer);
 
-        logger.debug('Flag 4');
-
         // buyerはエスクローに結果を報告する
         buyer.reportResult(seller, escrows);
-        logger.debug('Flag 5');
 
-        // 
+        // Presenterで描画する
         this.presenter.render(this);
-        logger.debug('Flag 6');
 
+        await this.sleep(sleep);
       }
     }
   }
 
-  async sleep(seconds: number): Promise<void> {
-    await new Promise(resolve => setTimeout(resolve, seconds * 1000));
+  async sleep(mills: number): Promise<void> {
+    await new Promise(resolve => setTimeout(resolve, mills));
   }
 
   // playersから商取引ゲームの順番を決める。

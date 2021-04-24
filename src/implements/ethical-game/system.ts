@@ -101,7 +101,7 @@ export abstract class BaseCommerceSystem implements ICommerceSystem {
   }
 
   get n(): number {
-    return Object.keys(this.initialState).length;
+    return Object.keys(this.initialState.balances).length;
   }
 
   getPlayerIds(excludeIds: PlayerId[] = []): PlayerId[] {

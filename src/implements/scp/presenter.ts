@@ -11,15 +11,19 @@ export class Presenter implements IPresenter {
 
   render(simulator: IContractSimulator) {
     const table = this.buildTable(simulator);
-    console.clear();
+    // console.clear();
     console.log(table.toString());
+    const player = simulator.players.find(player => player.id === 0)!;
+    const n = simulator.n;
+    const transaction = player.system.getTransaction(simulator.t - n * (n - 1) - 1);
+    logger.debug('transaction:', transaction);
   }
 
   buildTable(simulator: IContractSimulator) {
     const table = new AsciiTable();
     table.setHeading(...this.buildHeading(simulator));
     for (const player of simulator.players) {
-      table.addRow(...this.buildRow(player as IContractPlayer, simulator.n, simulator.t));
+      table.addRow(...this.buildRow(player, simulator.n, simulator.t));
     }
     return table
   }
@@ -29,10 +33,9 @@ export class Presenter implements IPresenter {
   }
 
   buildRow(player: IContractPlayer, n: number, t: number) {
-    logger.debug(player.system.history);
-    
-    const balances = player.system.getBalances(t);
-    logger.debug('Flag 6');
+    if (t - n * (n - 1) < 0) return [`${player.id}`, ...[...Array(n)].map(() => '')];
+    const balances = player.system.getBalances(t - n * (n - 1));
+    // console.debug(balances);
     const arr = [...Array(n)].map((_, i) => balances[i]);
     return [`${player.id}`, ...arr];
   }

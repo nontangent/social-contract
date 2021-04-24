@@ -1,9 +1,7 @@
-import { IPlayer } from '../player';
-
-export interface ISimulator<T> {
+export interface ISimulator<Player> {
   t: number;
   n: number;
-  players: IPlayer<T>[];
+  players: Player[];
 
   run(maxCount: number): void;
 }

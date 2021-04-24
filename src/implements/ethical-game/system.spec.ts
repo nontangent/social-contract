@@ -4,7 +4,7 @@ describe('System', () => {
   it('getAllPlayerIds()', () => {
     const initialState = {balances: {0: 1, 1: 1}};
     const system = new CommerceSystem(initialState);
-    const output = system['allPlayerIds'];
+    const output = system.getPlayerIds();
     expect(output).toEqual([0, 1]);
   });
 
@@ -43,5 +43,12 @@ describe('System', () => {
     const balances = {0: 0, 1: 0, 2: 0};
     const output = system['getReputationWeight'](balances, 0, []);
     expect(output).toEqual(1/3);
+  });
+
+  it('n', () => {
+    const initialState = {balances: {0: 1, 1: 1, 2: 1}};
+    const system = new CommerceSystem(initialState);
+    const output = system.n;
+    expect(output).toEqual(3);
   });
 });

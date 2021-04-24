@@ -11,13 +11,14 @@ const systemFactory = (initialState: InitialState) => new MemoCommerceSystem(ini
 const playerFactory = (i: number, n: number) => new Player(i, systemFactory(initialStateFactory(n)));
 
 function main() {
-  const N = 16;
+  const N = 3;
 
   const players = [...Array(N)].map((_, i) => playerFactory(i, N));
+
   const presenter = new Presenter();
   // const presenter = new NoopPresenter();
   const simulator = new Simulator(players, presenter);
-  simulator.run(10);
+  simulator.run(1000);
 }
 
 main();
