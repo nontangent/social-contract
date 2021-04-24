@@ -1,4 +1,4 @@
-import { configure, getLogger } from 'log4js';
+import { configure } from 'log4js';
 
 configure({
   appenders: {
@@ -6,16 +6,14 @@ configure({
       type: 'console', 
       layout: {
         type: 'pattern',
-        pattern: '%[%f{1}:%l %p %m %]'
+        pattern: '%[%m %]'
       }
     }
   },
   categories: {
     default: { 
       appenders: ['console'], 
-      level: 'info'
+      level: 'debug'
     }
   }
 });
-
-export { getLogger };

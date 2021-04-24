@@ -19,7 +19,3 @@ export function permutation<T>(arr: T[], k: number): T[][] {
   }
   return ans;
 }
-
-export const sum = (arr: number[]) => arr.reduce((pv, cv) => pv + cv, 0);
-
-export const isSetsEqual = <T=any>(a: Set<T>, b: Set<T>) => a.size === b.size && [...a].every(value => b.has(value));

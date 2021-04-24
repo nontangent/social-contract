@@ -33,6 +33,12 @@ export interface Rewards {
 }
 
 export interface ICommerceSystem {
+  n: number;
+  initialState: InitialState;
+  history: History;
+
+  getPlayerIds(excludes?: PlayerId[]): PlayerId[];
+
   getBalances(t: number): Balances;
   getBalance(playerId: PlayerId, t: number): number;
 

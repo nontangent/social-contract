@@ -1,21 +1,16 @@
 import { Action, Actor } from '@social-contract/core/actor';
-import { IPlayer as _IPlayer, PlayerId, PlayerStrategy } from '@social-contract/core/player';
-import { ICommerceSystem, Result } from '@social-contract/core/system';
+import { PlayerId, PlayerStrategy } from '@social-contract/core/player';
+import { Result } from '@social-contract/core/system';
+import { EthicalGamePlayerType, IEthicalGamePlayer, MessageType } from './player.interface';
 
-export enum MessageType { SEND_GOODS };
-export type IPlayer = _IPlayer<MessageType>;
-
-export class Player extends Actor<MessageType> implements IPlayer {
+export class Player extends Actor<MessageType> implements IEthicalGamePlayer {
   t = 0;
 
-  constructor (
-    public id: PlayerId,
-    public strategy: PlayerStrategy
-  ) {
+  constructor (public id: PlayerId, public type: EthicalGamePlayerType) {
     super(id);
   }
 
-  sendGoods(receiver: IPlayer): any {
+  sendGoods(receiver: IEthicalGamePlayer): any {
     switch(this.strategy[0]) {
       case 1: return this.sendMessage(receiver, {type: MessageType.SEND_GOODS, data: true});
       case 2: return this.sendMessage(receiver, {type: MessageType.SEND_GOODS, data: false});
@@ -32,4 +27,16 @@ export class Player extends Actor<MessageType> implements IPlayer {
     }
   }
 
+  get strategy(): PlayerStrategy {
+    switch (this.type) {
+      case 'A': return [1, 1];
+      case 'B': return [1, 2];
+      case 'C': return [1, 3];
+      case 'D': return [1, 4];
+      case 'E': return [2, 1];
+      case 'F': return [2, 2];
+      case 'G': return [2, 3];
+      case 'H': return [2, 4];  
+    }
+  }
 }

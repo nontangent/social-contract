@@ -1,13 +1,13 @@
 import { PlayerId } from '@social-contract/core/player';
 import { isSetsEqual, sum } from '@social-contract/core/helpers';
 import { Balances, History, ICommerceSystem, InitialState, Result, Rewards, Transaction } from "@social-contract/core/system";
-import { getLogger} from '@social-contract/core/logging';
+import { getLogger } from 'log4js';
 const logger = getLogger('@social-contract/ethical-game/system');
 
 export type EscrowWeights = Record<PlayerId, number>;
 
 export abstract class BaseCommerceSystem implements ICommerceSystem {
-  protected history: History = {};
+  history: History = {};
   public price = 1;
   totalBalances!: number;
 
@@ -51,7 +51,10 @@ export abstract class BaseCommerceSystem implements ICommerceSystem {
     const balances = this.getBalances(t-1);
     
     // 時刻tの商取引を取得する
-    const {sellerId, buyerId, result} = this.getTransaction(t);
+    const transaction = this.getTransaction(t);
+    if (!transaction) return balances;
+
+    const {sellerId, buyerId, result} = transaction;
 
     // 商取引ゲームに伴うbalancesの変動の幅を取得する
     const rewards = this.getRewards(balances, sellerId, buyerId);
@@ -59,7 +62,9 @@ export abstract class BaseCommerceSystem implements ICommerceSystem {
 
     // 失敗が報告された場合にsellerかbuyerのどちらかの残高が0以下になるならば、balancesを変動させずに返す
     if (
+      balances[sellerId] + rewards.seller.success < 0 ||
       balances[sellerId] + rewards.seller.failure < 0 || 
+      balances[buyerId] + rewards.buyer.success < 0 ||
       balances[buyerId] + rewards.buyer.failure < 0
     ) return balances;
 
@@ -69,11 +74,11 @@ export abstract class BaseCommerceSystem implements ICommerceSystem {
     logger.debug('result:', result);
 
     // 現在のbalancesの総量を取得する
-    const currentAmount = this.getTotalAmount(balances);
+    const currentAmount = Math.round(this.getTotalAmount(balances));
     logger.debug('currentAmount:', currentAmount);
 
     // 初期のbalancesの総量を取得する
-    const initialAmount = this.getTotalAmount(this.initialState.balances);
+    const initialAmount = Math.round(this.getTotalAmount(this.initialState.balances));
     logger.debug('initialAmount:', initialAmount);
 
     // 初期と現在のbalancesの総量の差を計算する
@@ -99,17 +104,13 @@ export abstract class BaseCommerceSystem implements ICommerceSystem {
     return Object.keys(this.initialState).length;
   }
 
-  get historyLength(): number {
-    return Object.keys(this.history).length;
-  }
-
-  protected getPlayerIds(excludeIds: PlayerId[] = []): PlayerId[] {
+  getPlayerIds(excludeIds: PlayerId[] = []): PlayerId[] {
     return Object.keys(this.initialState.balances)
       .map(id => parseInt(id, 10))
       .filter(id => !excludeIds.includes(id));
   }
 
-  protected getTotalAmount(balances: Balances, excludeIds: PlayerId[] = []): number {
+  getTotalAmount(balances: Balances, excludeIds: PlayerId[] = []): number {
     const playerIds = this.getPlayerIds(excludeIds);
     return sum(playerIds.map(id => balances[id]));
   }
@@ -178,11 +179,12 @@ export class CommerceSystem extends BaseCommerceSystem {
     return trust;
   }
 
+  // targetのプレイヤーのbalanceの割合を取得
   private getReputationWeight(balances: Balances, targetId: PlayerId, excludeIds: PlayerId[] = []) {
     const playerIds = this.getPlayerIds(excludeIds);
     const totalBalance = sum(playerIds.map(id => balances[id]));
 
-     // totalBalanceが0でなければ、プレイヤーの占める割合、0の場合は1をプレイヤー数で割った数
+    // totalBalanceが0でなければ、プレイヤーの占める割合、0の場合は1をプレイヤー数で割った数
     return totalBalance !== 0 ? balances[targetId] / totalBalance : 1 / playerIds.length;
   }
 

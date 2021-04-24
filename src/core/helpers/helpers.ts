@@ -1,0 +1,1 @@
+export const isSetsEqual = <T=any>(a: Set<T>, b: Set<T>) => a.size === b.size && [...a].every(value => b.has(value));
