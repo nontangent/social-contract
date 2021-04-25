@@ -14,11 +14,11 @@ function main() {
   const N = 3;
 
   const players = [...Array(N)].map((_, i) => playerFactory(i, N));
-
   const presenter = new Presenter();
   // const presenter = new NoopPresenter();
+
   const simulator = new Simulator(players, presenter);
-  simulator.run(1000);
+  simulator.run(1000, 1000);
 }
 
 main();

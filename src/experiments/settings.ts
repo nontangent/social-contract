@@ -13,7 +13,7 @@ configure({
   categories: {
     default: { 
       appenders: ['console'], 
-      level: 'debug'
+      level: 'info'
     }
   }
 });

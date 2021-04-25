@@ -34,10 +34,10 @@ export class Simulator implements IContractSimulator {
         seller.sendGoods(buyer);
 
         // buyerはエスクローに結果を報告する
-        buyer.reportResult(seller, escrows);
+        const result = buyer.reportResult(seller, escrows);
 
         // Presenterで描画する
-        this.presenter.render(this);
+        this.presenter.render(this, {t: this.t, sellerId, buyerId, result});
 
         await this.sleep(sleep);
       }
