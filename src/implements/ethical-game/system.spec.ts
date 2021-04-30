@@ -1,3 +1,4 @@
+import { Result } from "@social-contract/core/system";
 import { CommerceSystem } from "./system";
 
 describe('System', () => {
@@ -27,6 +28,17 @@ describe('System', () => {
     const system = new CommerceSystem(initialState);
     const output = system.getBalance(1, 0);
     expect(output).toEqual(1);
+  });
+
+  it('getBalance(1, 0)', () => {
+    const initialState = {balances: {0: 3, 1: 3, 2: 3}};
+    const system = new CommerceSystem(initialState);
+    system.setTransaction({ t: 1, sellerId: 0, buyerId: 1, result: Result.SUCCESS });
+    system.setTransaction({ t: 2, sellerId: 0, buyerId: 2, result: Result.SUCCESS });
+    system.setTransaction({ t: 3, sellerId: 1, buyerId: 0, result: Result.SUCCESS });
+    let output = system.getBalance(0, 0);
+    output = system.getBalance(0, 0);
+    expect(output).toEqual(3);
   });
 
   it('getReputationWeight(): balancesの合計が0でない場合', () => {

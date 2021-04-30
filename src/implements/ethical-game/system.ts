@@ -40,6 +40,9 @@ export abstract class BaseCommerceSystem implements ICommerceSystem {
   }
 
   setTransaction(transaction: Transaction) {
+    if (this.history[transaction.t] && this.history[transaction.t].result !== transaction.result) {
+      throw new Error();
+    }
     this.history[transaction.t] = transaction;
   }
 
@@ -52,7 +55,7 @@ export abstract class BaseCommerceSystem implements ICommerceSystem {
     
     // 時刻tの商取引を取得する
     const transaction = this.getTransaction(t);
-    if (!transaction) return balances;
+    if (!transaction) throw new Error(`A transaction at time(${t}) is none.`);
 
     const {sellerId, buyerId, result} = transaction;
 
@@ -209,14 +212,77 @@ export class CommerceSystem extends BaseCommerceSystem {
 }
 
 export class MemoCommerceSystem extends CommerceSystem {
-  private balancesCache = new Map<number, Balances>();
+  balancesCache = new Map<number, Balances>();
+  balanceCache: {[key: number]: {[key: number]: number}} = {};
 
   getBalances(t: number): Balances {
     const cached = this.balancesCache.get(t);
-    if (cached) return cached;
+    // if (cached) { console.warn(t, 'is cached!') } else { console.warn(t, 'is new!') };
+    if (cached) return {...cached};
 
     const balances = super.getBalances(t);
-    this.balancesCache.set(t, balances);
+    this.balancesCache.set(t, {...balances});
     return {...balances};
   }
+
+  // getBalance(playerId: number, t: number) {
+  //   return this.getBalances(t)[playerId];
+    // this.balanceCache = this.balanceCache || {};
+    // this.balanceCache[playerId] = this.balanceCache?.[playerId] || {};
+    // if (this.balanceCache[playerId][t]) return this.balanceCache[playerId][t];
+    // const balance = super.getBalance(playerId, t);
+    // this.balanceCache[playerId][t] = balance;
+    // return balance;
+  // }
+}
+
+export class CompareSystem implements ICommerceSystem {
+  constructor(private systems: ICommerceSystem[] = []) { }
+
+  get n(): number {
+    return this.compare<number>(system => system.n);
+  }
+
+  get initialState(): InitialState {
+    return this.compare<InitialState>(system => system.initialState);
+  }
+
+  get history(): History {
+    return this.compare<History>(system => system.history);
+  }
+
+  private compare<T = any>(func: (system: ICommerceSystem) => T) {
+    let same!: T;
+    this.systems.map(func).forEach((res: T) => {
+      if (!same || JSON.stringify(same) === JSON.stringify(res)) {
+        same = res;
+      } else {
+        console.error('A:', same);
+        console.error('B:', res);
+        throw new Error('Compared Systems does not return as same');
+      }
+    });
+    return same;
+  }
+
+  getPlayerIds(excludes?: PlayerId[]): PlayerId[] {
+    return this.compare(system => system.getPlayerIds(excludes));
+  }
+
+  getBalances(t: number): Balances {
+    return this.compare(system => system.getBalances(t));
+  }
+
+  getBalance(playerId: number, t: number): number {
+    return this.compare(system => system.getBalance(playerId, t));
+  }
+
+  getTransaction(t: number): Transaction {
+    return this.compare(system => system.getTransaction(t));
+  }
+  
+  setTransaction(transaction: Transaction): void {
+    return this.compare(system => system.setTransaction(transaction));
+  }
+
 }

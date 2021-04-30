@@ -1,5 +1,5 @@
 import { IPresenter, PlayerId } from '@social-contract/core/index';
-import { permutation } from '@social-contract/core/helpers';
+import { permutation, sleep } from '@social-contract/core/helpers';
 import { IContractPlayer } from './player.interface';
 import { IContractSimulator } from './simulator.interface';
 
@@ -14,9 +14,10 @@ export class Simulator implements IContractSimulator {
     public presenter: IPresenter,
   ) { }
 
-  async run(maxT: number = 10, sleep: number = 10) {
+  async run(maxT: number = 10, interval: number = 10) {
     // sellerとbuyerの一周の順番を決める(n * (n-1))。
     const combinations = this.generateCombinations();
+    logger.info('combinations:', combinations);
 
     while (this.t < combinations.length * maxT) {
       for (const [sellerId, buyerId] of combinations) {
@@ -37,15 +38,11 @@ export class Simulator implements IContractSimulator {
         const result = buyer.reportResult(seller, escrows);
 
         // Presenterで描画する
-        this.presenter.render(this, {t: this.t, sellerId, buyerId, result});
+        await this.presenter.render(this, {t: this.t, sellerId, buyerId, result});
 
-        await this.sleep(sleep);
+        await sleep(interval);
       }
     }
-  }
-
-  async sleep(mills: number): Promise<void> {
-    await new Promise(resolve => setTimeout(resolve, mills));
   }
 
   // playersから商取引ゲームの順番を決める。

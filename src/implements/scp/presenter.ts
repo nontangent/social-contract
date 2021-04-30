@@ -3,50 +3,55 @@ import { IContractPlayer } from "./player.interface";
 import { IContractSimulator } from "./simulator.interface";
 
 import { getLogger } from 'log4js';
-import { Transaction } from "@social-contract/core/system";
+import { Result, Transaction } from "@social-contract/core/system";
 import { PlayerId } from "@social-contract/core/player";
-import { ISimulator } from "@social-contract/core/simulator";
+import { sleep, z2, z7 } from "@social-contract/core/helpers";
 const logger = getLogger('@social-contract/implements/scp/presenter');
 
 const AsciiTable = require('ascii-table');
 
 export class Presenter implements IPresenter {
 
-  render(simulator: IContractSimulator, transaction: Transaction): void {
+  private tableBuilder = new TableBuilder();
+
+  async render(simulator: IContractSimulator, transaction: Transaction): Promise<void> {
     const { t, sellerId, buyerId, result } = transaction;
-    const seller = this.getPlayer(simulator, sellerId)!;
-    const buyer = this.getPlayer(simulator, buyerId)!;
-    logger.info(`t: ${t}, (seller, buyer) = (${sellerId}, ${buyerId}), result: ${result}`);
-    logger.info(`seller(${seller.id}).system.history: ${Object.keys(seller.system.history)}`);
-    logger.info(`buyer(${buyer.id}).system.history: ${Object.keys(buyer.system.history)}`);
-    // const table = this.buildTable(simulator);
-    // console.clear();
-    // console.log(table.toString());
-    // const player = simulator.players.find(player => player.id === 0)!;
-    // const n = simulator.n;
-    // const transaction = player.system.getTransaction(simulator.t - n * (n - 1) - 1);
-    // logger.debug('transaction:', transaction);
-  }
+    const n = simulator.n;
+    let determinedT = t - 2 * n * (n - 1);
+    determinedT = determinedT < 0 ? 0 : determinedT;
 
-  buildTable(simulator: IContractSimulator) {
-    const table = new AsciiTable();
-    table.setHeading(...this.buildHeading(simulator));
-    for (const player of simulator.players) {
-      table.addRow(...this.buildRow(player, simulator.n, simulator.t));
-    }
-    return table
-  }
+    // for (const player of simulator.players) {
+    //   const history = player.system.history;
+    //   const results = Object.keys(history).sort().map((k: string) => history[parseInt(k, 10)].result);
+    //   logger.info(`player(${player.id}).system.history: ${results.map(r => r === Result.SUCCESS ? 'S' : 'F').join(', ')}`);
+    // }
 
-  buildHeading(simulator: IContractSimulator) {
-    return [`${simulator.t}`, ...[...Array(simulator.n)].map((_, i) => `${i}`)];
-  }
+    const systems: SystemData = simulator.players.reduce((pre, player) => ({
+      // ...pre, [player.id]: simulator.players.map(opp => player.system.getBalance(opp.id, determinedT)),
+      ...pre, 
+      [player.id]: simulator.players.map(opp => player.system.getBalances(determinedT)[opp.id]),
+    }), {} as SystemData);
+    const data: Data = { n: simulator.n, t: simulator.t, determinedT, systems };
 
-  buildRow(player: IContractPlayer, n: number, t: number) {
-    if (t - n * (n - 1) < 0) return [`${player.id}`, ...[...Array(n)].map(() => '')];
-    const balances = player.system.getBalances(t - n * (n - 1));
-    // console.debug(balances);
-    const arr = [...Array(n)].map((_, i) => balances[i]);
-    return [`${player.id}`, ...arr];
+    const player0 = this.getPlayer(simulator, 0)!;
+    const player1 = this.getPlayer(simulator, 1)!;
+    const player2 = this.getPlayer(simulator, 2)!;
+
+    // if ([13].includes(t)) {
+    //   console.debug('player(0).system.history:', player0.system.history);
+    //   console.debug('player(1).system.history:', player1.system.history);
+    //   console.debug('player(2).system.history:', player2.system.history);
+    //   console.debug('balances:', player2.system.getBalances(1));
+    // }
+    // if (t == 14) process.exit();
+
+    const tableStr = this.tableBuilder.buildString(data);
+
+    console.clear();
+    logger.info(`${z7(transaction.t)} (seller, buyer) = (${z2(transaction.sellerId)}, ${z2(transaction.buyerId)}) ${transaction.result}`);
+    logger.info(tableStr);
+    logger.info('==============================================================');
+    await sleep(20);
   }
 
   getPlayer(simulator: IContractSimulator, playerId: PlayerId): IContractPlayer | undefined {
@@ -55,5 +60,25 @@ export class Presenter implements IPresenter {
 }
 
 export class NoopPresenter implements IPresenter {
-  render() { }
+  async render() { }
 }
+
+export class TableBuilder {
+  buildString(data: Data) {
+    const table = new AsciiTable();
+    table.setHeading(`${data.determinedT}`, ...[...Array(data.n)].map((_, i) => `${i}`));
+    for (const playerId of Object.keys(data.systems)) {
+      table.addRow(playerId, ...data.systems[playerId]);
+    }
+    return table.toString()
+  }
+}
+
+interface Data {
+  t: number;
+  determinedT: number;
+  n: number;
+  systems: SystemData;
+}
+
+interface SystemData {[playerId: string]: number[]};

@@ -1,7 +1,7 @@
 import { ICommerceSystem, Transaction, History, Result } from '@social-contract/core/system';
 import { Action, Actor } from '@social-contract/core/actor';
 import { PlayerId, PlayerStrategy, Reports } from '@social-contract/core/player'
-import { range } from '@social-contract/core/helpers';
+import { range, b10, z4 } from '@social-contract/core/helpers';
 import { IContractPlayer, MessageType, ContractMessage } from './player.interface';
 import { getLogger } from 'log4js';
 const logger = getLogger('@social-contract/implements/scp/player');
@@ -26,7 +26,7 @@ export class Player extends Actor<MessageType> implements IContractPlayer {
     
     // 報告された商取引の結果を取得する
     const start = this.t - n * (n - 1);
-    const end = this.t;
+    const end = this.t - 1;
     const transactions = this.getReportedTransactions(start, end);
     
     // 報告された商取引の結果を送信する
@@ -41,34 +41,27 @@ export class Player extends Actor<MessageType> implements IContractPlayer {
   // たぶん、ここのアルゴリズムが難しい。
   // ①自分が支持するレコードと前回、送信されたレコードが一致しているか
   // ②自分が支持するレコードと違う結果を報告したPlayerであるか
+
+  // 時刻t-2n(n-1)~時刻t-n(n-1)までのトランザクションは全員から一度づつ報告されているので、
+  // 時刻t-2n(n-1)~時刻t-n(n-1)までの支持する歴史は決定できる
+  // 時刻t-2n(n-1)~時刻t-n(n-1)までの間にbuyerが報告したTransactionが支持する歴史の結果と一つでも一致しないならば失敗を報告する
   reportResult(seller: IContractPlayer, escrows: IContractPlayer[]): Result {
     // プレイヤー数を取得する
     const n = this.system.n;
 
     // 支持する歴史を決定する
-    const keys = Object.keys(this.system.history).map(k => parseInt(k, 10));
-    const start = keys.length ? Math.max(...keys) + 1 : 1;
-    const end = start + n * (n - 1) - 1;
-    // const start = this.t - 2 * n * (n - 1);
-    // const end = this.t - n * (n - 1) - 1;
-    logger.warn(`start: ${start}, end: ${end}`);
-    const transactions = end < this.t ? this.determineSupportingTransactions(start, end) : [];
-
-    // 支持する歴史を商取引システムに設定する
-    for (const t of transactions) this.system.setTransaction(t);
+    const start = this.t - 2 * n * (n - 1) + 1;
+    const end = this.t - n * (n - 1) + 1;
+    logger.warn(`this.t: ${this.t}, start: ${start}, end: ${end}`);
+    this.determineSupportingTransactions(start, end);
     
     // 商取引の結果を決定する
-    // 時刻startからendまでの支持する歴史とsellerが報告した歴史が一致するか
-    const result = end < this.t ? this.determineResult(seller.id, start, end) : Result.SUCCESS;
+    const result = this.determineResult(seller.id, start, end);
 
     // 全体に結果を報告
-    const message: ContractMessage<Transaction> = {
-      type: MessageType.RESULT,
-      data: this.buildRecord(seller.id, result)
-    };
-    this.broadcastMessage<Transaction>(escrows, message);
+    this.broadcastResult(seller.id, escrows, result);
 
-    // MEMO: テストのために商取引の結果を返す
+    // テストのために商取引の結果を返す
     return result;
   }
 
@@ -93,60 +86,73 @@ export class Player extends Actor<MessageType> implements IContractPlayer {
   }
 
   // 商取引ゲームの結果を確定する
-  private determineResult(sellerId: PlayerId, start: number, end: number): Result {
-    // 時刻startからendまでの商取引システムに記録されたトランザクションの結果と
-    for (const t of range(start, end-1)) {
-      if (t <= 0) continue;
+  determineResult(sellerId: PlayerId, start: number, end: number): Result {
+    // 時刻startからendまでの商取引システムに記録されたトランザクションの結果と比較する
+    for (const t of range(start, end-1).filter(t => t > 0)) {
       const transaction = this.system.getTransaction(t);
-      if(transaction.result !== this.getReportedTransaction(sellerId, t).result) return Result.FAILED
+      if (!transaction) throw new Error('transaction is null');
+      if (transaction.result !== this.getReportedTransaction(sellerId, t)!.result) return Result.FAILED;
     }
     return Result.SUCCESS;
   }
 
   // 支持する歴史を決定する
-  private determineSupportingTransactions(start: number, end: number): Transaction[] {
-    const transactions: Transaction[] = [];
-
+  private determineSupportingTransactions(start: number, end: number): void{
     // 時刻startからendまでのhistoryを確定する
-    for (let t = start; 0 < t && t < end; t++) {
-      // logger.debug(`t: ${t}, player(${this.id}).reports:`, this.reports);
-      const transaction = this.determineSupportingTransaction(t);
-      transactions.push(transaction)
+    for (let t = start; t < end; t++) {
+      if (t <= 0) continue;
+      this.determineSupportingTransaction(t);
     }
-    return transactions;
   }
 
   // 報告されたトランザクションから支持するトランザクションを決定する
-  private determineSupportingTransaction(t: number): Transaction {
-    let score = 0;
-    // TODO: ここ、undefinedが変える場合がある。
+  private determineSupportingTransaction(t: number): void {
+    // 自分がreporterの場合はそのトランザクションを正しい歴史とする
     const transaction = this.getReportedTransaction(this.id, t);
+    if (transaction) return this.setSystemTransaction(transaction);
+    
+    // console.debug(`${z4(t)}: ${this.system.getPlayerIds().map(id => b10(this.getReportedTransaction(id, t)?.result || ''))}`);
 
-    for (const playerId of this.system.getPlayerIds()) {
+    let sellerId!: PlayerId, buyerId!: PlayerId;
+    let score = 0;
+    for (const playerId of this.system.getPlayerIds([this.id])) {
       // 時刻t-1のbalanceを取得する
-      const weight = this.system.getBalance(playerId, t - 1);
+      const n = this.system.n;
+      // TODO: ここの時刻正しいか精査する
+      const weight = this.getBalance(playerId, Math.max(0, t - 2 * n * (n - 1) + 1));
       
       // playerが報告した時刻tのトランザクションを取得する
-      const transaction = this.getReportedTransaction(playerId, t);
+      const transaction = this.getReportedTransaction(playerId, t)!;
+      if (!transaction) throw new Error('transaction is null');
       
-      // 報告されたトランザクションが存在しない場合、飛ばす。
-      if (!transaction) continue;
-      
-      // 
+      // scoreを計算
       score += (transaction.result === Result.SUCCESS ? 1 : -1) * weight;
+
+      buyerId = transaction!.buyerId;
+      sellerId = transaction!.sellerId;
     }
 
     // scoreから時刻tの支持するトランザクションの結果を決定する
     const result = score > 0 ? Result.SUCCESS : Result.FAILED
-
-    return { ...transaction, t, result };
+    return this.setSystemTransaction({ sellerId, buyerId, t, result });
   }
 
+  private getBalance(playerId: PlayerId, t: number) {
+    logger.debug(`${this.t}: player(${this.id}) get player(${playerId})'s balance at the time(${t}).`);
+    return this.system.getBalance(playerId, t);
+  }
+
+  private setSystemTransaction(transaction: Transaction) {
+    return this.system.setTransaction({...transaction})
+  }
+
+  // 報告されたトランザクションを記録する
   private setReportedTransactions(transactions: Transaction[]) {
     for (let transaction of transactions) this.setReportedTransaction(transaction);
     return this.reports;
   }
 
+  // 報告されたトランザクションを記録する
   private setReportedTransaction(transaction: Transaction) {
     this.reports[transaction.reporterId!] = this.reports[transaction.reporterId!] || {};
     this.reports[transaction.reporterId!][transaction.t] = transaction;
@@ -159,8 +165,16 @@ export class Player extends Actor<MessageType> implements IContractPlayer {
       .filter(transaction => timeRange.includes(transaction.t));
   }
 
-  getReportedTransaction(reporterId: PlayerId, t: number): Transaction {
-    return this.reports?.[reporterId]?.[t];
+  // 報告されたトランザクションを取得する
+  private getReportedTransaction(reporterId: PlayerId, t: number): Transaction | null {
+    return this.reports?.[reporterId]?.[t] || null;
+  }
+
+  private broadcastResult(sellerId: PlayerId, escrows: IContractPlayer[], result: Result): void {
+    this.broadcastMessage<Transaction>(escrows, {
+      type: MessageType.RESULT,
+      data: this.buildRecord(sellerId, result)
+    });
   }
 
 }
