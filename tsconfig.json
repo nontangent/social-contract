@@ -8,9 +8,15 @@
     "strict": true,
     "baseUrl": "./",
     "paths": {
-      "@social-contract/core/*": ["src/core/*"],
-      "@social-contract/implements": ["src/implements"],
-      "@social-contract/implements/*": ["src/implements/*"]
+      "@social-contract/core/*": ["lib/core/*"],
+      "@social-contract/ethical-game": ["projects/ethical-game"],
+      "@social-contract/ethical-game/*": ["projects/ethical-game/*"],
+      "@social-contract/complex-system": ["projects/complex-system"],
+      "@social-contract/complex-system/*": ["projects/complex-system/*"],
+      "@social-contract/presenters": ["lib/presenters"],
+      "@social-contract/presenters/*": ["lib/presenters/*"],
+      "@social-contract/utils/*": ["lib/utils/*"],
+      "@social-contract/experiments/*": ["experiments/*"]
     },
     "types": ["@types/node", "@types/jest"],
     "esModuleInterop": true,
