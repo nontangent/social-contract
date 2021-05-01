@@ -1,30 +1,53 @@
+import { SuccessRateRecorder } from '@social-contract/core/recorder';
 import { ICommerceSystem } from '@social-contract/core/system';
+import { f2, p100 } from '@social-contract/utils/helpers';
+import { BalancesData, BalancesPresenter } from './balances.presenter';
+import { RecorderData, RecorderPresenter } from './recorder.presenter';
 const AsciiTable = require('ascii-table');
 
-export interface BalancesData {
-  t: number;
-  n: number;
-  balances: {[key: string]: number[]};
+export interface SystemData {
+  balances: BalancesData;
+  recorder: RecorderData;
 }
 
 export class SystemPresenter {
-  buildBalancesData(systemMap: {[key: string]: ICommerceSystem}, t: number, n: number): BalancesData {
-    const balances = Object.keys(systemMap).reduce((pre, key, i) => ({
-      ...pre, 
-      [key]: [...Array(n)].map((_, j) => systemMap[key].getBalance(j, t))
-    }), {});
-    return {t, n, balances};
+  balances = new BalancesPresenter();
+  recorder = new RecorderPresenter();
+
+  buildSystemString(    
+    systemMap: {[key: string]: ICommerceSystem}, 
+    recorderMap: {[key: string]: SuccessRateRecorder},
+    t: number, 
+    n: number
+  ): string {
+    const data = this.buildSystemData(systemMap, recorderMap, t, n);
+    return this.formatSystemData(data);
   }
 
-  buildBalancesString(data: BalancesData): string {
+  buildSystemData(
+    systemMap: {[key: string]: ICommerceSystem}, 
+    recorderMap: {[key: string]: SuccessRateRecorder},
+    t: number, 
+    n: number
+  ): SystemData {
+    return {
+      balances: this.balances.buildBalancesData(systemMap, t, n),
+      recorder: this.recorder.buildRecorderData(recorderMap),
+    }
+  }
+
+  formatSystemData(data: SystemData): string {
     const table = new AsciiTable();
-    table.setHeading(`Balances(${data.t})`, ...[...Array(data.n)].map((_, i) => `${i}`));
-    Object.keys(data.balances).forEach(key => {
-      const balances = data.balances[key].map(b => f2(b));
-      return table.addRow(key, ...balances);
+    table.setHeading(`Balances(${data.balances.t})`, 
+      ...[...Array(data.balances.n)].map((_, i) => `${i}`),
+      'True', 'Reported'
+    );
+    Object.keys(data.balances.balances).forEach(key => {
+      const balances = data.balances.balances[key].map(b => f2(b));
+      const recorder = data.recorder?.[key];
+      return table.addRow(key, ...balances, `${p100(recorder?.true)}`, `${p100(recorder?.reported)}`);
     })
     return table.toString();
   }
 }
 
-export const f2 = (n: number) => Math.round(n * 10) / 10;

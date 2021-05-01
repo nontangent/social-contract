@@ -54,7 +54,7 @@ describe('History Presenter Test', () => {
       });
     });
 
-    const data = presenter.buildHistoryData({'TestSystem': system}, 4, {maxSize: 4});
+    const data = presenter.buildHistoryData({'TestSystem': system}, 4, {maxSize: 4, padding: 0});
     expect(data.historyMap['TestSystem']).toEqual(['S', 'S', 'S', 'S']);
   });
 
@@ -72,7 +72,7 @@ describe('History Presenter Test', () => {
       });
     });
 
-    const data = presenter.buildHistoryData({'TestSystem': system}, 4, {maxSize: 4});
+    const data = presenter.buildHistoryData({'TestSystem': system}, 4, {maxSize: 4, padding: 0});
     expect(data.historyMap['TestSystem']).toEqual(['S', ' ', ' ', ' ']);
   });
 
@@ -90,7 +90,7 @@ describe('History Presenter Test', () => {
       });
     });
 
-    const data = presenter.buildHistoryData({'TestSystem': system}, 6, {maxSize: 4});
+    const data = presenter.buildHistoryData({'TestSystem': system}, 6, {maxSize: 4, padding: 0});
     expect(data.historyMap['TestSystem']).toEqual(['S', 'S', 'S', 'F']);
   });
 });

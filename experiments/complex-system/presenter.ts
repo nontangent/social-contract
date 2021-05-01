@@ -1,4 +1,4 @@
-import { IPresenter } from "@social-contract/core/presenter";
+import { IPresenter } from "@social-contract/presenters";
 import { IContractPlayer } from "@social-contract/complex-system/player.interface";
 import { IContractSimulator } from "@social-contract/complex-system/simulator.interface";
 
@@ -25,11 +25,8 @@ export class Presenter implements IPresenter {
     const systems = simulator.players.reduce((p, player) => ({
       ...p, [`${player.id}`]: player.system
     }), {});
-    const data = this.systemPresenter.buildBalancesData(systems, determinedT, n);
-    const tableStr = this.systemPresenter.buildBalancesString(data);
-
-    const historyData = this.historyPresenter.buildHistoryData(systems, t, {maxSize: 16, padding: -10});
-    const historyTable = this.historyPresenter.buildHistoryString(historyData);
+    const systemTable = this.systemPresenter.buildSystemString(systems, {}, determinedT, n);
+    const historyTable = this.historyPresenter.buildHistoryString(systems, t, {maxSize: 16, padding: -10});
 
     console.clear();
     logger.info('==============================================================');
@@ -39,8 +36,10 @@ export class Presenter implements IPresenter {
     logger.info(historyTable);
     logger.info(`\n`);
     logger.info(`=== Balances === `);
-    logger.info(tableStr);
+    logger.info(systemTable);
     logger.info('==============================================================');
+
+    // 
     await sleep(20);
   }
 

@@ -20,6 +20,11 @@ export class HistoryPresenter implements IPresenter {
 
   }
 
+  buildHistoryString(...args: [any, any, any]): string {
+    const data = this.buildHistoryData(...args);
+    return this.formatHistoryData(data);
+  }
+
   buildHistoryData(
     systemMap: {[key: string]: ICommerceSystem}, 
     t: number, 
@@ -41,7 +46,7 @@ export class HistoryPresenter implements IPresenter {
     return data;
   }
 
-  buildHistoryString(data: HistoryData): string {
+  formatHistoryData(data: HistoryData): string {
     const table = new AsciiTable();
     table.setHeading(`Player \\ Time`, ...data.timeRange.map(i => b4(`${i}`)));
     for (const [key, transactions] of Object.entries(data.historyMap)) {
@@ -49,7 +54,5 @@ export class HistoryPresenter implements IPresenter {
       table.addRow(`${key}`, ...results.map(i => b4(`${i}`)));
     }
     return table.toString();
-
-    // return 
   }
 }

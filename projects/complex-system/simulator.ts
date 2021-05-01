@@ -1,20 +1,23 @@
-import { PlayerId } from '@social-contract/core/player';
-import { permutation, sleep } from '@social-contract/utils/helpers';
+import { sleep } from '@social-contract/utils/helpers';
 import { IPresenter } from '@social-contract/presenters';
+import { BaseSimulator } from '@social-contract/core/simulator';
 
 import { IContractPlayer } from './player.interface';
 import { IContractSimulator } from './simulator.interface';
 
 import { getLogger } from 'log4js';
+import { Result } from '@social-contract/core/system';
 const logger = getLogger(__filename);
 
-export class Simulator implements IContractSimulator {
-  t: number = 0;
+export class Simulator extends BaseSimulator<IContractPlayer> implements IContractSimulator {
+  recorderMap = {};
 
   constructor(
     public players: IContractPlayer[] = [],
     public presenter: IPresenter,
-  ) { }
+  ) {
+    super();
+  }
 
   async run(maxT: number = 10, interval: number = 10) {
     // sellerとbuyerの一周の順番を決める(n * (n-1))。
@@ -42,23 +45,14 @@ export class Simulator implements IContractSimulator {
         // Presenterで描画する
         await this.presenter.render(this, {t: this.t, sellerId, buyerId, result});
 
+        // 
         await sleep(interval);
       }
     }
   }
 
-  // playersから商取引ゲームの順番を決める。
-  private generateCombinations(): [number, number][] {
-    const playerIds = this.players.map(p => p.id);
-    return permutation<number>(playerIds, 2) as [number, number][];
-  }
-
-  getPlayer(id: PlayerId): IContractPlayer {
-    return this.players[id];
-  }
-
-  get n(): number {
-    return this.players.length;
+  getTrueResult(): Result {
+    return Result.SUCCESS;
   }
 
 }

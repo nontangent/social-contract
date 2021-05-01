@@ -1,24 +1,24 @@
-import { Balances, ICommerceSystem, Result, Transaction } from '@social-contract/core/system';
-import { permutation, Queue, sleep } from '@social-contract/utils/helpers';
-import { PlayerId } from '@social-contract/core/player';
+import { ICommerceSystem, Result, Transaction } from '@social-contract/core/system';
+import { sleep } from '@social-contract/utils/helpers';
+import { SuccessRateRecorder } from '@social-contract/core/recorder';
 import { IPresenter } from '@social-contract/presenters';
+import { BaseSimulator } from '@social-contract/core/simulator';
 
 import { IEthicalGamePlayer } from './player.interface';
 import { IEthicalGameSimulator } from './simulator.interface';
 
-export class Simulator implements IEthicalGameSimulator {
-  t = 0;
+export class Simulator extends BaseSimulator<IEthicalGamePlayer> implements IEthicalGameSimulator {
+  recorderMap = {system: new SuccessRateRecorder()};
 
   constructor(
     public players: IEthicalGamePlayer[],
     public system: ICommerceSystem,
     public presenter: IPresenter,
-  ) { }
+  ) {
+    super();
+  }
 
-  reportedResults = new Queue<Result>(100);
-  trueResults = new Queue<Result>(100);
-
-  async run(maxT: number = 10, interval: number = 10) {
+  async run(maxT: number = 10, interval: number = 10): Promise<void> {
     const combinations = this.generateCombinations();
 
     while (this.t < maxT * combinations.length) {
@@ -30,17 +30,12 @@ export class Simulator implements IEthicalGameSimulator {
         const buyer = this.getPlayer(buyerId);
         const transaction = this.deal(seller, buyer);
 
-        // 商取引ゲームが行われた場合(バランスに変化があった場合)、真の結果と報告された結果を記録する
-        const balances = this.system.getBalances(this.t);
-        if (!this.isSameWithPreBalances(balances)) {
-          this.reportedResults.put(transaction.result);
-          const trueResult = this.getTrueResult(seller, buyer);
-          this.trueResults.put(trueResult);
-        }
+        this.recordResult('system', this.system, transaction);
 
         // 表示
         await this.presenter.render(this, transaction);
 
+        // 
         await sleep(interval);
       }
     }
@@ -59,34 +54,9 @@ export class Simulator implements IEthicalGameSimulator {
     return transaction;
   }
 
-  getPlayer(playerId: PlayerId): IEthicalGamePlayer {
-    return this.players.find(p => p.id === playerId)!
-  }
-
-  // playersから商取引ゲームの順番を決める。
-  private generateCombinations(): [number, number][] {
-    const playerIds = this.players.map(p => p.id);
-    return permutation<number>(playerIds, 2) as [number, number][];
-  }
-
-  get n() {
-    return this.players.length;
-  }
-
-  private preBalances?: Balances;
-
-  isSameWithPreBalances(balances: Balances): boolean {
-    const res = JSON.stringify(this.preBalances) === JSON.stringify(balances);
-    this.preBalances = balances;
-    return res;
-  }
-
   getTrueResult(seller: IEthicalGamePlayer, buyer: IEthicalGamePlayer): Result {
-    if([1].includes(seller.strategy[0]) && [1, 2].includes(buyer.strategy[1])) {
-      return Result.SUCCESS
-    } else {
-      return Result.FAILED;
-    }
+    const condition = [1].includes(seller.strategy[0]) && [1, 2].includes(buyer.strategy[1]);
+    return condition ? Result.SUCCESS : Result.FAILED;
   }
 
 }
