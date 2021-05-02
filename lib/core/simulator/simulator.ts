@@ -18,12 +18,14 @@ export abstract class BaseSimulator<IPlayer extends {id: PlayerId}> implements I
     return this.players.find(p => p.id === playerId)!
   }
 
-  recordResult(key: string, system: ICommerceSystem, transaction: Transaction): void {
-    // 商取引ゲームが行われた場合(バランスに変化があった場合)、真の結果と報告された結果を記録する
-    const balances = system.getBalances(this.t);
+  recordResult(system: ICommerceSystem, transaction: Transaction): void {
+    // const recorder = this.recorderMap[system.id];
+    // recorder.addReportedResult(transaction.result);
+    // recorder.addTrueResult(transaction.result);
 
-    // 
-    const recorder = this.recorderMap[key];
+    // 商取引ゲームが行われた場合(バランスに変化があった場合)、真の結果と報告された結果を記録する
+    const balances = system.getBalances(transaction.t);
+    const recorder = this.recorderMap[system.id];
     if (!recorder.isSameWithPreBalances(balances)) {
       const seller = this.getPlayer(transaction.sellerId);
       const buyer = this.getPlayer(transaction.buyerId);

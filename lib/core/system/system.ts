@@ -4,6 +4,7 @@ import { State } from './state';
 import { IStore } from './store';
 
 export interface ICommerceSystem {
+  id: string;
   n: number;
   store: IStore<State>;
 

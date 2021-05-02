@@ -17,15 +17,16 @@ export class Presenter implements IPresenter {
   historyPresenter = new HistoryPresenter();
 
   async render(simulator: IContractSimulator, transaction: Transaction): Promise<void> {
-    const { t, sellerId, buyerId, result } = transaction;
-    const n = simulator.n;
+    // const { t, sellerId, buyerId, result } = transaction;
+    // const n = simulator.n;
+    const { t, n, recorderMap } = simulator; 
     let determinedT = t - 2 * n * (n - 1);
     determinedT = determinedT < 0 ? 0 : determinedT;
 
     const systems = simulator.players.reduce((p, player) => ({
       ...p, [`${player.id}`]: player.system
     }), {});
-    const systemTable = this.systemPresenter.buildSystemString(systems, {}, determinedT, n);
+    const systemTable = this.systemPresenter.buildSystemString(systems, recorderMap, determinedT, n);
     const historyTable = this.historyPresenter.buildHistoryString(systems, t, {maxSize: 16, padding: -10});
 
     console.clear();
@@ -39,11 +40,7 @@ export class Presenter implements IPresenter {
     logger.info(systemTable);
     logger.info('==============================================================');
 
-    // 
+    // 待機する
     await sleep(20);
-  }
-
-  private getPlayer(simulator: IContractSimulator, playerId: PlayerId): IContractPlayer | undefined {
-    return simulator.players.find(player => player.id === playerId);
   }
 }

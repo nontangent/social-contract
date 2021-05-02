@@ -18,14 +18,14 @@ const balancesFactory = (n: number) => [...Array(n)].map((_, i) => i)
 const initialStateFactory = (n: number) => ({balances: balancesFactory(n)});
 // const systemFactory = (initialState: InitialState) => new MemoCommerceSystem(initialState);
 // const systemFactory = (initialState: InitialState) => new CommerceSystem(initialState);
-const systemFactory = (initialState: InitialState) => {
+const systemFactory = (initialState: InitialState, i: number) => {
   return new CompareSystem([
     // new CommerceSystem(initialState),
     new MemoCommerceSystem(initialState)
-  ]);
+  ], `${i}`);
 };
-const playerFactoryA = (i: number, n: number) => new Player(i, systemFactory(initialStateFactory(n)));
-const playerFactoryB = (i: number, n: number) => new PlayerTypeB(i, systemFactory(initialStateFactory(n)));
+const playerFactoryA = (i: number, n: number) => new Player(i, systemFactory(initialStateFactory(n), i));
+const playerFactoryB = (i: number, n: number) => new PlayerTypeB(i, systemFactory(initialStateFactory(n), i));
 
 function main() {
   const N = 4;

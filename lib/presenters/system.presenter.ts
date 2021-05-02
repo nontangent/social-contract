@@ -40,12 +40,13 @@ export class SystemPresenter {
     const table = new AsciiTable();
     table.setHeading(`Balances(${data.balances.t})`, 
       ...[...Array(data.balances.n)].map((_, i) => `${i}`),
-      'True', 'Reported'
+      'Reported', 'True'
     );
     Object.keys(data.balances.balances).forEach(key => {
       const balances = data.balances.balances[key].map(b => f2(b));
       const recorder = data.recorder?.[key];
-      return table.addRow(key, ...balances, `${p100(recorder?.true)}`, `${p100(recorder?.reported)}`);
+      const formatter = (n: number | undefined): string => n ? `${p100(n)}` : `-`;
+      return table.addRow(key, ...balances, formatter(recorder?.reported), formatter(recorder?.true));
     })
     return table.toString();
   }

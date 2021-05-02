@@ -3,11 +3,9 @@ export class Queue<T> {
 
   constructor(public readonly maxSize: number) { }
 
-  put(item: T) {
-    this.arr.push(item);
-    if (this.arr.length > this.maxSize) {
-      this.arr.shift();
-    }
+  put(item: T): T | null {
+    return this.arr.push(item) > this.maxSize ? this.arr.shift() || null : null;;
+    // return this.arr.length
   }
 
   readAll(): T[] {

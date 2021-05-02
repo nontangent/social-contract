@@ -30,7 +30,7 @@ export class Simulator extends BaseSimulator<IEthicalGamePlayer> implements IEth
         const buyer = this.getPlayer(buyerId);
         const transaction = this.deal(seller, buyer);
 
-        this.recordResult('system', this.system, transaction);
+        this.recordResult(this.system, transaction);
 
         // 表示
         await this.presenter.render(this, transaction);
