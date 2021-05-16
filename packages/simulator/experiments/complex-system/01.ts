@@ -20,7 +20,7 @@ const initialStateFactory = (n: number) => ({balances: balancesFactory(n)});
 // const systemFactory = (initialState: InitialState) => new CommerceSystem(initialState);
 const systemFactory = (initialState: InitialState, i: number) => {
   return new CompareSystem([
-    // new CommerceSystem(initialState),
+    new CommerceSystem(initialState),
     new MemoCommerceSystem(initialState)
   ], `${i}`);
 };

@@ -1,0 +1,77 @@
+\section{不正が防止される条件}
+\subsection{不正が抑制される戦略組と期待利得の不等式}
+「倫理ある商取引ゲーム」において不正が生じないためには$seller$と$buyer$の戦略組を$(s^{seller}_1, s^{buyer}_1)$に帰着させなくてはならない．
+そのためには$seller$が戦略$s^{seller}_1$をとった場合の期待利得$E(r|s^{seller}_1)$が戦略$s^{seller}_2$をとった場合の期待利得$E(r|s^{seller}_2)$より大きく，$buyer$が戦略$s^{buyer}_1$をとった場合の期待利得$E(r|s^{buyer}_1)$が戦略$s^{buyer}_3$をとった場合の期待利得$E(r|s^{buyer}_3)$より大きくならなければならない．
+つまりは，$E(r|s^{seller}_1) > E(r|s^{seller}_2)$かつ$E(r|s^{buyer}_1) > E(r|s^{buyer}_3)$を満たす$(r^{seller}_{success}, r^{seller}_{failure}, r^{buyer}_{success}, r^{buyer}_{failure})$の組を「商取引システム」から決定できる必要がある．
+
+\subsection{$ seller $と$ buyer $の期待利得}
+
+$ seller $と$ buyer $の各戦略の利得の期待値は以下のように表せる．\\
+
+
+$ E(R|s^{seller}_1) = p^{buyer}_1 (r^{seller}_{success} + \epsilon^{seller}) + p^{buyer}_3 (r^{seller}_{failure} + \lambda^{seller}) $ \\
+
+$ E(R|s^{seller}_2) = p^{buyer}_1 (goods + r^{seller}_{failure} + \lambda^{seller}) + p^{buyer}_3 (goods + r^{seller}_{failure} + \lambda^{seller}) $ \\
+
+$ = goods + r^{seller}_{failure} + \lambda^{seller} $ \\
+
+$ \because p^{buyer}_1 + p^{buyer}_3 = 1 $($ buyer $が$ p^{buyer}_2 $と$ p^{buyer}_4 $が0と見積もられているため) \\
+
+$ E(R|s^{buyer}_1) = p^{seller}_1 (goods + r^{buyer}_{success} + \epsilon^{buyer}) + p^{seller}_2 (r^{buyer}_{failure} + \lambda^{buyer}) $ \\
+
+$ E(R|s^{buyer}_3) = p^{seller}_1(goods+r^{buyer}_{failure} + \lambda^{buyer}) + p^{seller}_2 (r^{buyer}_{failure} + \lambda^{buyer}) $ \\
+
+$ = p^{seller}_1 goods + r^{buyer}_{failure} + \lambda^{buyer} $ \\
+
+$ \because p^{seller}_1 + p^{seller}_2 = 1 $ \\
+
+
+\subsection{$ seller $が誠実な戦略をとる条件}
+
+$ E(R|s^{seller}_1) > E(R|s^{seller}_2) $
+$ \therefore p^{buyer}_1 (r^{seller}_{success} + \epsilon) + p^{buyer}_2 (r^{seller}_{failure} + \lambda) > goods + r^{seller}_{failure} + \lambda $
+$ \therefore p^{buyer}_1(r^{seller}_{success} + \epsilon) - p^{buyer}_1(r^{seller}_{failure} + \lambda) > goods $
+$ \therefore p^{buyer}_1(r^{seller}_{success} - r^{seller}_{failure} + \epsilon - \lambda) > goods $
+仮定より，$ \epsilon > \lambda $のため，
+$ p^{buyer}_1 (r^{seller}_{success} - r^{seller}_{failure}) \geq goods $を満たせばよい．
+
+$ 0 < p^{buyer}_1 $を仮定するならば，
+$ r^{seller}_{success} - r^{seller}_{failure} \geq \frac{goods}{p^{buyer}_1} $
+
+
+\subsection{$ buyer $が誠実な戦略をとる条件}
+
+$ E(R|s^{buyer}_1) > E(R|s^{buyer}_3) $
+$ \therefore p^{seller}_1 (goods + r^{buyer}_{success}) + p^{seller}_2 r^{buyer}_{failure} > p^{seller}_1(goods+r^{buyer}_{failure}) + p^{seller}_2 r^{buyer}_{failure} $
+$ \therefore p^{seller}_1(r^{buyer}_{success} - r^{buyer}_{failure}) > 0 $
+$ 0 < p^{seller}_1 $を仮定するならば，
+$ r^{buyer}_{success} - r^{buyer}_{failure} > 0 $
+
+上記をまとめると，$ 0<p^{buyer}_1 $かつ $ 0 < p^{seller}_{1} $を仮定した上で，
+$ r^{seller}_{success} - r^{seller}_{failure} \geq \frac{goods}{p^{buyer}_1} $かつ$ r^{buyer}_{success} - r^{buyer}_{failure} > 0 $
+を満たせば，「倫理ある商取引ゲーム」では不正を抑制することができる．
+
+
+\subsection{相手の誠実さ $ P^{player} $}
+
+ここで，任意の$ player $が誠実な戦略($ p^{seller}_1, p^{buyer}_1 $のいづれか)をとる主観確率を$ p^{player}_1 $とすると，$ p^{player}_1 $は各プレイヤーに対して誠実な戦略をとった割合$ HonestyStrategyRate(player, opportunity) $と任意の重み$ r.w.^{player} $を用いて次のように表せる．
+$ p^{player}_1 \equiv \sum^{players}_{opotunity} r.w.^{opotunity} HonestyStrategyRate(player, opotunity) $
+
+
+\subsection{最低信頼度 $ T^{player} $}
+
+ただ「商取引システム」からは$ HonestyStrategyRate $がわからないため，これでは$ p^{player}_1 $を求めることができない．そこで$ HonestyStrategyRate $の代わりに$ ReportedSuccessRate $を用いて同様の$ r.w.^{player} $で重み付けした総和を最低信頼度$ T^{player} $とおくことにする．
+
+$ T^{player} \equiv \sum^{players}_{opotunity} {r.w.}^{opotunity} ReportedSuccessRate(player, opotunity) $
+
+ここで$ HonestyStrategyRate \geq ReportedSuccessRate $であるため，$ p^{player}_1 \geq T^{player} $がいえる．
+
+それゆえに，
+$ r^{seller}_{success} - r^{seller}_{failure}  \geq \frac{goods}{T^{buyer}} \geq \frac{goods}{p^{buyer}_1} $
+となる．
+ここから「倫理ある商取引ゲーム」において不正が抑制される条件は次のように書き直せる．
+
+$ 0<p^{buyer}_1 $かつ $ 0 < p^{seller}_{1} $を仮定した上で，
+$ r^{seller}_{success} - r^{seller}_{failure} \geq \frac{goods}{T^{buyer}} $かつ$ r^{buyer}_{success} - r^{buyer}_{failure} > 0 $
+
+つまりは，この最低信頼度$ T^{player} $をもちいることで，以下の条件を満たす$ (r^{seller}_{success}, r^{seller}_{failure}, r^{buyer}_{success}, r^{buyer}_{failure}) $の組を決定できる．
