@@ -21,9 +21,7 @@
 %
 % そのため，これまでの6パターンのなかで，この「$seller$が商取引契約を反故にした場合に必ず『失敗』を報告する」という行動規範がもっとも考えられる．また，これは実社会の商取引において，多くの場合で不正に会った場合にそれを告発していることから考えるに妥当な条件である．そこで本稿では「$seller$が商取引契約を反故にした場合に必ず『失敗』を報告する戦略をとり，相手がそれ以外の戦略とる確率を0とみなすプレイヤーを倫理あるプレイヤーとして定義する．また，この倫理に従うプレイヤーのみが参加する「商取引ゲーム」を「倫理ある商取引ゲーム」とする．
 
-\clearpage
-
-\begin{figure*}[b]
+\begin{figure*}
   \centering
   \includegraphics[width=1\linewidth]{./04_ethical-commerce-game/ethical-gametree.png}
   \caption{「倫理ある商取引ゲーム」のゲーム木}
@@ -31,7 +29,7 @@
 \end{figure*}
 
 
-\begin{table*}[b]
+\begin{table*}
 \centering
 \begin{tabular}{|l|l|l|l|}
 \hline
@@ -44,6 +42,8 @@
 \caption{非協力戦略型ゲームとして表した「倫理ある商取引ゲーム」の利得表}
 \label{ethical-gametable}
 \end{table*}
+
+\clearpage
 
 \subsection{誠実な戦略が取られた割合と報告された成功率の関係}
 この「倫理ある商取引ゲーム」においては，商取引が失敗した場合に必ず「失敗」が報告されるため，商取引の成功率は「商取引システム」に「成功」が報告された割合以上である．ここで任意の$ player $が任意の$ opportunity $と過去に「商取引ゲーム」を行った際，誠実な戦略($ s^{seller}_1, s^{buyer}_1 $のいずれか)をとってきた割合を$ HonestStrategyRate(player, opportunity) $とし，同様に報告された商取引の成功率を$ ReportedSuccessRate(player, opportunity) $とする．そのとき，$ HonestStrategyRate(player, opportunity) $と$ ReporttedSuccessRate(player, opportunity) $の関係は次の式で表せる．
