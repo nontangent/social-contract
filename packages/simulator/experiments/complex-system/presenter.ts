@@ -3,7 +3,7 @@ import { IContractPlayer } from "@social-contract/complex-system/player.interfac
 import { IContractSimulator } from "@social-contract/complex-system/simulator.interface";
 
 import { getLogger } from 'log4js';
-import { Result, Transaction } from "@social-contract/core/system";
+import { ICommerceSystem, Result, Transaction } from "@social-contract/core/system";
 import { PlayerId } from "@social-contract/core/player";
 import { range, sleep, z2, z7 } from "@social-contract/utils/helpers";
 import { SystemPresenter } from '@social-contract/presenters';
@@ -25,7 +25,7 @@ export class Presenter implements IPresenter {
 
     const systems = simulator.players.reduce((p, player) => ({
       ...p, [`${player.id}`]: player.system
-    }), {});
+    }), {} as {[key: string]: ICommerceSystem});
     const systemTable = this.systemPresenter.buildSystemString(systems, recorderMap, determinedT, n);
     const historyTable = this.historyPresenter.buildHistoryString(systems, t, {maxSize: 16, padding: -10});
 
@@ -39,6 +39,8 @@ export class Presenter implements IPresenter {
     logger.info(`=== Balances === `);
     logger.info(systemTable);
     logger.info('==============================================================');
+
+    // Object.values(systems).
 
     // 待機する
     await sleep(20);

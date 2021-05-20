@@ -41,6 +41,7 @@ export class CommerceSystem extends BaseCommerceSystem {
     return escrowIds.reduce((p, id) => ({...p, [id]: this.getReputationWeight(balances, id, excludeIds)}), {} as EscrowWeights);
   }
 
+  // TODO: できれば逐次処理に変更
   // 最低信頼度Tを取得する
   private getMinimumTrustScore(balances: Balances, playerId: PlayerId, excludeIds: PlayerId[]) {
     // 
@@ -65,6 +66,7 @@ export class CommerceSystem extends BaseCommerceSystem {
     return trust;
   }
 
+  // TODO: 逐次処理に変更
   // targetのプレイヤーのbalanceの割合を取得
   private getReputationWeight(balances: Balances, targetId: PlayerId, excludeIds: PlayerId[] = []) {
     const playerIds = this.getPlayerIds(excludeIds);
