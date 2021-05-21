@@ -10,6 +10,7 @@ import { SystemPresenter } from '@social-contract/presenters';
 import { HistoryPresenter } from "@social-contract/presenters/history.presenter";
 const logger = getLogger(__filename);
 
+type SystemMap =  {[key: string]: ICommerceSystem};
 
 export class Presenter implements IPresenter {
 
@@ -23,11 +24,10 @@ export class Presenter implements IPresenter {
     let determinedT = t - 2 * n * (n - 1);
     determinedT = determinedT < 0 ? 0 : determinedT;
 
-    const systems = simulator.players.reduce((p, player) => ({
-      ...p, [`${player.id}`]: player.system
-    }), {} as {[key: string]: ICommerceSystem});
+    const systems = simulator.players.reduce((c, p) => ({...c, [`${p.id}`]: p.system}), {} as SystemMap);
     const systemTable = this.systemPresenter.buildSystemString(systems, recorderMap, determinedT, n);
-    const historyTable = this.historyPresenter.buildHistoryString(systems, t, {maxSize: 16, padding: -10});
+    const padding = - n * (n-1) - 2;
+    const historyTable = this.historyPresenter.buildHistoryString(systems, t, {maxSize: 16, padding});
 
     console.clear();
     logger.info('==============================================================');
@@ -43,6 +43,6 @@ export class Presenter implements IPresenter {
     // Object.values(systems).
 
     // 待機する
-    await sleep(20);
+    // await sleep(20);
   }
 }

@@ -15,13 +15,17 @@ export abstract class BaseCommerceSystem implements ICommerceSystem {
     this.store.setInitialState(initialState)
   }
 
-  getRewards(balances: Balances, sellerId: PlayerId, buyerId: PlayerId): Rewards {
+  getRewards(t: number, sellerId: PlayerId, buyerId: PlayerId): Rewards {
+    // 時刻tのTransactionがなければエラー
+    const transaction = this.getTransaction(t);
+    if (!transaction) throw new Error(`A transaction at time(${t}) is none.`);
+
     // エスクローコスト(失敗が報告された場合に没収される合計金額)を決定する
-    const E = this.getEscrowCost(balances, sellerId, buyerId);
+    const E = this.getEscrowCost(t, sellerId, buyerId);
     logger.debug(`EscrowCost: ${E}`);
 
     // エスクローコストの負担割合を決定する
-    const [sellerW, buyerW] = this.getNormalizedBurdenWeights(balances, sellerId, buyerId);
+    const [sellerW, buyerW] = this.getNormalizedBurdenWeights(t, sellerId, buyerId);
     logger.debug(`sellerW: ${sellerW}, buyerW: ${buyerW}`);
 
     // 成功が報告された場合と失敗が報告された場合のsellerとbuyerのbalancesの変動値を決定する
@@ -60,7 +64,7 @@ export abstract class BaseCommerceSystem implements ICommerceSystem {
     const {sellerId, buyerId, result} = transaction;
 
     // 商取引ゲームに伴うbalancesの変動の幅を取得する
-    const rewards = this.getRewards(balances, sellerId, buyerId);
+    const rewards = this.getRewards(t, sellerId, buyerId);
     logger.debug('rewards:', rewards);
 
     // 失敗が報告された場合にsellerかbuyerのどちらかの残高が0以下になるならば、balancesを変動させずに返す
@@ -89,6 +93,7 @@ export abstract class BaseCommerceSystem implements ICommerceSystem {
     logger.debug('delta:', delta);
 
     // 差分を各プレイヤーに分配する際に用いる重みを取得する
+    // ここの引数に撮るbalancesはEscrowCostが引かれたあとのもの
     const escrowWeights = this.getEscrowWeights(balances, []);
     logger.debug('escrowWeights:', escrowWeights);
 
@@ -118,7 +123,21 @@ export abstract class BaseCommerceSystem implements ICommerceSystem {
     return sum(playerIds.map(id => balances[id]));
   }
 
-  abstract getNormalizedBurdenWeights(balances: Balances, sellerId: PlayerId, buyerId: PlayerId): [number, number];
-  abstract getEscrowCost(balances: Balances, sellerId: PlayerId, buyerId: PlayerId): number;
-  abstract getEscrowWeights(balances: Balances, excludeIds: PlayerId[]): EscrowWeights;
+  // システムに失敗が報告された場合に没収される額を各プレイヤーに分配する重みを取得する
+  private getEscrowWeights(balances: Balances, excludeIds: PlayerId[]): EscrowWeights {
+    const escrowIds = this.getPlayerIds(excludeIds);
+    const totalBalance = sum(escrowIds.map(id => balances[id]));
+
+    // totalBalanceが0でなければ、プレイヤーの占める割合、0の場合は1をプレイヤー数で割った数
+    return escrowIds.reduce((p, id) => ({
+      ...p, 
+      [id]: totalBalance !== 0 ? balances[id] / totalBalance : 1 / escrowIds.length
+    }), {} as EscrowWeights);
+  }
+  
+
+  abstract getNormalizedBurdenWeights(t: number, sellerId: PlayerId, buyerId: PlayerId): [number, number];
+  abstract getEscrowCost(t: number, sellerId: PlayerId, buyerId: PlayerId): number;
+  // abstract getEscrowWeights(t: number, balances: Balances, excludeIds: PlayerId[]): EscrowWeights;
+  abstract getSuccessRate(t: number, playerId: PlayerId, opportunityId: PlayerId): [number, number];
 }

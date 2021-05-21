@@ -8,8 +8,8 @@ export class PlayerTypeB extends Player {
   determineResult(sellerId: PlayerId, start: number, end: number): Result {
     // return Result.SUCCESS
     const result = super.determineResult(sellerId, start, end);
-    // return result === Result.SUCCESS ? Result.FAILED : Result.SUCCESS;
-    return Result.FAILED;
+    return result === Result.SUCCESS ? Result.FAILED : Result.SUCCESS;
+    // return Result.FAILED;
   }
 }
 
@@ -21,16 +21,16 @@ const initialStateFactory = (n: number) => ({balances: balancesFactory(n)});
 // const systemFactory = (initialState: InitialState) => new CommerceSystem(initialState);
 const systemFactory = (initialState: InitialState, i: number) => {
   return new CompareSystem([
-    new CommerceSystem(initialState),
-    // new MemoCommerceSystem(initialState)
+    // new CommerceSystem(initialState),
+    new MemoCommerceSystem(initialState)
   ], `${i}`);
 };
 const playerFactoryA = (i: number, n: number) => new Player(i, systemFactory(initialStateFactory(n), i));
 const playerFactoryB = (i: number, n: number) => new PlayerTypeB(i, systemFactory(initialStateFactory(n), i));
 
 function main() {
-  const N = 3;
-  const K = 1;
+  const N = 8;
+  const K = 4;
 
   let players = [...Array(N-K)].map((_, i) => playerFactoryA(i, N));
   players = players.concat([...Array(K)].map((_, i) => playerFactoryB(N-K+i, N)));

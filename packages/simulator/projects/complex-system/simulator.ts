@@ -27,7 +27,7 @@ export class Simulator extends BaseSimulator<IContractPlayer> implements IContra
     this.recorderQueueMap = this.buildRecorderQueueMap(players);
   }
 
-  async run(maxT: number = 10, interval: number = 10) {
+  async run(maxT: number = 10, interval: number = 0) {
     // sellerとbuyerの一周の順番を決める(n * (n-1))。
     const combinations = this.generateCombinations();
     logger.info('combinations:', combinations);
