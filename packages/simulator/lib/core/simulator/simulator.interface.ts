@@ -4,7 +4,7 @@ export interface ISimulator<Player> {
   t: number;
   n: number;
   players: Player[];
-  recorderMap: {[key: string]: SuccessRateRecorder};
+  recorderMap: Map<Player | string, SuccessRateRecorder>;
 
   run(maxCount: number): void;
 }

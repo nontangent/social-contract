@@ -1,32 +1,35 @@
 import { Result } from '@social-contract/core/system';
 import { b3, p100, sum } from '@social-contract/utils/helpers';
 import { SuccessRateRecorder } from '@social-contract/core/recorder';
+import { IPlayer } from '@social-contract/core/player';
 const AsciiTable = require('ascii-table');
 
-export interface RecorderData {
-  [key: string]: { true: number, reported: number };
-}
+// export interface RecorderData {
+//   [key: string]: { true: number, reported: number };
+// }
+
+type MapKey = IPlayer<any> | string;
+
+export type RecorderData = Map<MapKey, { true: number, reported: number }>;
+export type RecorderMap = Map<MapKey, SuccessRateRecorder>;
 
 export class RecorderPresenter {
-  buildRecorderString(recorderMap: {[key: string]: SuccessRateRecorder}): string {
+  buildRecorderString(recorderMap: RecorderMap): string {
     const data = this.buildRecorderData(recorderMap);
     return this.formatRecorderData(data);
   }
 
-  buildRecorderData(recorderMap: {[key: string]: SuccessRateRecorder}): RecorderData {
-    return Object.entries(recorderMap).reduce((pre, [key, recorder]) => ({
-      ...pre,
-      [key]: {
-        true: this.calcTrueSuccessRate(recorder),
-        reported: this.calcReportedSuccessRate(recorder)
-      }
-    }), {} as RecorderData);
+  buildRecorderData(recorderMap: RecorderMap): RecorderData {
+    return [...recorderMap.entries()].reduce((pre, [key, recorder]) => pre.set(key, {
+      true: this.calcTrueSuccessRate(recorder),
+      reported: this.calcReportedSuccessRate(recorder)
+    }), new Map() as RecorderData);
   }
 
   formatRecorderData(data: RecorderData): string {
     const table = new AsciiTable();
     table.setHeading(`SuccessRate`, 'True', 'Reported');
-    for (const [key, value] of Object.entries(data)) {
+    for (const [key, value] of data.entries()) {
       table.addRow(key, `${p100(value.true)}`, `${p100(value.reported)}`);
     }
     return table.toString();

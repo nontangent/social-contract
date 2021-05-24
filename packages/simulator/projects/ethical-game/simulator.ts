@@ -8,7 +8,7 @@ import { IEthicalGamePlayer } from './player.interface';
 import { IEthicalGameSimulator } from './simulator.interface';
 
 export class Simulator extends BaseSimulator<IEthicalGamePlayer> implements IEthicalGameSimulator {
-  recorderMap = {system: new SuccessRateRecorder()};
+  recorderMap = new Map().set('system', new SuccessRateRecorder());
 
   constructor(
     public players: IEthicalGamePlayer[],
@@ -57,6 +57,10 @@ export class Simulator extends BaseSimulator<IEthicalGamePlayer> implements IEth
   getTrueResult(seller: IEthicalGamePlayer, buyer: IEthicalGamePlayer): Result {
     const condition = [1].includes(seller.strategy[0]) && [1, 2].includes(buyer.strategy[1]);
     return condition ? Result.SUCCESS : Result.FAILED;
+  }
+
+  getRecorderKey(system: ICommerceSystem): IEthicalGamePlayer | string {
+    return system.id;
   }
 
 }

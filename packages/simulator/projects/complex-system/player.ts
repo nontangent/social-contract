@@ -6,16 +6,18 @@ import { IContractPlayer, MessageType, ContractMessage } from './player.interfac
 import { getLogger } from 'log4js';
 const logger = getLogger('@social-contract/implements/scp/player');
 
-export class Player extends Actor<MessageType> implements IContractPlayer {
+export abstract class Player extends Actor<MessageType> implements IContractPlayer {
   t: number = 0;
   private reports: Reports = {};
 
   constructor (
     public id: PlayerId,
-    public system: ICommerceSystem
+    public system: ICommerceSystem,
   ) {
     super(id);
   }
+
+  abstract name: string;
 
   // 商取引ゲームでsellerの場合に商品を送る
   // 時刻t-n(n-1)から時刻t-1までに報告されたRecordをbuyerに送信

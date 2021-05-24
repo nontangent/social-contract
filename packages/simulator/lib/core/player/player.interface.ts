@@ -12,6 +12,7 @@ export type Reports = Record<PlayerId, History>;
 export interface IPlayer<T> extends Actor<T> {
   t: number;
   id: PlayerId;
+  name: string;
   type?: string;
 
   sendGoods(buyer: IPlayer<T>): any;

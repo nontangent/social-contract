@@ -29,7 +29,7 @@ function main() {
   const system = new MemoCommerceSystem(initialState);
   const presenter = new EthicalGamePresenter()
   const simulator = new Simulator(players, system, presenter);
-  simulator.run(MAX_T, 100);
+  simulator.run(MAX_T, 0);
 }
 
 main();

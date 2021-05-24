@@ -8,11 +8,12 @@ import { IContractPlayer } from './player.interface';
 import { IContractSimulator } from './simulator.interface';
 
 import { getLogger } from 'log4js';
+import { Player } from './player';
 const logger = getLogger(__filename);
 
-export type RecorderMap = {[key: string]: SuccessRateRecorder};
+export type RecorderMap = Map<IContractPlayer | string, SuccessRateRecorder>;
 export type RecorderParams = {system: ICommerceSystem, transaction: Transaction};
-export type RecorderQueueMap = {[key: string]: Queue<RecorderParams>};
+export type RecorderQueueMap = Map<IContractPlayer | string, Queue<RecorderParams>>;
 
 export class Simulator extends BaseSimulator<IContractPlayer> implements IContractSimulator {
   recorderMap: RecorderMap;
@@ -72,20 +73,23 @@ export class Simulator extends BaseSimulator<IContractPlayer> implements IContra
   }
 
   buildRecorderMap(players: IContractPlayer[]): RecorderMap {
-    return players.reduce((pre, player) => ({
-      ...pre, [player.system.id]: new SuccessRateRecorder()
-    }), {} as RecorderMap);
+    return players.reduce((pre, player) => pre.set(player, new SuccessRateRecorder()), new Map() as RecorderMap);
   }
 
   buildRecorderQueueMap(players: IContractPlayer[]): RecorderQueueMap {
-    return players.reduce((pre, player) => ({
-      ...pre, [player.system.id]: new Queue<RecorderParams>(2 * this.n * (this.n - 1))
-    }), {} as RecorderQueueMap);
+    return players.reduce((pre, player) => pre.set(
+      player, new Queue<RecorderParams>(2 * this.n * (this.n - 1))
+    ), new Map() as RecorderQueueMap);
   }
 
   recordResult(system: ICommerceSystem, transaction: Transaction): void {
-    const params = this.recorderQueueMap[system.id].put({system, transaction});
+    const player = this.players.find(p => p.system.id === system.id)!;
+    const params = this.recorderQueueMap.get(player)!.put({system, transaction});
     if (params) super.recordResult(params.system, params.transaction);
+  }
+
+  getRecorderKey(system: ICommerceSystem): IContractPlayer {
+    return this.players.find(player => player.system.id === system.id)!;
   }
 
 }

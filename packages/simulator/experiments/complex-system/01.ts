@@ -4,7 +4,17 @@ import { Player, Simulator, MemoCommerceSystem, CommerceSystem, CompareSystem } 
 import { Presenter } from './presenter';
 import '../settings';
 
-export class PlayerTypeB extends Player {
+export class PlayerA extends Player {
+  get name(): string {
+    return `Player ${this.id}(Contract A)`
+  }
+}
+
+export class PlayerB extends Player {
+  get name(): string {
+    return `Player ${this.id}(Contract B)`
+  }
+
   determineResult(sellerId: PlayerId, start: number, end: number): Result {
     // return Result.SUCCESS
     const result = super.determineResult(sellerId, start, end);
@@ -25,8 +35,8 @@ const systemFactory = (initialState: InitialState, i: number) => {
     new MemoCommerceSystem(initialState)
   ], `${i}`);
 };
-const playerFactoryA = (i: number, n: number) => new Player(i, systemFactory(initialStateFactory(n), i));
-const playerFactoryB = (i: number, n: number) => new PlayerTypeB(i, systemFactory(initialStateFactory(n), i));
+const playerFactoryA = (i: number, n: number) => new PlayerA(i, systemFactory(initialStateFactory(n), i));
+const playerFactoryB = (i: number, n: number) => new PlayerB(i, systemFactory(initialStateFactory(n), i));
 
 function main() {
   const N = 8;
@@ -41,7 +51,7 @@ function main() {
   // const presenter = new NoopPresenter();
 
   const simulator = new Simulator(players, presenter);
-  simulator.run(1000, 100);
+  simulator.run(1000, 0);
 }
 
 main();
