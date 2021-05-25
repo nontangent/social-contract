@@ -27,31 +27,25 @@ export class PlayerB extends Player {
 const balancesFactory = (n: number) => [...Array(n)].map((_, i) => i)
   .reduce((p, i) => ({...p, [i]: n}), {} as Balances);
 const initialStateFactory = (n: number) => ({balances: balancesFactory(n)});
-// const systemFactory = (initialState: InitialState) => new MemoCommerceSystem(initialState);
-// const systemFactory = (initialState: InitialState) => new CommerceSystem(initialState);
-const systemFactory = (initialState: InitialState, i: number) => {
-  return new CompareSystem([
-    // new CommerceSystem(initialState),
-    new MemoCommerceSystem(initialState)
-  ], `${i}`);
-};
+const systemFactory = (initialState: InitialState, i: number) => new MemoCommerceSystem(initialState, `${i}`);
 const playerFactoryA = (i: number, n: number) => new PlayerA(i, systemFactory(initialStateFactory(n), i));
 const playerFactoryB = (i: number, n: number) => new PlayerB(i, systemFactory(initialStateFactory(n), i));
 
 function main() {
   const N = 8;
-  const K = 4;
+  const K = 0;
 
-  let players = [...Array(N-K)].map((_, i) => playerFactoryA(i, N));
-  players = players.concat([...Array(K)].map((_, i) => playerFactoryB(N-K+i, N)));
-  console.debug('players:', players);
-  // process.exit();
+  // const players = [
+  //   ...[...Array(N-K)].map((_, i) => playerFactoryA(i, N)),
+  //   ...[...Array(K)].map((_, i) => playerFactoryB(N-K+i, N)),
+  // ];
+  const players = [...Array(N-K)].map((_, i) => playerFactoryA(i, N))
+    .concat([...Array(K)].map((_, i) => playerFactoryB(N-K+i, N)));
 
   const presenter = new Presenter();
-  // const presenter = new NoopPresenter();
 
   const simulator = new Simulator(players, presenter);
-  simulator.run(1000, 0);
+  simulator.run(1000, 10);
 }
 
 main();
