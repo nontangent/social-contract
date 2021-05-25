@@ -31,10 +31,13 @@ export abstract class Player extends Actor<MessageType> implements IContractPlay
     const transactions = this.getReportedTransactions(start, end);
     
     // 報告された商取引の結果を送信する
-    const message = { type: MessageType.GOODS, data: transactions };
-    this.sendMessage(buyer, message);
+    return this.sendGoodsMessage(buyer, transactions)
+  }
 
-    // テスト用のコード
+  sendGoodsMessage(receiver: IContractPlayer, transactions: Transaction[]): ContractMessage<any> {
+    // 報告された商取引の結果を送信する
+    const message = { type: MessageType.GOODS, data: transactions };
+    this.sendMessage(receiver, message);
     return message;
   }
 
@@ -67,7 +70,8 @@ export abstract class Player extends Actor<MessageType> implements IContractPlay
 
   // 商取引ゲームで受け取ったTransactionsを記録する
   @Action(MessageType.GOODS)
-  receiveGoods(transactions: Transaction[], senderId: PlayerId): Record<number, History> {
+  receiveGoods(data: any, senderId: PlayerId): Record<number, History> {
+    const transactions: Transaction[] = data;
     return this.setReportedTransactions(transactions.map(r => ({...r, reporterId: senderId})));
   }
 
@@ -117,7 +121,8 @@ export abstract class Player extends Actor<MessageType> implements IContractPlay
       // 時刻t-1のbalanceを取得する
       const n = this.system.n;
       // TODO: ここの時刻正しいか精査する
-      const weight = this.getBalance(playerId, Math.max(0, t - 2 * n * (n - 1) + 1));
+      const targetT = Math.max(0, t - 2 * n * (n - 1) + 1);
+      const weight = this.getBalance(playerId, targetT);
       
       // playerが報告した時刻tのトランザクションを取得する
       const transaction = this.getReportedTransaction(playerId, t)!;
@@ -140,7 +145,7 @@ export abstract class Player extends Actor<MessageType> implements IContractPlay
   }
 
   // 報告されたトランザクションを記録する
-  private setReportedTransactions(transactions: Transaction[]) {
+  protected setReportedTransactions(transactions: Transaction[]) {
     for (let transaction of transactions) this.setReportedTransaction(transaction);
     return this.reports;
   }
