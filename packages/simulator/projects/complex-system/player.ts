@@ -1,7 +1,7 @@
 import { ICommerceSystem, Transaction, History, Result } from '@social-contract/core/system';
 import { Action, Actor } from '@social-contract/core/actor';
 import { PlayerId, Reports } from '@social-contract/core/player'
-import { range, b10, z4 } from '@social-contract/utils/helpers';
+import { range, b10, z4, clone } from '@social-contract/utils/helpers';
 import { IContractPlayer, MessageType, ContractMessage } from './player.interface';
 import { getLogger } from 'log4js';
 const logger = getLogger('@social-contract/implements/scp/player');
@@ -31,7 +31,7 @@ export abstract class Player extends Actor<MessageType> implements IContractPlay
     const transactions = this.getReportedTransactions(start, end);
     
     // 報告された商取引の結果を送信する
-    return this.sendGoodsMessage(buyer, transactions)
+    return this.sendGoodsMessage(buyer, transactions);
   }
 
   sendGoodsMessage(receiver: IContractPlayer, transactions: Transaction[]): ContractMessage<any> {
@@ -153,14 +153,15 @@ export abstract class Player extends Actor<MessageType> implements IContractPlay
   // 報告されたトランザクションを記録する
   private setReportedTransaction(transaction: Transaction) {
     this.reports[transaction.reporterId!] = this.reports[transaction.reporterId!] || {};
-    this.reports[transaction.reporterId!][transaction.t] = transaction;
+    this.reports[transaction.reporterId!][transaction.t] = clone(transaction);
   }
 
   // 時刻startから時刻endまでに報告されたトランザクションを取得する
   private getReportedTransactions(start: number, end: number): Transaction[] {
     const timeRange = range(start, end);
     return Object.values(this.reports).map(history => Object.values(history)).flat()
-      .filter(transaction => timeRange.includes(transaction.t));
+      .filter(transaction => timeRange.includes(transaction.t))
+      .filter(transaction => transaction.reporterId === transaction.buyerId);
   }
 
   // 報告されたトランザクションを取得する
