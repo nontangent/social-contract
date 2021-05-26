@@ -23,7 +23,7 @@ export abstract class BaseContractSimulator<IPlayer extends IContractPlayer> ext
     public presenter: IPresenter,
   ) {
     super();
-    this.recorderMap = this.buildRecorderMap(players);
+    this.recorderMap = this.buildRecorderMap(players, this.generateCombinations().length);
     this.recorderQueueMap = this.buildRecorderQueueMap(players);
   }
 
@@ -65,8 +65,8 @@ export abstract class BaseContractSimulator<IPlayer extends IContractPlayer> ext
     }
   }
 
-  buildRecorderMap(players: IPlayer[]): RecorderMap<IPlayer> {
-    return players.reduce((pre, player) => pre.set(player, new SuccessRateRecorder()), new Map() as RecorderMap<IPlayer>);
+  buildRecorderMap(players: IPlayer[], maxSize: number): RecorderMap<IPlayer> {
+    return players.reduce((pre, player) => pre.set(player, new SuccessRateRecorder(maxSize)), new Map() as RecorderMap<IPlayer>);
   }
 
   buildRecorderQueueMap(players: IPlayer[]): RecorderQueueMap {

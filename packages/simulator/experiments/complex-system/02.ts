@@ -66,8 +66,8 @@ const playerFactoryA = (i: number, n: number) => new PlayerTypeA(i, systemFactor
 const playerFactoryB = (i: number, n: number) => new PlayerTypeB(i, systemFactory(initialStateFactory(n), i));
 
 function main() {
-  const N = 8;
-  const K = 5;
+  const N = 4;
+  const K = 1;
 
   const players = [
     ...[...Array(N-K)].map((_, i) => playerFactoryA(i, N)),
@@ -76,7 +76,7 @@ function main() {
 
   const presenter = new Presenter();
   const simulator = new Simulator(players, presenter);
-  simulator.run(1000, 0);
+  simulator.run(1000, 100);
 }
 
 main();

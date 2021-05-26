@@ -8,7 +8,7 @@ import { IEthicalGamePlayer } from './player.interface';
 import { IEthicalGameSimulator } from './simulator.interface';
 
 export class Simulator extends BaseSimulator<IEthicalGamePlayer> implements IEthicalGameSimulator {
-  recorderMap = new Map().set('system', new SuccessRateRecorder());
+  recorderMap = new Map().set('system', new SuccessRateRecorder(this.generateCombinations().length));
 
   constructor(
     public players: IEthicalGamePlayer[],
@@ -32,10 +32,10 @@ export class Simulator extends BaseSimulator<IEthicalGamePlayer> implements IEth
 
         this.recordResult(this.system, transaction);
 
-        // 表示
+        // Presenterで描画するs
         await this.presenter.render(this, transaction);
 
-        // 
+        // 待機する
         await sleep(interval);
       }
     }

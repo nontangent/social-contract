@@ -56,7 +56,7 @@ function main() {
 
   const presenter = new Presenter();
   const simulator = new Simulator(players, presenter);
-  simulator.run(1000, 0);
+  simulator.run(1000, 100);
 }
 
 main();
