@@ -18,7 +18,7 @@ export abstract class BasePlayer extends Player {
   supportMap = new Map<PlayerId, Support>();
 
   get name(): string {
-    return `Player ${this.id}(Contract ${this.support})`;
+    return `Player ${this.id}(Support ${this.support})`;
   }
 
   sendGoodsMessage(receiver: IContractPlayer, transactions: Transaction[]) {
@@ -55,7 +55,7 @@ export class PlayerTypeB extends BasePlayer {
 
 export class Simulator extends BaseContractSimulator<BasePlayer> {
   getTrueResult(seller: BasePlayer, buyer: BasePlayer) {
-    return seller.support === buyer.support ? Result.SUCCESS : Result.FAILED;
+    return seller.support === Support.A && buyer.support === Support.A ? Result.SUCCESS : Result.FAILED;
   }
 }
 
@@ -67,7 +67,7 @@ const playerFactoryB = (i: number, n: number) => new PlayerTypeB(i, systemFactor
 
 function main() {
   const N = 8;
-  const K = 3;
+  const K = 5;
 
   const players = [
     ...[...Array(N-K)].map((_, i) => playerFactoryA(i, N)),

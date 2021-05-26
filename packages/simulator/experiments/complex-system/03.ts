@@ -35,11 +35,7 @@ class PlayerTypeB extends BasePlayer {
 
 export class Simulator extends BaseContractSimulator<BasePlayer> {
   getTrueResult(seller: BasePlayer, buyer: BasePlayer): Result {
-    if (seller.type === buyer.type) {
-      return Result.FAILED;
-    } else {
-      return Result.SUCCESS;
-    }
+    return seller.type === PlayerType.A && buyer.type === PlayerType.A ? Result.SUCCESS : Result.FAILED;
   }
 }
 
