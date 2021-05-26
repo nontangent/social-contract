@@ -1,21 +1,23 @@
 import { ICommerceSystem, Transaction, History, Result } from '@social-contract/core/system';
 import { Action, Actor } from '@social-contract/core/actor';
 import { PlayerId, Reports } from '@social-contract/core/player'
-import { range, b10, z4 } from '@social-contract/utils/helpers';
+import { range, b10, z4, clone } from '@social-contract/utils/helpers';
 import { IContractPlayer, MessageType, ContractMessage } from './player.interface';
 import { getLogger } from 'log4js';
 const logger = getLogger('@social-contract/implements/scp/player');
 
-export class Player extends Actor<MessageType> implements IContractPlayer {
+export abstract class Player extends Actor<MessageType> implements IContractPlayer {
   t: number = 0;
   private reports: Reports = {};
 
   constructor (
     public id: PlayerId,
-    public system: ICommerceSystem
+    public system: ICommerceSystem,
   ) {
     super(id);
   }
+
+  abstract name: string;
 
   // 商取引ゲームでsellerの場合に商品を送る
   // 時刻t-n(n-1)から時刻t-1までに報告されたRecordをbuyerに送信
@@ -29,10 +31,13 @@ export class Player extends Actor<MessageType> implements IContractPlayer {
     const transactions = this.getReportedTransactions(start, end);
     
     // 報告された商取引の結果を送信する
-    const message = { type: MessageType.GOODS, data: transactions };
-    this.sendMessage(buyer, message);
+    return this.sendGoodsMessage(buyer, transactions);
+  }
 
-    // テスト用のコード
+  sendGoodsMessage(receiver: IContractPlayer, transactions: Transaction[]): ContractMessage<any> {
+    // 報告された商取引の結果を送信する
+    const message = { type: MessageType.GOODS, data: transactions };
+    this.sendMessage(receiver, message);
     return message;
   }
 
@@ -65,7 +70,8 @@ export class Player extends Actor<MessageType> implements IContractPlayer {
 
   // 商取引ゲームで受け取ったTransactionsを記録する
   @Action(MessageType.GOODS)
-  receiveGoods(transactions: Transaction[], senderId: PlayerId): Record<number, History> {
+  receiveGoods(data: any, senderId: PlayerId): Record<number, History> {
+    const transactions: Transaction[] = data;
     return this.setReportedTransactions(transactions.map(r => ({...r, reporterId: senderId})));
   }
 
@@ -109,36 +115,27 @@ export class Player extends Actor<MessageType> implements IContractPlayer {
     const transaction = this.getReportedTransaction(this.id, t);
     if (transaction) return this.system.setTransaction(transaction);
 
-    let sellerId!: PlayerId, buyerId!: PlayerId;
-    let score = 0;
-    for (const playerId of this.system.getPlayerIds([this.id])) {
-      // 時刻t-1のbalanceを取得する
-      const n = this.system.n;
-      // TODO: ここの時刻正しいか精査する
-      const weight = this.getBalance(playerId, Math.max(0, t - 2 * n * (n - 1) + 1));
-      
-      // playerが報告した時刻tのトランザクションを取得する
-      const transaction = this.getReportedTransaction(playerId, t)!;
-      if (!transaction) throw new Error('transaction is null');
-      
-      // scoreを計算
-      score += (transaction.result === Result.SUCCESS ? 1 : -1) * weight;
+    // 時刻tの商取引ゲームのsellerとbuyerを取得する
+    const [sellerId, buyerId] = this.system.getCombination(t);
 
-      buyerId = transaction!.buyerId;
-      sellerId = transaction!.sellerId;
-    }
+    // 重みとなるbalanceを取得する
+    const n = this.system.n;
+    const balances = this.system.getBalances(Math.max(0, t - 2 * n * (n - 1) + 1));
+
+    // 各プレイヤーが報告した結果からスコアを計算する
+    const score = this.system.getPlayerIds([this.id]).reduce((score, id) => {
+      const transaction = this.getReportedTransaction(id, t);
+      if (!transaction) throw new Error('transaction is null!');
+      return score + (transaction.result === Result.SUCCESS ? 1 : -1) * balances[id];
+    }, 0);
 
     // scoreから時刻tの支持するトランザクションの結果を決定する
-    const result = score > 0 ? Result.SUCCESS : Result.FAILED
+    const result = score > 0 ? Result.SUCCESS : Result.FAILED;
     return this.system.setTransaction({ sellerId, buyerId, t, result });
   }
 
-  private getBalance(playerId: PlayerId, t: number) {
-    return this.system.getBalance(playerId, t);
-  }
-
   // 報告されたトランザクションを記録する
-  private setReportedTransactions(transactions: Transaction[]) {
+  protected setReportedTransactions(transactions: Transaction[]) {
     for (let transaction of transactions) this.setReportedTransaction(transaction);
     return this.reports;
   }
@@ -146,14 +143,15 @@ export class Player extends Actor<MessageType> implements IContractPlayer {
   // 報告されたトランザクションを記録する
   private setReportedTransaction(transaction: Transaction) {
     this.reports[transaction.reporterId!] = this.reports[transaction.reporterId!] || {};
-    this.reports[transaction.reporterId!][transaction.t] = transaction;
+    this.reports[transaction.reporterId!][transaction.t] = clone(transaction);
   }
 
   // 時刻startから時刻endまでに報告されたトランザクションを取得する
   private getReportedTransactions(start: number, end: number): Transaction[] {
     const timeRange = range(start, end);
     return Object.values(this.reports).map(history => Object.values(history)).flat()
-      .filter(transaction => timeRange.includes(transaction.t));
+      .filter(transaction => timeRange.includes(transaction.t))
+      .filter(transaction => transaction.reporterId === transaction.buyerId);
   }
 
   // 報告されたトランザクションを取得する

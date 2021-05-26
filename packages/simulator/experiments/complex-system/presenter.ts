@@ -3,31 +3,30 @@ import { IContractPlayer } from "@social-contract/complex-system/player.interfac
 import { IContractSimulator } from "@social-contract/complex-system/simulator.interface";
 
 import { getLogger } from 'log4js';
-import { Result, Transaction } from "@social-contract/core/system";
-import { PlayerId } from "@social-contract/core/player";
+import { ICommerceSystem, Result, Transaction } from "@social-contract/core/system";
+import { IPlayer, PlayerId } from "@social-contract/core/player";
 import { range, sleep, z2, z7 } from "@social-contract/utils/helpers";
 import { SystemPresenter } from '@social-contract/presenters';
 import { HistoryPresenter } from "@social-contract/presenters/history.presenter";
 const logger = getLogger(__filename);
 
+type MapKey = IPlayer<any> | string;
+type SystemMap = Map<MapKey, ICommerceSystem>;
 
 export class Presenter implements IPresenter {
 
   private systemPresenter = new SystemPresenter();
   historyPresenter = new HistoryPresenter();
 
-  async render(simulator: IContractSimulator, transaction: Transaction): Promise<void> {
-    // const { t, sellerId, buyerId, result } = transaction;
-    // const n = simulator.n;
+  async render(simulator: IContractSimulator, transaction: Transaction, sleepTime: number = 0): Promise<void> {
     const { t, n, recorderMap } = simulator; 
     let determinedT = t - 2 * n * (n - 1);
     determinedT = determinedT < 0 ? 0 : determinedT;
 
-    const systems = simulator.players.reduce((p, player) => ({
-      ...p, [`${player.id}`]: player.system
-    }), {});
-    const systemTable = this.systemPresenter.buildSystemString(systems, recorderMap, determinedT, n);
-    const historyTable = this.historyPresenter.buildHistoryString(systems, t, {maxSize: 16, padding: -10});
+    const systems = simulator.players.reduce((c, p) => c.set(p, p.system), new Map() as SystemMap);
+    const padding = - n * (n-1) - 2;
+    const historyTable = this.historyPresenter.buildHistoryString(systems, t, {maxSize: 16, padding});
+    const balancesTable = this.systemPresenter.buildSystemString(systems, recorderMap, determinedT, n);
 
     console.clear();
     logger.info('==============================================================');
@@ -36,11 +35,10 @@ export class Presenter implements IPresenter {
     logger.info(`=== History === `);
     logger.info(historyTable);
     logger.info(`\n`);
-    logger.info(`=== Balances === `);
-    logger.info(systemTable);
+    logger.info(`=== Balances and Success Rate (t=${Math.max(t - 2 * n * (n - 1), 0)}) ===`);
+    logger.info(balancesTable);
     logger.info('==============================================================');
 
-    // 待機する
-    await sleep(20);
+    await sleep(sleepTime);
   }
 }

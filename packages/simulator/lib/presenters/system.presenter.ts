@@ -1,9 +1,12 @@
+import { IPlayer } from '@social-contract/core/player';
 import { SuccessRateRecorder } from '@social-contract/core/recorder';
 import { ICommerceSystem } from '@social-contract/core/system';
 import { f2, p100 } from '@social-contract/utils/helpers';
 import { BalancesData, BalancesPresenter } from './balances.presenter';
 import { RecorderData, RecorderPresenter } from './recorder.presenter';
 const AsciiTable = require('ascii-table');
+
+type MapKey = IPlayer<any> | string;
 
 export interface SystemData {
   balances: BalancesData;
@@ -15,8 +18,8 @@ export class SystemPresenter {
   recorder = new RecorderPresenter();
 
   buildSystemString(    
-    systemMap: {[key: string]: ICommerceSystem}, 
-    recorderMap: {[key: string]: SuccessRateRecorder},
+    systemMap: Map<MapKey, ICommerceSystem>, 
+    recorderMap: Map<MapKey, SuccessRateRecorder>,
     t: number, 
     n: number
   ): string {
@@ -25,8 +28,8 @@ export class SystemPresenter {
   }
 
   buildSystemData(
-    systemMap: {[key: string]: ICommerceSystem}, 
-    recorderMap: {[key: string]: SuccessRateRecorder},
+    systemMap: Map<MapKey, ICommerceSystem>, 
+    recorderMap: Map<MapKey, SuccessRateRecorder>,
     t: number, 
     n: number
   ): SystemData {
@@ -38,17 +41,27 @@ export class SystemPresenter {
 
   formatSystemData(data: SystemData): string {
     const table = new AsciiTable();
-    table.setHeading(`Balances(${data.balances.t})`, 
+    table.setHeading(
+      `System Owner \\ Player`, 
       ...[...Array(data.balances.n)].map((_, i) => `${i}`),
       'Reported', 'True'
     );
-    Object.keys(data.balances.balances).forEach(key => {
-      const balances = data.balances.balances[key].map(b => f2(b));
-      const recorder = data.recorder?.[key];
-      const formatter = (n: number | undefined): string => n ? `${p100(n)}` : `-`;
-      return table.addRow(key, ...balances, formatter(recorder?.reported), formatter(recorder?.true));
+    [...data.balances.balances.keys()].forEach(key => {
+      const balances = data.balances.balances.get(key)!.map(b => f2(b));
+      const recorder = data.recorder.get(key)!;
+
+      return table.addRow(
+        this.getKeyString(key), 
+        ...balances, 
+        this.recorder.formatSuccessRate(recorder.reported), 
+        this.recorder.formatSuccessRate(recorder.true)
+      );
     })
     return table.toString();
+  }
+
+  getKeyString(key: MapKey): string {
+    return typeof key === 'string' ? key : key.name;
   }
 }
 

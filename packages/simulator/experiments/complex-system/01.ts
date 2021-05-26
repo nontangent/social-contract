@@ -1,14 +1,29 @@
 import { PlayerId } from '@social-contract/core/player';
 import { InitialState, Balances, Result } from '@social-contract/core/system';
-import { Player, Simulator, MemoCommerceSystem, CommerceSystem, CompareSystem } from '@social-contract/complex-system';
+import { Player, BaseContractSimulator, MemoCommerceSystem } from '@social-contract/complex-system';
 import { Presenter } from './presenter';
 import '../settings';
 
-export class PlayerTypeB extends Player {
+class PlayerA extends Player {
+  get name(): string {
+    return `Player ${this.id}(Contract A)`
+  }
+}
+
+class PlayerB extends Player {
+  get name(): string {
+    return `Player ${this.id}(Contract B)`
+  }
+
   determineResult(sellerId: PlayerId, start: number, end: number): Result {
-    // return Result.SUCCESS
     const result = super.determineResult(sellerId, start, end);
     return result === Result.SUCCESS ? Result.FAILED : Result.SUCCESS;
+  }
+}
+
+class Simulator extends BaseContractSimulator<Player> {
+  getTrueResult(seller: Player, buyer: Player): Result {
+    return Result.SUCCESS;
   }
 }
 
@@ -16,31 +31,23 @@ export class PlayerTypeB extends Player {
 const balancesFactory = (n: number) => [...Array(n)].map((_, i) => i)
   .reduce((p, i) => ({...p, [i]: n}), {} as Balances);
 const initialStateFactory = (n: number) => ({balances: balancesFactory(n)});
-// const systemFactory = (initialState: InitialState) => new MemoCommerceSystem(initialState);
-// const systemFactory = (initialState: InitialState) => new CommerceSystem(initialState);
-const systemFactory = (initialState: InitialState, i: number) => {
-  return new CompareSystem([
-    new CommerceSystem(initialState),
-    new MemoCommerceSystem(initialState)
-  ], `${i}`);
-};
-const playerFactoryA = (i: number, n: number) => new Player(i, systemFactory(initialStateFactory(n), i));
-const playerFactoryB = (i: number, n: number) => new PlayerTypeB(i, systemFactory(initialStateFactory(n), i));
+const systemFactory = (initialState: InitialState, i: number) => new MemoCommerceSystem(initialState, `${i}`);
+const playerFactoryA = (i: number, n: number) => new PlayerA(i, systemFactory(initialStateFactory(n), i));
+const playerFactoryB = (i: number, n: number) => new PlayerB(i, systemFactory(initialStateFactory(n), i));
 
 function main() {
-  const N = 4;
-  const K = 1;
+  const N = 8;
+  const K = 0;
 
-  let players = [...Array(N-K)].map((_, i) => playerFactoryA(i, N));
-  players = players.concat([...Array(K)].map((_, i) => playerFactoryB(N-K+i, N)));
-  console.debug('players:', players);
-  // process.exit();
+  const players = [
+    ...[...Array(N-K)].map((_, i) => playerFactoryA(i, N)),
+    ...[...Array(K)].map((_, i) => playerFactoryB(N-K+i, N)),
+  ];
 
   const presenter = new Presenter();
-  // const presenter = new NoopPresenter();
 
   const simulator = new Simulator(players, presenter);
-  simulator.run(1000, 100);
+  simulator.run(1000, 10);
 }
 
 main();

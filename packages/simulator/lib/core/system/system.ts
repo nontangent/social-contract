@@ -7,6 +7,7 @@ export interface ICommerceSystem {
   id: string;
   n: number;
   store: IStore<State>;
+  combinations: [PlayerId, PlayerId][];
 
   getPlayerIds(excludes?: PlayerId[]): PlayerId[];
 
@@ -15,4 +16,7 @@ export interface ICommerceSystem {
 
   getTransaction(t: number): Transaction | null;
   setTransaction(transaction: Transaction): void;
+
+  getSuccessRate(t: number, playerId: PlayerId, opportunityId: PlayerId): [number, number];
+  getCombination(t: number): [PlayerId, PlayerId];
 }

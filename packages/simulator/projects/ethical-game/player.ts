@@ -6,8 +6,15 @@ import { EthicalGamePlayerType, IEthicalGamePlayer, MessageType } from './player
 export class Player extends Actor<MessageType> implements IEthicalGamePlayer {
   t = 0;
 
-  constructor (public id: PlayerId, public type: EthicalGamePlayerType) {
+  constructor (
+    public id: PlayerId, 
+    public type: EthicalGamePlayerType,
+  ) {
     super(id);
+  }
+
+  get name(): string {
+    return `Player(${this.id})`;
   }
 
   sendGoods(receiver: IEthicalGamePlayer): any {

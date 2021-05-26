@@ -3,8 +3,13 @@ import { Queue } from '@social-contract/utils/helpers';
 
 export class SuccessRateRecorder {
   private preBalances?: Balances;
-  reportedResults = new Queue<Result>(100);
-  trueResults = new Queue<Result>(100);
+  reportedResults: Queue<Result>;
+  trueResults: Queue<Result>;
+
+  constructor(public readonly maxSize: number) {
+    this.reportedResults = new Queue<Result>(this.maxSize);
+    this.trueResults = new Queue<Result>(this.maxSize);
+  }
 
   isSameWithPreBalances(balances: Balances): boolean {
     const res = JSON.stringify(this.preBalances) === JSON.stringify(balances);
