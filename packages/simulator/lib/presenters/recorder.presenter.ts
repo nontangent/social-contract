@@ -10,7 +10,7 @@ const AsciiTable = require('ascii-table');
 
 type MapKey = IPlayer<any> | string;
 
-export type RecorderData = Map<MapKey, { true: number, reported: number }>;
+export type RecorderData = Map<MapKey, { true: number | null, reported: number | null }>;
 export type RecorderMap = Map<MapKey, SuccessRateRecorder>;
 
 export class RecorderPresenter {
@@ -30,18 +30,24 @@ export class RecorderPresenter {
     const table = new AsciiTable();
     table.setHeading(`SuccessRate`, 'True', 'Reported');
     for (const [key, value] of data.entries()) {
-      table.addRow(key, `${p100(value.true)}`, `${p100(value.reported)}`);
+      table.addRow(key, this.formatSuccessRate(value.true), this.formatSuccessRate(value.reported));
     }
     return table.toString();
   }
 
-  calcTrueSuccessRate(recorder: SuccessRateRecorder): number {
+  formatSuccessRate(rate: number | null): string {
+    return rate !== null ? `${p100(rate)}` : `-`;
+  }
+
+  calcTrueSuccessRate(recorder: SuccessRateRecorder): number | null {
     const results = recorder.trueResults.readAll();
+    if (results.length !== recorder.trueResults.maxSize) return null;
     return this.calcSuccessRate(results);
   }
 
-  calcReportedSuccessRate(recorder: SuccessRateRecorder): number {
+  calcReportedSuccessRate(recorder: SuccessRateRecorder): number | null {
     const results = recorder.reportedResults.readAll();
+    if (results.length !== recorder.reportedResults.maxSize) return null;
     return this.calcSuccessRate(results);
   }
 

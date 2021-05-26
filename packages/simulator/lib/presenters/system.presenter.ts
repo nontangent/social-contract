@@ -48,9 +48,14 @@ export class SystemPresenter {
     );
     [...data.balances.balances.keys()].forEach(key => {
       const balances = data.balances.balances.get(key)!.map(b => f2(b));
-      const recorder = data.recorder.get(key);
-      const formatter = (n: number | undefined): string => n ? `${p100(n)}` : `-`;
-      return table.addRow(this.getKeyString(key), ...balances, formatter(recorder?.reported), formatter(recorder?.true));
+      const recorder = data.recorder.get(key)!;
+
+      return table.addRow(
+        this.getKeyString(key), 
+        ...balances, 
+        this.recorder.formatSuccessRate(recorder.reported), 
+        this.recorder.formatSuccessRate(recorder.true)
+      );
     })
     return table.toString();
   }
