@@ -1,7 +1,7 @@
 import { PlayerId } from '@social-contract/core/player';
 import { Balances, ICommerceSystem, InitialState, IStore, Result, Rewards, Transaction } from "@social-contract/core/system";
 import { Store } from '@social-contract/ethical-game/store';
-import { sum } from '@social-contract/utils/helpers';
+import { permutation, sum } from '@social-contract/utils/helpers';
 import { getLogger } from 'log4js';
 const logger = getLogger(__filename);
 
@@ -110,6 +110,21 @@ export abstract class BaseCommerceSystem implements ICommerceSystem {
 
   get n(): number {
     return Object.keys(this.store.getInitialState()!.balances).length;
+  }
+
+  private _combinations: [PlayerId, PlayerId][] | undefined;
+  get combinations(): [PlayerId, PlayerId][] {
+    if (!this._combinations) this._combinations = this.generateCombinations(this.getPlayerIds());
+    return this._combinations;
+  }
+
+  protected generateCombinations(playerIds: PlayerId[]): [PlayerId, PlayerId][] {
+    return permutation<PlayerId>(playerIds, 2) as [PlayerId, PlayerId][];
+  }
+
+  getCombination(t: number): [PlayerId, PlayerId] {
+    const i = (t % this.combinations.length) || this.combinations.length;
+    return this.combinations[i-1];
   }
 
   getPlayerIds(excludeIds: PlayerId[] = []): PlayerId[] {

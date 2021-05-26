@@ -115,33 +115,23 @@ export abstract class Player extends Actor<MessageType> implements IContractPlay
     const transaction = this.getReportedTransaction(this.id, t);
     if (transaction) return this.system.setTransaction(transaction);
 
-    let sellerId!: PlayerId, buyerId!: PlayerId;
-    let score = 0;
-    for (const playerId of this.system.getPlayerIds([this.id])) {
-      // 時刻t-1のbalanceを取得する
-      const n = this.system.n;
-      // TODO: ここの時刻正しいか精査する
-      const targetT = Math.max(0, t - 2 * n * (n - 1) + 1);
-      const weight = this.getBalance(playerId, targetT);
-      
-      // playerが報告した時刻tのトランザクションを取得する
-      const transaction = this.getReportedTransaction(playerId, t)!;
-      if (!transaction) throw new Error('transaction is null');
-      
-      // scoreを計算
-      score += (transaction.result === Result.SUCCESS ? 1 : -1) * weight;
+    // 時刻tの商取引ゲームのsellerとbuyerを取得する
+    const [sellerId, buyerId] = this.system.getCombination(t);
 
-      buyerId = transaction!.buyerId;
-      sellerId = transaction!.sellerId;
-    }
+    // 重みとなるbalanceを取得する
+    const n = this.system.n;
+    const balances = this.system.getBalances(Math.max(0, t - 2 * n * (n - 1) + 1));
+
+    // 各プレイヤーが報告した結果からスコアを計算する
+    const score = this.system.getPlayerIds([this.id]).reduce((score, id) => {
+      const transaction = this.getReportedTransaction(id, t);
+      if (!transaction) throw new Error('transaction is null!');
+      return score + (transaction.result === Result.SUCCESS ? 1 : -1) * balances[id];
+    }, 0);
 
     // scoreから時刻tの支持するトランザクションの結果を決定する
-    const result = score > 0 ? Result.SUCCESS : Result.FAILED
+    const result = score > 0 ? Result.SUCCESS : Result.FAILED;
     return this.system.setTransaction({ sellerId, buyerId, t, result });
-  }
-
-  private getBalance(playerId: PlayerId, t: number) {
-    return this.system.getBalance(playerId, t);
   }
 
   // 報告されたトランザクションを記録する

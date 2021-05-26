@@ -17,6 +17,10 @@ export class CompareSystem implements ICommerceSystem {
     return this.compare<IStore>(system => system.store);
   }
 
+  get combinations(): [PlayerId, PlayerId][] {
+    return this.compare<[PlayerId, PlayerId][]>(system => system.combinations);
+  }
+
   private compare<T = any>(func: (system: ICommerceSystem) => T) {
     let same!: T;
     this.systems.map(func).forEach((res: T) => {
@@ -41,6 +45,10 @@ export class CompareSystem implements ICommerceSystem {
 
   getBalance(playerId: number, t: number): number {
     return this.compare(system => system.getBalance(playerId, t));
+  }
+
+  getCombination(t: number): [PlayerId, PlayerId] {
+    return this.compare(system => system.getCombination(t));
   }
 
   getTransaction(t: number): Transaction | null {
