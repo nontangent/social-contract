@@ -1,26 +1,25 @@
 import { Queue, sleep } from '@social-contract/utils/helpers';
 import { IPresenter } from '@social-contract/presenters';
 import { BaseSimulator } from '@social-contract/core/simulator';
-import { ICommerceSystem, Result, Transaction } from '@social-contract/core/system';
+import { ICommerceSystem, Transaction } from '@social-contract/core/system';
 import { SuccessRateRecorder } from '@social-contract/core/recorder';
 
 import { IContractPlayer } from './player.interface';
 import { IContractSimulator } from './simulator.interface';
 
 import { getLogger } from 'log4js';
-import { Player } from './player';
 const logger = getLogger(__filename);
 
-export type RecorderMap = Map<IContractPlayer | string, SuccessRateRecorder>;
+export type RecorderMap<IPlayer> = Map<IPlayer | string, SuccessRateRecorder>;
 export type RecorderParams = {system: ICommerceSystem, transaction: Transaction};
 export type RecorderQueueMap = Map<IContractPlayer | string, Queue<RecorderParams>>;
 
-export class Simulator extends BaseSimulator<IContractPlayer> implements IContractSimulator {
-  recorderMap: RecorderMap;
+export abstract class BaseContractSimulator<IPlayer extends IContractPlayer> extends BaseSimulator<IPlayer> implements IContractSimulator {
+  recorderMap: RecorderMap<IPlayer>;
   private recorderQueueMap;
 
   constructor(
-    public players: IContractPlayer[] = [],
+    public players: IPlayer[] = [],
     public presenter: IPresenter,
   ) {
     super();
@@ -57,8 +56,6 @@ export class Simulator extends BaseSimulator<IContractPlayer> implements IContra
         // Recorderに真の結果と報告された結果を記録
         for (const player of this.players) this.recordResult(player.system, transaction);
 
-        // console.debug('this.recorderMap:', this.recorderMap);
-
         // Presenterで描画する
         await this.presenter.render(this, transaction);
 
@@ -68,15 +65,11 @@ export class Simulator extends BaseSimulator<IContractPlayer> implements IContra
     }
   }
 
-  getTrueResult(): Result {
-    return Result.SUCCESS;
+  buildRecorderMap(players: IPlayer[]): RecorderMap<IPlayer> {
+    return players.reduce((pre, player) => pre.set(player, new SuccessRateRecorder()), new Map() as RecorderMap<IPlayer>);
   }
 
-  buildRecorderMap(players: IContractPlayer[]): RecorderMap {
-    return players.reduce((pre, player) => pre.set(player, new SuccessRateRecorder()), new Map() as RecorderMap);
-  }
-
-  buildRecorderQueueMap(players: IContractPlayer[]): RecorderQueueMap {
+  buildRecorderQueueMap(players: IPlayer[]): RecorderQueueMap {
     return players.reduce((pre, player) => pre.set(
       player, new Queue<RecorderParams>(2 * this.n * (this.n - 1))
     ), new Map() as RecorderQueueMap);
@@ -88,7 +81,7 @@ export class Simulator extends BaseSimulator<IContractPlayer> implements IContra
     if (params) super.recordResult(params.system, params.transaction);
   }
 
-  getRecorderKey(system: ICommerceSystem): IContractPlayer {
+  getRecorderKey(system: ICommerceSystem): IPlayer {
     return this.players.find(player => player.system.id === system.id)!;
   }
 
