@@ -1,8 +1,8 @@
 import { Action } from '@social-contract/core/actor';
 import { PlayerId } from '@social-contract/core/player';
 import { Balances, History, InitialState, Result, Transaction } from '@social-contract/core/system';
-import { MemoCommerceSystem, Player, Simulator } from '@social-contract/complex-system';
-import { ContractMessage, IContractPlayer, MessageType } from '@social-contract/complex-system/player.interface';
+import { MemoCommerceSystem, Player, BaseContractSimulator } from '@social-contract/complex-system';
+import { IContractPlayer, MessageType } from '@social-contract/complex-system/player.interface';
 import { Presenter } from './presenter';
 import '../settings';
 
@@ -24,7 +24,6 @@ export abstract class BasePlayer extends Player {
   sendGoodsMessage(receiver: IContractPlayer, transactions: Transaction[]) {
     const data: MessageData = {transactions: transactions, support: this.support};
     const message = { type: MessageType.GOODS, data };
-    // const message = { type: MessageType.GOODS, data: transactions.map(t => ({...t, result: Result.FAILED})) };
     this.sendMessage(receiver, message);
     return message;
   }
@@ -52,6 +51,12 @@ export class PlayerTypeA extends BasePlayer {
 
 export class PlayerTypeB extends BasePlayer {
   support = Support.B;
+}
+
+export class Simulator extends BaseContractSimulator<BasePlayer> {
+  getTrueResult(seller: BasePlayer, buyer: BasePlayer) {
+    return seller.support === buyer.support ? Result.SUCCESS : Result.FAILED;
+  }
 }
 
 const balancesFactory = (n: number) => [...Array(n)].map((_, i) => i).reduce((p, i) => ({...p, [i]: n}), {} as Balances);

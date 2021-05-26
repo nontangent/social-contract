@@ -1,25 +1,29 @@
 import { PlayerId } from '@social-contract/core/player';
 import { InitialState, Balances, Result } from '@social-contract/core/system';
-import { Player, Simulator, MemoCommerceSystem, CommerceSystem, CompareSystem } from '@social-contract/complex-system';
+import { Player, BaseContractSimulator, MemoCommerceSystem } from '@social-contract/complex-system';
 import { Presenter } from './presenter';
 import '../settings';
 
-export class PlayerA extends Player {
+class PlayerA extends Player {
   get name(): string {
     return `Player ${this.id}(Contract A)`
   }
 }
 
-export class PlayerB extends Player {
+class PlayerB extends Player {
   get name(): string {
     return `Player ${this.id}(Contract B)`
   }
 
   determineResult(sellerId: PlayerId, start: number, end: number): Result {
-    // return Result.SUCCESS
     const result = super.determineResult(sellerId, start, end);
     return result === Result.SUCCESS ? Result.FAILED : Result.SUCCESS;
-    // return Result.FAILED;
+  }
+}
+
+class Simulator extends BaseContractSimulator<Player> {
+  getTrueResult(seller: Player, buyer: Player): Result {
+    return Result.SUCCESS;
   }
 }
 
@@ -35,12 +39,10 @@ function main() {
   const N = 8;
   const K = 0;
 
-  // const players = [
-  //   ...[...Array(N-K)].map((_, i) => playerFactoryA(i, N)),
-  //   ...[...Array(K)].map((_, i) => playerFactoryB(N-K+i, N)),
-  // ];
-  const players = [...Array(N-K)].map((_, i) => playerFactoryA(i, N))
-    .concat([...Array(K)].map((_, i) => playerFactoryB(N-K+i, N)));
+  const players = [
+    ...[...Array(N-K)].map((_, i) => playerFactoryA(i, N)),
+    ...[...Array(K)].map((_, i) => playerFactoryB(N-K+i, N)),
+  ];
 
   const presenter = new Presenter();
 
