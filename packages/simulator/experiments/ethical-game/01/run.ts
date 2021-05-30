@@ -1,10 +1,12 @@
 import { EthicalGamePlayerType, IEthicalGamePlayer } from '@social-contract/ethical-game/player.interface';
-import { MemoCommerceSystem, Simulator, Player, CommerceSystem } from '@social-contract/ethical-game';
+import { MemoCommerceSystem, Simulator, Player } from '@social-contract/ethical-game';
 import { initialStateFactory } from '@social-contract/utils/factories';
-import '../settings';
-import { EthicalGamePresenter } from './presenter';
-import { getLogger } from 'log4js';
 import { sum } from '@social-contract/utils/helpers';
+
+import { EthicalGamePresenter } from './presenter';
+import '../../settings';
+
+import { getLogger } from 'log4js';
 const logger = getLogger('experiments.01');
 
 export function playersFactory(map: Record<EthicalGamePlayerType, number>): IEthicalGamePlayer[] {
@@ -12,23 +14,37 @@ export function playersFactory(map: Record<EthicalGamePlayerType, number>): IEth
   return types.map((type, i) => new Player(i, type));
 }
 
-function main() {
-  const playerMap = {
-    A: 8, B: 0, C: 0, D: 0,
-    E: 0, F: 0, G: 0, H: 0,
-  };
+export type PlayerKey = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H';
 
+export interface Options {
+  laps: number;
+  interval: number;
+  playerMap: Record<PlayerKey, number>;
+}
+
+export const defaultOption: Options = {
+  laps: 100,
+  interval: 100,
+  playerMap: { A: 8, B: 0, C: 0, D: 0, E: 0, F: 0, G: 0, H: 0 },
+};
+
+export async function run({ playerMap, laps, interval }: Options = defaultOption) {
   const N = sum(Object.values(playerMap));
   const B = sum(Object.values(playerMap));
-  const MAX_T = 100;
   const initialState = initialStateFactory(N, B);
   const players: IEthicalGamePlayer[] = playersFactory(playerMap);
 
-  // const system = new CommerceSystem(initialState);
   const system = new MemoCommerceSystem(initialState);
   const presenter = new EthicalGamePresenter()
   const simulator = new Simulator(players, system, presenter);
-  simulator.run(MAX_T, 0);
+
+  await simulator.run(laps, interval);
 }
 
-main();
+function main() {
+  return run();
+}
+
+if (require?.main === module) {
+  main();
+}

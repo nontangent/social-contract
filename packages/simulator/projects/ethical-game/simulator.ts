@@ -18,10 +18,10 @@ export class Simulator extends BaseSimulator<IEthicalGamePlayer> implements IEth
     super();
   }
 
-  async run(maxT: number = 10, interval: number = 10): Promise<void> {
+  async run(laps: number = 10, interval: number = 10): Promise<void> {
     const combinations = this.generateCombinations();
 
-    while (this.t < maxT * combinations.length) {
+    while (this.t < laps * combinations.length) {
       for (const [sellerId, buyerId] of combinations) {
         this.t += 1;
         
