@@ -20,10 +20,6 @@ export abstract class BaseSimulator<IPlayer extends {id: PlayerId}> implements I
   }
 
   recordResult(system: ICommerceSystem, transaction: Transaction): void {
-    // const recorder = this.recorderMap[system.id];
-    // recorder.addReportedResult(transaction.result);
-    // recorder.addTrueResult(transaction.result);
-
     // 商取引ゲームが行われた場合(バランスに変化があった場合)、真の結果と報告された結果を記録する
     const balances = system.getBalances(transaction.t);
     const key = this.getRecorderKey(system);
