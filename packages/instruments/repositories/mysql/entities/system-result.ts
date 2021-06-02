@@ -22,7 +22,7 @@ export class SystemResult implements ISystemResult {
   @Column({nullable: true})
   reported!: number;
 
-  @Column()
+  @Column({nullable: true})
   true!: number;
 
   @CreateDateColumn()

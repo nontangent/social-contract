@@ -39,8 +39,8 @@ export class BaseSimulatorLogger<IPlayer extends { id: PlayerId }> implements IS
         t: simulator.t,
         simulationId: simulator.id,
         ownerId: ownerId,
-        reported: recorder.reportedResults.readAll().length,
-        true: recorder.trueResults.readAll().length,
+        reported: recorder.calcReportedSuccessRate(),
+        true: recorder.calcTrueSuccessRate(),
       }
     });
     await this.repository.saveSystemResults(records);

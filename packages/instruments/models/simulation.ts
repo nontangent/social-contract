@@ -11,6 +11,6 @@ export interface ISystemResult {
   t: number;
   simulationId?: string;
   ownerId: string;
-  reported: number;
-  true: number;
+  reported: number | null;
+  true: number | null;
 }
