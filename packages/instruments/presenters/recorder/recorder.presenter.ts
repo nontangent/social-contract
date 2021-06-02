@@ -1,7 +1,5 @@
-import { Result } from '@social-contract/libs/core/system';
-import { p100, Queue, sum } from '@social-contract/libs/utils/helpers';
+import { p100 } from '@social-contract/libs/utils/helpers';
 import { MapKey, RecorderMap } from '@social-contract/instruments/simulators/interfaces';
-import { SuccessRateRecorder } from '@social-contract/instruments/recorders';
 import { IPlayer } from '@social-contract/libs/core';
 
 const AsciiTable = require('ascii-table');
@@ -16,8 +14,8 @@ export class RecorderPresenter {
 
   buildRecorderData(recorderMap: RecorderMap<IPlayer<any>>): RecorderData {
     return [...recorderMap.entries()].reduce((pre, [key, recorder]) => pre.set(key, {
-      true: this.calcTrueSuccessRate(recorder),
-      reported: this.calcReportedSuccessRate(recorder)
+      true: recorder.calcTrueSuccessRate(),
+      reported: recorder.calcReportedSuccessRate(),
     }), new Map() as RecorderData);
   }
 
@@ -32,21 +30,5 @@ export class RecorderPresenter {
 
   formatSuccessRate(rate: number | null): string {
     return rate !== null ? `${p100(rate)}` : `-`;
-  }
-
-  calcTrueSuccessRate(recorder: SuccessRateRecorder): number | null {
-    const queue = recorder.trueResults;
-    return this.calcSuccessRate(queue)
-  }
-
-  calcReportedSuccessRate(recorder: SuccessRateRecorder): number | null {
-    const queue = recorder.reportedResults;
-    return this.calcSuccessRate(queue)
-  }
-
-  private calcSuccessRate(queue: Queue<Result>) {
-    const results = queue.readAll();
-    if (results.length !== queue.maxSize) return null;
-    return sum(results.map(r => r === Result.SUCCESS ? 1 : 0)) / results.length;
   }
 }
