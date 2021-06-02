@@ -1,12 +1,13 @@
 import { MemoCommerceSystem, Player, EthicalGamePlayerType, IEthicalGamePlayer } from '@social-contract/libs/ethical-game';
 import { initialStateFactory } from '@social-contract/libs/utils/factories';
-import { EthicalGameSimulator } from '@social-contract/instruments/simulators';
+import { BaseEthicalGameSimulator } from '@social-contract/instruments/simulators';
 import { sum } from '@social-contract/libs/utils/helpers';
 
 import { EthicalGamePresenter } from './presenter';
 import '../../settings';
 
 import { getLogger } from 'log4js';
+import { PlayerId } from '@social-contract/libs/core';
 const logger = getLogger('experiments.01');
 
 export function playersFactory(map: Record<EthicalGamePlayerType, number>): IEthicalGamePlayer[] {
@@ -28,6 +29,18 @@ export const defaultOption: Options = {
   playerMap: { A: 8, B: 0, C: 0, D: 0, E: 0, F: 0, G: 0, H: 0 },
 };
 
+class Simulator extends BaseEthicalGameSimulator {
+  description = `倫理ある商取引ゲーム(01)`;
+
+  get playersInfo(): Record<PlayerId, string> {
+    return this.players.reduce((record, player) => ({
+      ...record,
+      [player.id]: player.type
+    }), {});
+  }
+  
+}
+
 export async function run({ playerMap, laps, interval }: Options = defaultOption) {
   const N = sum(Object.values(playerMap));
   const B = sum(Object.values(playerMap));
@@ -36,7 +49,7 @@ export async function run({ playerMap, laps, interval }: Options = defaultOption
 
   const system = new MemoCommerceSystem(initialState);
   const presenter = new EthicalGamePresenter()
-  const simulator = new EthicalGameSimulator(players, system, presenter);
+  const simulator = new Simulator(players, system, presenter);
 
   await simulator.run(laps, interval);
 }

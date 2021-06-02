@@ -23,6 +23,8 @@ class PlayerB extends BaseContractPlayer {
 }
 
 class Simulator extends BaseContractSimulator<BaseContractPlayer> {
+  description = `倫理ある商取引ゲーム`;
+  
   getTrueResult(seller: BaseContractPlayer, buyer: BaseContractPlayer): Result {
     return Result.SUCCESS;
   }

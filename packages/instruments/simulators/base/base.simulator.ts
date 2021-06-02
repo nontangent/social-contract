@@ -3,18 +3,28 @@ import { PlayerId } from '@social-contract/libs/core/player';
 import { ICommerceSystem, Result, Transaction } from '@social-contract/libs/core/system';
 import { SuccessRateRecorder } from '@social-contract/instruments/recorders';
 import { ISimulator } from '@social-contract/instruments/simulators';
-
+import { ISimulatorLogger } from '@social-contract/instruments/loggers';
+import { uuid } from 'uuidv4';
 
 export abstract class BaseSimulator<IPlayer extends {id: PlayerId}> implements ISimulator<IPlayer> {
+  abstract description: string;
+  abstract playersInfo: Record<PlayerId, string>;
+  
   t = 0;
+  
   get n() { return this.players.length; }
   abstract players: IPlayer[];
   abstract recorderMap: Map<IPlayer | string, SuccessRateRecorder>;
-
-
+  constructor(
+    protected logger: ISimulatorLogger<IPlayer>,
+    public id: string = uuid(),
+  ) { }
+  
   abstract run(): Promise<void>;
   abstract getTrueResult(seller: IPlayer, buyer: IPlayer): Result;
   abstract getRecorderKey(system: ICommerceSystem): IPlayer | string;
+  abstract render(simulator: BaseSimulator<IPlayer>, transaction: Transaction): Promise<void>;
+  abstract saveSimulationData(): Promise<void>;
 
   getPlayer(playerId: PlayerId): IPlayer {
     return this.players.find(p => p.id === playerId)!;

@@ -15,9 +15,12 @@
 - [ ] simulator
   - [ ] Ethical Commerce Game
     - [x] implements
-    - [ ] experiment
+    - [x] experiment
     - [ ] evaluation
   - [ ] Social Contract as a Complex System
-    - [ ] implements
-    - [ ] experiment
+    - [x] implements
+    - [x] experiment
     - [ ] evaluation
+    - [ ] 実験データの保存機能
+    - [ ] マルチプロセッシング
+    - [ ] 

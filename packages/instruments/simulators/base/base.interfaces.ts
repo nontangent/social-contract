@@ -1,6 +1,11 @@
 import { SuccessRateRecorder } from '@social-contract/instruments/recorders';
+import { PlayerId } from '@social-contract/libs/core';
 
 export interface ISimulator<Player> {
+  id: string;
+  description: string;
+  playersInfo: Record<PlayerId, string>;
+
   t: number;
   n: number;
   players: Player[];

@@ -6,6 +6,7 @@ import { IPresenter } from '@social-contract/instruments/presenters';
 import { SuccessRateRecorder } from '@social-contract/instruments/recorders';
 
 import { IContractSimulator, RecorderMap } from '@social-contract/instruments/simulators';
+import { BaseSimulatorLogger, ISimulatorLogger } from '@social-contract/instruments/loggers';
 
 import { getLogger } from 'log4js';
 const logger = getLogger(__filename);
@@ -20,8 +21,9 @@ export abstract class BaseContractSimulator<IPlayer extends IContractPlayer> ext
   constructor(
     public players: IPlayer[] = [],
     public presenter: IPresenter,
-  ) {
-    super();
+    public logger: ISimulatorLogger<IContractPlayer> = new BaseSimulatorLogger<IContractPlayer>(),
+    ) {
+    super(logger);
     this.recorderMap = this.buildRecorderMap(players, this.generateCombinations().length);
     this.recorderQueueMap = this.buildRecorderQueueMap(players);
   }
