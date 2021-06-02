@@ -42,7 +42,8 @@ import { MySQLRepository } from "../repositories";
   }
 
   buildBaseDataset(simulation: ISimulation): Record<string, number> {
-    return Object.keys(simulation.playersInfo).reduce((pre, key) => ({...pre, [key]: 0}), {});
+    const N = Object.keys(simulation.playersInfo).length;
+    return [...Array(N+1)].map((_, i) => i).reduce((pre, key) => ({...pre, [key]: 0}), {});
   }
 
   abstract isHonestPlayer(info: string): boolean;

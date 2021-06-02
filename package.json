@@ -34,6 +34,6 @@
     "promise-mysql": "^5.0.3",
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.2.32",
-    "uuidv4": "^6.2.8"
+    "uuid": "^8.3.2"
   }
 }

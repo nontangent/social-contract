@@ -4,10 +4,10 @@ import { ICommerceSystem, Result, Transaction } from '@social-contract/libs/core
 import { SuccessRateRecorder } from '@social-contract/instruments/recorders';
 import { ISimulator } from '@social-contract/instruments/simulators';
 import { ISimulatorLogger } from '@social-contract/instruments/loggers';
-import { uuid } from 'uuidv4';
+import { v4 as uuidv4 } from 'uuid';
 
 export abstract class BaseSimulator<IPlayer extends {id: PlayerId}> implements ISimulator<IPlayer> {
-  id: string = uuid();  
+  id: string = uuidv4();  
   t = 0;
 
   constructor(protected logger: ISimulatorLogger<IPlayer>) { }

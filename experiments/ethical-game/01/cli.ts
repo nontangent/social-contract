@@ -15,32 +15,12 @@ cli
       return;
     }
 
-    await run({
-      laps: options.laps,
-      interval: options.interval,
-      n: 16,
-    });
+    // await run({
+    //   laps: options.laps,
+    //   interval: options.interval,
+    //   n: 16,
+    // });
   });
-
-// async function main() {
-//   const _options = cli.opts();
-//   const options: Options = {
-//     laps: _options.laps,
-//     interval: _options.interval,
-//     playerMap: {
-//       A: _options.A,
-//       B: _options.B,
-//       C: _options.C,
-//       D: _options.D,
-//       E: _options.E,
-//       F: _options.F,
-//       G: _options.G,
-//       H: _options.H,
-//     }
-//   };
-//   console.debug('options:', options);
-//   await run(options);
-// }
 
 async function main() {
   await cli.parseAsync(process.argv);
