@@ -1,9 +1,9 @@
 import { MemoCommerceSystem, Player, IEthicalGamePlayer } from '@social-contract/libs/ethical-game';
 import { initialStateFactory } from '@social-contract/libs/utils/factories';
+import { randomChoice } from '@social-contract/libs/utils/helpers';
 import { EthicalGamePresenter } from './presenter';
 import { Simulator } from './simulator';
 import '../../settings';
-import { randomChoice } from '@social-contract/libs/utils/helpers/random-choice';
 
 const PLAYER_TYPES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 export type PlayerKey = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H';
