@@ -21,6 +21,7 @@
     - [x] implements
     - [x] experiment
     - [ ] evaluation
-    - [ ] 実験データの保存機能
+    - [x] 実験データの保存機能
+    - [ ] 保存するResultを割合に変更
     - [ ] マルチプロセッシング
     - [ ] 

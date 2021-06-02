@@ -1,5 +1,5 @@
 import { Result } from '@social-contract/libs/core/system';
-import { b3, p100, sum } from '@social-contract/libs/utils/helpers';
+import { p100, Queue, sum } from '@social-contract/libs/utils/helpers';
 import { MapKey, RecorderMap } from '@social-contract/instruments/simulators/interfaces';
 import { SuccessRateRecorder } from '@social-contract/instruments/recorders';
 import { IPlayer } from '@social-contract/libs/core';
@@ -35,18 +35,18 @@ export class RecorderPresenter {
   }
 
   calcTrueSuccessRate(recorder: SuccessRateRecorder): number | null {
-    const results = recorder.trueResults.readAll();
-    if (results.length !== recorder.trueResults.maxSize) return null;
-    return this.calcSuccessRate(results);
+    const queue = recorder.trueResults;
+    return this.calcSuccessRate(queue)
   }
 
   calcReportedSuccessRate(recorder: SuccessRateRecorder): number | null {
-    const results = recorder.reportedResults.readAll();
-    if (results.length !== recorder.reportedResults.maxSize) return null;
-    return this.calcSuccessRate(results);
+    const queue = recorder.reportedResults;
+    return this.calcSuccessRate(queue)
   }
 
-  private calcSuccessRate(results: Result[]): number {
+  private calcSuccessRate(queue: Queue<Result>) {
+    const results = queue.readAll();
+    if (results.length !== queue.maxSize) return null;
     return sum(results.map(r => r === Result.SUCCESS ? 1 : 0)) / results.length;
   }
 }
