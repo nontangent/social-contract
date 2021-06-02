@@ -25,8 +25,9 @@ export class BaseSimulatorLogger<IPlayer extends { id: PlayerId }> implements IS
   async saveSimulatorData(simulator: ISimulator<IPlayer> & {system: {store: Store<any>}}): Promise<void> {
     const data: ISimulation = {
       id: simulator.id,
-      initialState: JSON.stringify(simulator.system.store.getInitialState()),
+      label: simulator.label,
       description: simulator.description,
+      initialState: simulator.system.store.getInitialState()!,
       playersInfo: simulator.playersInfo,
     };
     await this.repository.createSimulationRecord(data);

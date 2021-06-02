@@ -1,51 +1,42 @@
-import { MemoCommerceSystem, Player, EthicalGamePlayerType, IEthicalGamePlayer } from '@social-contract/libs/ethical-game';
+import { MemoCommerceSystem, Player, IEthicalGamePlayer } from '@social-contract/libs/ethical-game';
 import { initialStateFactory } from '@social-contract/libs/utils/factories';
-import { BaseEthicalGameSimulator } from '@social-contract/instruments/simulators';
-import { sum } from '@social-contract/libs/utils/helpers';
-
 import { EthicalGamePresenter } from './presenter';
+import { Simulator } from './simulator';
 import '../../settings';
+import { randomChoice } from '@social-contract/libs/utils/helpers/random-choice';
 
-import { getLogger } from 'log4js';
-import { PlayerId } from '@social-contract/libs/core';
-const logger = getLogger('experiments.01');
-
-export function playersFactory(map: Record<EthicalGamePlayerType, number>): IEthicalGamePlayer[] {
-  const types = Object.entries(map).map(([t, n]) => [...Array(n)].map(() => t as EthicalGamePlayerType)).flat();
-  return types.map((type, i) => new Player(i, type));
-}
-
+const PLAYER_TYPES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 export type PlayerKey = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H';
 
 export interface Options {
   laps: number;
   interval: number;
-  playerMap: Record<PlayerKey, number>;
+  n: number;
+  playersCode?: string;
 }
 
 export const defaultOption: Options = {
-  laps: 100,
-  interval: 100,
-  playerMap: { A: 8, B: 0, C: 0, D: 0, E: 0, F: 0, G: 0, H: 0 },
+  laps: 20,
+  interval: 0,
+  n: 16,
 };
 
-class Simulator extends BaseEthicalGameSimulator {
-  description = `倫理ある商取引ゲーム(01)`;
-
-  get playersInfo(): Record<PlayerId, string> {
-    return this.players.reduce((record, player) => ({
-      ...record,
-      [player.id]: player.type
-    }), {});
-  }
-  
+export function randomPlayersCode(n: number): string {
+  return [...Array(n)].map(() => randomChoice(PLAYER_TYPES)).join('');
 }
 
-export async function run({ playerMap, laps, interval }: Options = defaultOption) {
-  const N = sum(Object.values(playerMap));
-  const B = sum(Object.values(playerMap));
+export async function run({ n, playersCode, laps, interval }: Options = defaultOption) {
+  playersCode = playersCode ?? randomPlayersCode(n);
+  console.debug('playersCode:', playersCode);
+  const N = playersCode.length;
+  const B = N;
   const initialState = initialStateFactory(N, B);
-  const players: IEthicalGamePlayer[] = playersFactory(playerMap);
+  const players: IEthicalGamePlayer[] = [];
+
+  playersCode.split('').map((type, i) => {
+    if (!PLAYER_TYPES.includes(type)) throw Error('Player code is invalid!');
+    players.push(new Player(i, type as PlayerKey))
+  });
 
   const system = new MemoCommerceSystem(initialState);
   const presenter = new EthicalGamePresenter()

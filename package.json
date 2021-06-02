@@ -6,6 +6,7 @@
   "scripts": {
     "tsc": "tsc",
     "ts-node": "ts-node -P ./tsconfig.json -r tsconfig-paths/register",
+    "experiment:e:01": "npm run ts-node experiments/ethical-game/01/cli.ts --",
     "test": "jest",
     "test:watch": "npm run test:watch -- --watch"
   },
@@ -29,6 +30,7 @@
     "log4js": "^6.3.0",
     "log4js-extend": "^0.2.1",
     "mysql": "^2.18.1",
+    "nodeplotlib": "^0.7.3",
     "promise-mysql": "^5.0.3",
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.2.32",

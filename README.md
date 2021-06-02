@@ -16,12 +16,15 @@
   - [ ] Ethical Commerce Game
     - [x] implements
     - [x] experiment
+    - [x] 実験データの保存機能
+    - [x] 保存するResultを割合に変更
+    - [x] 実験データからプロットデータを生成
+    - [x] ランダムな初期値からの実験
+    - [ ] プロットデータから表を出力
+    - [ ] マルチプロセッシング
     - [ ] evaluation
   - [ ] Social Contract as a Complex System
     - [x] implements
     - [x] experiment
     - [ ] evaluation
-    - [x] 実験データの保存機能
-    - [ ] 保存するResultを割合に変更
-    - [ ] マルチプロセッシング
     - [ ] 

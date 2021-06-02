@@ -3,6 +3,7 @@ import { PlayerId } from '@social-contract/libs/core';
 
 export interface ISimulator<Player> {
   id: string;
+  label: string;
   description: string;
   playersInfo: Record<PlayerId, string>;
 

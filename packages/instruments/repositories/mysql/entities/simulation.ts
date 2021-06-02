@@ -3,16 +3,19 @@ import { ISimulation } from '@social-contract/instruments/models';
 import { SystemResult } from './system-result';
 
 @Entity({name: 'simulations'})
-export class Simulation implements ISimulation {
+export class Simulation {
 
   @PrimaryColumn()
   id!: string;
 
   @Column()
-  initialState!: string;
+  label!: string;
 
   @Column()
   description!: string;
+
+  @Column()
+  initialState!: string;
 
   @OneToMany(() => SystemResult, result => result.simulation)
   results!: SystemResult[];
@@ -29,6 +32,7 @@ export class Simulation implements ISimulation {
   constructor(simulation?: ISimulation) {
     Object.assign(this, simulation);
     this.playersInfo = JSON.stringify(simulation?.playersInfo);
+    this.initialState = JSON.stringify(simulation?.initialState);
   }
 
 }

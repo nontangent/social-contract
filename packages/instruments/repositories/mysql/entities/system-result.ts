@@ -3,7 +3,7 @@ import { ISystemResult } from '@social-contract/instruments/models';
 import { Simulation } from './simulation';
 
 @Entity({name: 'results'})
-export class SystemResult implements ISystemResult {
+export class SystemResult {
 
   @PrimaryGeneratedColumn('uuid')
   id!: string;

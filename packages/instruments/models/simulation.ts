@@ -1,10 +1,12 @@
-import { PlayerId } from "@social-contract/libs/core";
+import { InitialState, PlayerId } from "@social-contract/libs/core";
 
 export interface ISimulation {
   id: string;
-  initialState: string;
+  label: string;
+  initialState: InitialState;
   description: string;
   playersInfo: Record<PlayerId, string>;
+  results?:  ISystemResult[];
 }
 
 export interface ISystemResult {

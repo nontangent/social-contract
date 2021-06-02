@@ -7,24 +7,14 @@ import { ISimulatorLogger } from '@social-contract/instruments/loggers';
 import { uuid } from 'uuidv4';
 
 export abstract class BaseSimulator<IPlayer extends {id: PlayerId}> implements ISimulator<IPlayer> {
-  abstract description: string;
-  abstract playersInfo: Record<PlayerId, string>;
-  
+  id: string = uuid();  
   t = 0;
-  
-  get n() { return this.players.length; }
-  abstract players: IPlayer[];
-  abstract recorderMap: Map<IPlayer | string, SuccessRateRecorder>;
-  constructor(
-    protected logger: ISimulatorLogger<IPlayer>,
-    public id: string = uuid(),
-  ) { }
-  
-  abstract run(): Promise<void>;
-  abstract getTrueResult(seller: IPlayer, buyer: IPlayer): Result;
-  abstract getRecorderKey(system: ICommerceSystem): IPlayer | string;
-  abstract render(simulator: BaseSimulator<IPlayer>, transaction: Transaction): Promise<void>;
-  abstract saveSimulationData(): Promise<void>;
+
+  constructor(protected logger: ISimulatorLogger<IPlayer>) { }
+
+  get n() {
+    return this.players.length;
+  }
 
   getPlayer(playerId: PlayerId): IPlayer {
     return this.players.find(p => p.id === playerId)!;
@@ -49,5 +39,17 @@ export abstract class BaseSimulator<IPlayer extends {id: PlayerId}> implements I
     const playerIds = this.players.map(p => p.id);
     return permutation<number>(playerIds, 2) as [number, number][];
   }
+
+  abstract label: string;
+  abstract description: string;
+  abstract playersInfo: Record<PlayerId, string>;
+  abstract players: IPlayer[];
+  abstract recorderMap: Map<IPlayer | string, SuccessRateRecorder>;
+  
+  abstract run(): Promise<void>;
+  abstract getTrueResult(seller: IPlayer, buyer: IPlayer): Result;
+  abstract getRecorderKey(system: ICommerceSystem): IPlayer | string;
+  abstract render(simulator: BaseSimulator<IPlayer>, transaction: Transaction): Promise<void>;
+  abstract saveSimulationData(): Promise<void>;
 
 }

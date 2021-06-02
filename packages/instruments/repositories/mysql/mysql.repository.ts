@@ -44,6 +44,33 @@ export class MySQLRepository {
     await this.connection!.manager.save(data);
   }
 
+  async getSimulationsByLabel(label: string): Promise<ISimulation[]> {
+    const repository = this.connection!.getRepository(Simulation);
+    const entities = await repository.find({relations: ['results'], where: { label }});
+    return entities?.map(entity => this.convertEntityToSimulation(entity));
+  }
+
+  convertEntityToSimulation(entity: Simulation): ISimulation {
+    return {
+      id: entity.id,
+      label: entity.label,
+      initialState: JSON.parse(entity.initialState),
+      description: entity.description,
+      playersInfo: JSON.parse(entity.playersInfo),
+      results: entity.results?.map(result => this.convertEntityToSystemResult(result)) || [],
+    }
+  } 
+
+  convertEntityToSystemResult(entity: SystemResult): ISystemResult {
+    return {
+      t: entity.t,
+      simulationId: entity.simulationId,
+      ownerId: entity.ownerId,
+      reported: entity.reported,
+      true: entity.true,
+    }
+  }
+
   async close(): Promise<void> {
     await this.connection?.close();
   }
