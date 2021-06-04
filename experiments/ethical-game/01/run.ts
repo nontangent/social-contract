@@ -1,40 +1,28 @@
 import { MemoCommerceSystem, Player, IEthicalGamePlayer } from '@social-contract/libs/ethical-game';
 import { initialStateFactory } from '@social-contract/libs/utils/factories';
-import { randomChoice } from '@social-contract/libs/utils/helpers';
+import { NoopPresenter } from '@social-contract/instruments/presenters';
+import { randomPlayersCode } from '@social-contract/instruments/utils';
+
 import { EthicalGamePresenter } from './presenter';
 import { Simulator } from './simulator';
 import '../../settings';
-import { NoopPresenter } from '@social-contract/instruments/presenters';
+import { Options } from '../../options';
 
 const PLAYER_TYPES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 export type PlayerKey = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H';
 
-export interface Options {
-  laps: number;
-  interval: number;
-  n: number;
-  honestNum?: number,
-  presentation: boolean;
-  playersCode?: string;
-}
-
 export const defaultOption: Options = {
   laps: 20,
-  interval: 0,
+  interval: 100,
   n: 16,
   presentation: true,
+  sample: 1,
+  multi: 1,
 };
 
-export function randomPlayersCode(n: number, honestNum?: number): string {
-  let players = [...Array(n)].map(() => randomChoice(PLAYER_TYPES));
-  while (honestNum !== undefined && players.filter(p => p === 'A').length !== honestNum) {
-    players = [...Array(n)].map(() => randomChoice(PLAYER_TYPES));
-  }
-  return players.join('');
-}
-
 export async function run(options: Options = defaultOption) {
-  let playersCode = options.playersCode ?? randomPlayersCode(options.n, options.honestNum);
+  const fixed = options?.honestNum ? {type: 'A', n: options.honestNum} : undefined;
+  const playersCode = options.playersCode ?? randomPlayersCode(PLAYER_TYPES, options.n, fixed);
   console.debug('playersCode:', playersCode);
   const N = playersCode.length;
   const B = N;
