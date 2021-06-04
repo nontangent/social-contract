@@ -96,7 +96,7 @@ export abstract class BaseCommerceSystem implements ICommerceSystem {
 
     // 差分を各プレイヤーに分配する際に用いる重みを取得する
     // ここの引数に撮るbalancesはEscrowCostが引かれたあとのもの
-    const escrowWeights = this.getEscrowWeights(balances, []);
+    const escrowWeights = this.getEscrowWeights(balances, [sellerId, buyerId]);
     logger.debug('escrowWeights:', escrowWeights);
 
     // 差分を各プレイヤーに分配する
