@@ -8,3 +8,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: example
       MYSQL_DATABASE: social_contract_development
+    volumes:
+      - mysql_volume:/var/lib/mysql
+volumes:
+  mysql_volume:
+    driver: local

@@ -4,8 +4,7 @@ import { sleep } from '@social-contract/libs/utils/helpers';
 import { IPresenter } from '@social-contract/instruments/presenters';
 import { SuccessRateRecorder } from '@social-contract/instruments/recorders';
 import { BaseSimulator, IEthicalGameSimulator } from '@social-contract/instruments/simulators';
-import { BaseSimulatorLogger, ISimulatorLogger } from '@social-contract/instruments/loggers';
-
+import { EthicalGameLogger } from '@social-contract/instruments/loggers';
 
 export abstract class BaseEthicalGameSimulator extends BaseSimulator<IEthicalGamePlayer> implements IEthicalGameSimulator {
   recorderMap = new Map().set('system', new SuccessRateRecorder(this.generateCombinations().length));
@@ -14,45 +13,35 @@ export abstract class BaseEthicalGameSimulator extends BaseSimulator<IEthicalGam
     public players: IEthicalGamePlayer[],
     public system: ICommerceSystem,
     public presenter: IPresenter,
-    public logger: ISimulatorLogger<IEthicalGamePlayer> = new BaseSimulatorLogger<IEthicalGamePlayer>(),
+    public logger = new EthicalGameLogger(),
     ) {
     super(logger);
   }
 
   async run(laps: number = 10, interval: number = 10): Promise<void> {
-    try {
-      await this.logger.setup();
-      await this.saveSimulationData();
+    const combinations = this.generateCombinations();
 
-      const combinations = this.generateCombinations();
+    while (this.t < laps * combinations.length) {
+      for (const [sellerId, buyerId] of combinations) {
+        this.t += 1;
+        
+        // sellerとbuyerを取得して商取引ゲームを行う
+        const seller = this.getPlayer(sellerId);
+        const buyer = this.getPlayer(buyerId);
+        const transaction = this.deal(seller, buyer);
 
-      while (this.t < laps * combinations.length) {
-        for (const [sellerId, buyerId] of combinations) {
-          this.t += 1;
-          
-          // sellerとbuyerを取得して商取引ゲームを行う
-          const seller = this.getPlayer(sellerId);
-          const buyer = this.getPlayer(buyerId);
-          const transaction = this.deal(seller, buyer);
+        this.recordResult(this.system, transaction);
 
-          this.recordResult(this.system, transaction);
+        // Presenterで描画するs
+        await this.render(this, transaction);
 
-          // Presenterで描画するs
-          await this.render(this, transaction);
-
-          // 待機する
-          await sleep(interval);
-        }
+        // 待機する
+        await sleep(interval);
       }
-
-      await this.saveSystemsResult();
-
-    } catch (error) {
-      console.error(error);
-    } finally {
-      await this.logger.close();
     }
 
+    // シミュレーションの結果を保存する
+    await this.log();
   }
 
   deal(seller: IEthicalGamePlayer, buyer: IEthicalGamePlayer): Transaction {
@@ -81,12 +70,9 @@ export abstract class BaseEthicalGameSimulator extends BaseSimulator<IEthicalGam
     await this.presenter.render(simulator, transaction);
   }
 
-  async saveSimulationData(): Promise<void> {
-    await this.logger.saveSimulatorData(this);
+  async log(): Promise<void> {
+    await this.logger.setup();
+    await this.logger.log(this);
+    await this.logger.close();
   }
-
-  async saveSystemsResult(): Promise<void> {
-    await this.logger.saveSystemsResult(this);
-  }
-
 }

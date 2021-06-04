@@ -4,12 +4,8 @@ import { Queue, sleep } from '@social-contract/libs/utils/helpers';
 import { BaseSimulator } from '@social-contract/instruments/simulators/base';
 import { IPresenter } from '@social-contract/instruments/presenters';
 import { SuccessRateRecorder } from '@social-contract/instruments/recorders';
-
 import { IContractSimulator, RecorderMap } from '@social-contract/instruments/simulators';
-import { BaseSimulatorLogger, ISimulatorLogger } from '@social-contract/instruments/loggers';
-
-import { getLogger } from 'log4js';
-const logger = getLogger(__filename);
+import { ComplexSystemLogger } from '@social-contract/instruments/loggers';
 
 export type RecorderParams = {system: ICommerceSystem, transaction: Transaction};
 export type RecorderQueueMap = Map<IContractPlayer | string, Queue<RecorderParams>>;
@@ -21,8 +17,8 @@ export abstract class BaseContractSimulator<IPlayer extends IContractPlayer> ext
   constructor(
     public players: IPlayer[] = [],
     public presenter: IPresenter,
-    public logger: ISimulatorLogger<IContractPlayer> = new BaseSimulatorLogger<IContractPlayer>(),
-    ) {
+    public logger = new ComplexSystemLogger(),
+  ) {
     super(logger);
     this.recorderMap = this.buildRecorderMap(players, this.generateCombinations().length);
     this.recorderQueueMap = this.buildRecorderQueueMap(players);
@@ -31,7 +27,6 @@ export abstract class BaseContractSimulator<IPlayer extends IContractPlayer> ext
   async run(maxT: number = 10, interval: number = 0) {
     // sellerとbuyerの一周の順番を決める(n * (n-1))。
     const combinations = this.generateCombinations();
-    logger.info('combinations:', combinations);
 
     while (this.t < combinations.length * maxT) {
       for (const [sellerId, buyerId] of combinations) {
@@ -42,7 +37,6 @@ export abstract class BaseContractSimulator<IPlayer extends IContractPlayer> ext
         // seller,buyer,escrowsを取得
         const seller = this.getPlayer(sellerId);
         const buyer = this.getPlayer(buyerId);
-        // const escrows = this.players.filter(player => ![sellerId, buyerId].includes(player.id));
         const escrows = this.players;
 
         // sellerは商品である過去の履歴を渡す
@@ -54,16 +48,23 @@ export abstract class BaseContractSimulator<IPlayer extends IContractPlayer> ext
         // 取引を定義する
         const transaction = {t: this.t, sellerId, buyerId, result};
 
-        // Recorderに真の結果と報告された結果を記録
+        // Recorderに真の結果と報告された結果を記録する
         for (const player of this.players) this.recordResult(player.system, transaction);
 
         // Presenterで描画する
-        await this.presenter.render(this, transaction);
+        await this.render(this, transaction);
 
         // 待機する
         await sleep(interval);
       }
     }
+
+    // シミュレーションの結果を保存する
+    await this.log();
+  }
+
+  async render(simulator: BaseSimulator<IPlayer>, transaction: Transaction): Promise<void> {
+    await this.presenter.render(simulator, transaction);
   }
 
   buildRecorderMap(players: IPlayer[], maxSize: number): RecorderMap<IPlayer> {
@@ -86,4 +87,9 @@ export abstract class BaseContractSimulator<IPlayer extends IContractPlayer> ext
     return this.players.find(player => player.system.id === system.id)!;
   }
 
+  async log(): Promise<void> {
+    await this.logger.setup();
+    await this.logger.log(this);
+    await this.logger.close();
+  }
 }

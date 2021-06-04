@@ -10,7 +10,7 @@ export abstract class BaseSimulator<IPlayer extends {id: PlayerId}> implements I
   id: string = uuidv4();  
   t = 0;
 
-  constructor(protected logger: ISimulatorLogger<IPlayer>) { }
+  constructor(protected logger: ISimulatorLogger<ISimulator<IPlayer>>) { }
 
   get n() {
     return this.players.length;
@@ -47,9 +47,10 @@ export abstract class BaseSimulator<IPlayer extends {id: PlayerId}> implements I
   abstract recorderMap: Map<IPlayer | string, SuccessRateRecorder>;
   
   abstract run(): Promise<void>;
+  
   abstract getTrueResult(seller: IPlayer, buyer: IPlayer): Result;
   abstract getRecorderKey(system: ICommerceSystem): IPlayer | string;
-  abstract render(simulator: BaseSimulator<IPlayer>, transaction: Transaction): Promise<void>;
-  abstract saveSimulationData(): Promise<void>;
 
+  abstract render(simulator: BaseSimulator<IPlayer>, transaction: Transaction): Promise<void>;
+  abstract log(): Promise<void>;
 }

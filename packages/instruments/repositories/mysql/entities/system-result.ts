@@ -19,10 +19,10 @@ export class SystemResult {
   @Column()
   ownerId!: string;
 
-  @Column({nullable: true})
+  @Column({type: 'float', nullable: true})
   reported!: number;
 
-  @Column({nullable: true})
+  @Column({type: 'float', nullable: true})
   true!: number;
 
   @CreateDateColumn()
