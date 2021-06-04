@@ -27,15 +27,14 @@ const playerFactory = (type: PlayerType, i: number, n: number) => {
 export async function run() {
   const N = 8;
 
-  const playersCode = randomPlayersCode(PLAYER_TYPES.map(c => c), N, {type: 'A', n: 7});
-  // const playersCode = randomPlayersCode(PLAYER_TYPES.map(c => c), N);
+  const playersCode = randomPlayersCode(PLAYER_TYPES.map(c => c), N);
   console.debug('playersCode:', playersCode);
   const players: BasePlayer[] = [...playersCode].map((type, i) => playerFactory(type as PlayerType, i, playersCode.length));
 
-  // const presenter = new Presenter();
-  const presenter = new NoopPresenter();
+  const presenter = new Presenter();
+  // const presenter = new NoopPresenter();
   const simulator = new Simulator(players, presenter);
-  await simulator.run(20, 0);
+  await simulator.run(100, 10);
 }
 
 if (require?.main === module) {
