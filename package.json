@@ -7,6 +7,7 @@
     "tsc": "tsc",
     "ts-node": "ts-node -P ./tsconfig.json -r tsconfig-paths/register",
     "experiment:e:01": "npm run ts-node experiments/ethical-game/01/cli.ts --",
+    "plot": "python3 plot.py",
     "test": "jest",
     "test:watch": "npm run test:watch -- --watch"
   },
