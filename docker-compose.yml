@@ -10,6 +10,11 @@ services:
       MYSQL_DATABASE: social_contract_development
     volumes:
       - mysql_volume:/var/lib/mysql
+  texlive:
+    image: nontan18/texlive:stable
+    command: latexmk --pvc ./index.tex
+    volumes: 
+      - ./paper/src:/root/work
 volumes:
   mysql_volume:
     driver: local
