@@ -12,6 +12,8 @@
   - [ ] "Ethical Commerce Game" Rewrite(take 1)
   - [ ] "Social Contract as a Complex System" Rewrite(take 1)
   - [ ] "Afterword" Rewrite(take 1)
+  - [ ] 章立て見直し
+  - [ ] フォーマットを整える
 - [ ] simulator
   - [ ] Ethical Commerce Game
     - [x] implements
@@ -20,11 +22,12 @@
     - [x] 保存するResultを割合に変更
     - [x] 実験データからプロットデータを生成
     - [x] ランダムな初期値からの実験
-    - [ ] プロットデータから表を出力
-    - [ ] マルチプロセッシング
+    - [x] プロットデータから表を出力
+    - [x] マルチプロセッシング
+    - [x] evaluation(minimum)
     - [ ] evaluation
   - [ ] Social Contract as a Complex System
     - [x] implements
     - [x] experiment
-    - [ ] evaluation
-    - [ ] 
+    - [x] evaluation(minimum) 
+    - [ ] evaluation 
