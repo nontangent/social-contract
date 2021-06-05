@@ -20,7 +20,7 @@ export class Plotter extends BaseSimulationPlotter {
 export async function plot() {
   const plotter = new Plotter();
   const data = await plotter.getBarChartData(LABEL);
-  console.debug('data:', data);
+  process.stdout.write(JSON.stringify(data) + '\n');
 }
 
 if (require?.main === module) {

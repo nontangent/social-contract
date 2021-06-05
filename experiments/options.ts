@@ -8,3 +8,12 @@ export interface Options {
   presentation: boolean;
   playersCode?: string;
 }
+
+export const defaultOption: Options = {
+  laps: 20,
+  interval: 100,
+  n: 16,
+  presentation: true,
+  sample: 1,
+  multi: 1,
+};
