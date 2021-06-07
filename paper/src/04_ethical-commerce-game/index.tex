@@ -1,8 +1,68 @@
 \chapter{倫理ある商取引ゲーム}
-\input{./04_ethical-commerce-game/ethics.tex}
-\input{./04_ethical-commerce-game/ethical-commerce-game.tex}
+前章では合理的なプレイヤー達による「商取引ゲーム」において、不正を防止するインセンティブ設計が不可能であることがわかった。
+しかしながら、我々は現実の生活の中で商取引で不正に合うことは珍しく、ある程度不正が防止されている。
+本章では、この理論と現実の差異は限定合理性にあると仮説立て、
+そうした戦略をとるプレイヤーのみで構成されたときに不正を防止することができる「倫理ある商取引ゲーム」をモデリングする。
+そして、そのモデルが全ての戦略をとりえるプレイヤーによって構成された「商取引ゲーム」においても、
+プレイヤーの構成次第で不正を防止するインセンティブ設計として機能することを示す。
+
+\section{本章における問題提起}
+前章では商取引ゲームにおいて必ず不正が防止できるようなインセンティブの設計が不可能であることがわかった。
+しかしながら、現実的に私達は商取引で不正行為に遭遇することは稀である。
+なぜ先の理論では商取引で不正を防止するインセンティブ設計ができないにも関わらず、
+現実の生活の中で我々は商取引を成功させることができているのだろうか。
+
+\section{本章の仮説}
+この問いの答えは、限定合理性(Simon 1947\cite{simon 1947})によって戦略の均衡点が変化し、
+不正を防止できるインセンティブ設計が可能になっているためだと考えられる。
+限定合理性とは、認知能力の限界によって意思決定主体が限られた合理性しか持ち得ていないことである。
+各プレイヤーにとっての最適な戦略は他のプレイヤーがとる戦略に依存しているため、
+当然、一部のプレイヤーが合理的に戦略を選ばないのであれば最適な戦略の均衡点も変化する。
+それによって、全てのプレイヤーが合理的である「商取引ゲーム」においては不可能だった
+相手が不正を行う可能性を推定することが可能になり、不正を防止するインセンティブ設計が可能になると予想される。
+
+\section{提案手法}
+このような限定合理性を本章では「倫理」と呼ぶ。
+提案する「倫理」は、不正行為にあった場合に必ず「失敗」を報告する行動規範とする。
+フォーク定理やしっぺ返し戦略が有効であるのと、同様に報復行為である。
+この倫理に従うプレイヤーのみで構成される「倫理ある商取引ゲーム」を提案する。
+この「倫理」の導入によって、不正が生じた商取引ゲームは必ず失敗が報告されるようになるため、
+相手が不正を行う確率の最低値を知ることができ不正を防止するインセンティブ設計が可能になる。
+
+\subsection{倫理ある商取引ゲーム}
+「倫理ある商取引ゲーム」においては$buyer$は$seller$が不正を行った場合にかならず「失敗」を報告するため、
+ゲーム木は図\ref{ethical-gametree}のようになる．
+また、同様に$buyer$が「商取引ゲーム」における戦略$s^{buyer}_2, s^{buyer}_4$を取らないため、
+非協力戦略型ゲームの表は表\ref{ethical-gametable}のようになる．
+
+\subsection{誠実な戦略をとった割合と成功が報告される割合の関係}
+この「倫理ある商取引ゲーム」においては，商取引の成功率は「商取引システム」に「成功」が報告された割合以上である．
+故に、任意のプレイヤー$p$と$q$が過去に「商取引ゲーム」を行った際に、
+誠実な戦略($s^{seller}_1$もしくは$s^{buyer}_1$)をとってきた割合$HonestStrategyRate(p, q)$と、
+成功が報告された割合$ReportedSuccessRate(p, q)$について、次の関係がいえる。
+
+\begin{equation}
+  HonestStrategyRate(p, q) \geq ReportedSuccessRate(p, q)
+\end{equation}
+
 \input{./04_ethical-commerce-game/conditions.tex}
-\input{./04_ethical-commerce-game/approach.tex}
-\input{./04_ethical-commerce-game/experiments.tex}
-\input{./04_ethical-commerce-game/evaluation.tex}
-\input{./04_ethical-commerce-game/consideration.tex}
+
+
+\section{実験方法}
+個々で実装の詳細にも少し触れる。
+
+\section{評価}
+
+\section{結論}
+
+
+\clearpage
+\input{./04_ethical-commerce-game/figures.tex}
+
+% \input{./04_ethical-commerce-game/ethical-commerce-game.tex}
+
+% 倫理ある商取引ゲーム
+% \input{./04_ethical-commerce-game/approach.tex}
+% \input{./04_ethical-commerce-game/experiments.tex}
+% \input{./04_ethical-commerce-game/evaluation.tex}
+% \input{./04_ethical-commerce-game/consideration.tex}
