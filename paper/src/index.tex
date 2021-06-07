@@ -4,33 +4,95 @@
 \usepackage[T1]{fontenc}
 \usepackage[dvipdfmx]{graphicx}
 
+% \usepackage{comment}
+\usepackage{tabularx}
+% \usepackage{listliketab}
+% \usepackage[longnamesfirst]{natbib}
+% \usepackage[dvipdfmx]{graphics}
+% \usepackage[dvipdfmx]{graphicx}
+% \usepackage[dvipdfmx]{color}
+% \usepackage{subfigure}
+% \usepackage{alltt}
+% \usepackage{here}
+% \usepackage{afterpage}
+% \usepackage{./sty/ncodeline}
+% \usepackage{enumerate}
+% \usepackage{footnote}
+% \usepackage{amssymb}
+% \usepackage{array}
+
+% A4  size: 297mm*210mm %1pt = 0.35mm
+\setlength{\topmargin}{-3.4mm} % 10pt 25.4mm - 3.4mm = 22mm
+\setlength{\oddsidemargin}{-0.4mm} % 25.4mm - 0.4mm = 25mm
+\setlength{\evensidemargin}{-0.4mm} % 25.4mm - 0.4mm = 25mm
+\setlength{\textheight}{231mm} % 660pt % original is 225.75mm 645pt
+\setlength{\textwidth}{160mm} % 457pt
+
+% 各種ページに占める割合
+\renewcommand{\topfraction}{.99}
+\renewcommand{\textfraction}{.0}
+\renewcommand{\floatpagefraction}{.99}
+
+% 参考文献の表記を修正
+\renewcommand{\bibname}{参考文献}
+
+% 各ページ右上に章のタイトルを表示する
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead[]{}
+
+% よくわからないおまじない
+\makeatletter
+\def\chaptermark#1{\markboth {\ifnum \c@secnumdepth>\m@ne
+\@chapapp\ \thechapter \@chappos\ \fi #1}{}}
+\def\lst@lettertrue{\let\lst@ifletter\iffalse}
+\makeatother
+
+% メタデータ
 \title{計算可能な複雑系としての社会契約とそのカオスの分析}
-\renewcommand{\thefootnote}{\fnsymbol{footnote}}
-\author{Nozomu Miyamoto\footnotemark[1]　nontan@sfc.wide.ad.jp}
-\renewcommand{\thefootnote}{\arabic{footnote}}
+\def\title{商取引をベースにした\\計算可能な複雑系としての社会契約とそのカオスの分析}
+\def\etitle{Social Contract as a Computable Comlex System based on Commerce and Analysis its Chaos}
+\def\author{宮元 眺}
+\def\eauthor{Nozomu Miyamoto}
+\def\dept{慶應義塾大学 環境情報学部}
+\def\edept{Keio University Faculty of Environment and Information Studies}
 \date{\today}
 
 \begin{document}
 
-\maketitle
-\vspace{-6mm}
-\begin{abstract}
-  ここに概要を書きましょう．
-\end{abstract}
-\vspace{2mm}
+% 表紙
+\begin{titlepage}
+  \begin{center}
+    \begin{large}
+      卒業論文   2021年度(令和3年)\\
+      \vspace{24pt}
+      \title
+    \end{large}
+  \end{center}
+  \vspace{40em}
+  \begin{flushright}
+    \large \dept\\
+    \author
+  \end{flushright}
+\end{titlepage}
 
-\renewcommand{\thefootnote}{\fnsymbol{footnote}}
-\footnotetext[1]{慶應義塾大学 村井研}
-\renewcommand{\thefootnote}{\arabic{footnote}}
+% 概要
+\input{./abstract/index.tex}
 
 \tableofcontents\thispagestyle{plain}
 
 % 序論
 \input{./01_introduction/index.tex}
 \input{./02_background/index.tex}
+\chapter{本論文における問題定義}
+\chapter{本論文における仮説}
+\chapter{仮説の検証方法}
+\chapter{仮説の検証結果とその評価}
 \input{./03_commerce-game/index.tex}
 \input{./04_ethical-commerce-game/index.tex}
 \input{./05_complex-system/index.tex}
+\chapter{これまでの研究との違い}
+\chapter{結論}
 \input{./06_afterword/index.tex}
 
 % \renewcommand{\refname}{参考文献}

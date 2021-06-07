@@ -1,0 +1,18 @@
+% 卒論タイトル用のテーブルの枠組みを定義
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
+
+% ヘッダー
+卒業論文要旨 - 2020年度 (令和2年度)
+\begin{center}
+  \begin{large}
+    \begin{tabular}{|M{0.97\linewidth}|}
+      \hline
+        \title \\
+      \hline
+    \end{tabular}
+  \end{large}
+\end{center}
+
+% 概要
+\input{./abstract/jp.tex}
+\input{./abstract/en.tex}
