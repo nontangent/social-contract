@@ -1,6 +1,6 @@
-\section{「倫理ある商取引ゲーム」において不正が防止される条件}
 \subsection{不正が抑制される戦略組と期待利得の不等式}
-「倫理ある商取引ゲーム」において不正が生じないためには$seller$と$buyer$の戦略組を$(s^{seller}_1, s^{buyer}_1)$に帰着させなくてはならない．
+「倫理ある商取引ゲーム」において、不正を防止するためには、
+$seller$と$buyer$の戦略組を$(s^{seller}_1, s^{buyer}_1)$に帰着させる必要がある。．
 そのためには$seller$が戦略$s^{seller}_1$をとった場合の期待利得$E(r|s^{seller}_1)$が
 戦略$s^{seller}_2$をとった場合の期待利得$E(r|s^{seller}_2)$より大きく，
 $buyer$が戦略$s^{buyer}_1$をとった場合の期待利得$E(r|s^{buyer}_1)$が
@@ -64,7 +64,7 @@ $ r^{buyer}_{success} - r^{buyer}_{failure} > 0 $ \\
 
 $ r^{seller}_{success} - r^{seller}_{failure} \geq \frac{goods}{p^{buyer}_1} $かつ$ r^{buyer}_{success} - r^{buyer}_{failure} > 0 $ \\
 
-を満たせば，「倫理ある商取引ゲーム」では不正を抑制することができる．
+を満たせば，「倫理ある商取引ゲーム」で不正を防止することができる．
 
 
 \subsection{信頼度 $ p^{player} $}
@@ -72,34 +72,38 @@ $ r^{seller}_{success} - r^{seller}_{failure} \geq \frac{goods}{p^{buyer}_1} $�
 ここで，任意の$ player $が誠実な戦略($ p^{seller}_1, p^{buyer}_1 $のいづれか)をとる主観確率を$ p^{player}_1 $とすると，
 $ p^{player}_1 $は各プレイヤーに対して誠実な戦略をとった割合$ HonestyStrategyRate(player, opportunity) $と任意の重み$ w^{player} $を用いて次のように表せる． \\
 
-$ p^{player}_1 \equiv \sum^{players}_{opp} w^{opp} HonestyStrategyRate(player, opp) $
-
+\begin{equation}
+  p^{player}_1 \equiv \sum^{players}_{opp} w^{opp} HonestyStrategyRate(player, opp)
+\end{equation}
 
 \subsection{最低信頼度 $ T^{player} $}
 
 しかし、「商取引システム」からは$ HonestyStrategyRate(player, opportunity) $は未知のため，
 信頼度$ p^{player}_1 $を求めることができない．
-そこで$ HonestyStrategyRate $の代わりに$ ReportedSuccessRate $を用いて同様の$ w^{player} $で荷重総和を
-最低信頼度$ T^{player} $とおく． \\
+そこで$ HonestyStrategyRate $の代わりに$ ReportedSuccessRate $を用い、
+信頼度$ p^{player} $を計算するのと同じ重み$ w^{player} $の荷重総和をとったものを、
+最低信頼度$ T^{player} $と定義する． \\
 
-$ T^{player} \equiv \sum^{players}_{opp} {w}^{opp} ReportedSuccessRate(player, opp) $ \\
+\begin{equation}
+  T^{player} \equiv \sum^{players}_{opp} {w}^{opp} ReportedSuccessRate(player, opp)
+\end{equation}
 
 \subsection{最低信頼度を用いた条件}
 ここで$ HonestyStrategyRate \geq ReportedSuccessRate $であるため，$ p^{player}_1 \geq T^{player} $がいえる．
 
 ゆえに， \\
 
-$ r^{seller}_{success} - r^{seller}_{failure}  \geq \frac{goods}{T^{buyer}} \geq \frac{goods}{p^{buyer}_1} $ \\
+\begin{equation}
+  r^{seller}_{success} - r^{seller}_{failure}  \geq \frac{goods}{T^{buyer}} \geq \frac{goods}{p^{buyer}_1}
+\end{equation}
 
 となる．
 
 つまり、$ 0<p^{buyer}_1 $かつ $ 0 < p^{seller}_{1} $を仮定した上で，\\
 
-$ r^{seller}_{success} - r^{seller}_{failure} \geq \frac{goods}{T^{buyer}} $かつ$ r^{buyer}_{success} - r^{buyer}_{failure} > 0 $ \\
+\begin{equation}
+  r^{seller}_{success} - r^{seller}_{failure} \geq \frac{goods}{T^{buyer}} かつ r^{buyer}_{success} - r^{buyer}_{failure} > 0
+\end{equation}
 
-を満たす
-
-
-
-つまりは，この最低信頼度$ T^{player} $をもちいることで，
-以下の条件を満たす$ (r^{seller}_{success}, r^{seller}_{failure}, r^{buyer}_{success}, r^{buyer}_{failure}) $の組を決定できる．
+を満たす$ (r^{seller}_{success}, r^{seller}_{failure}, r^{buyer}_{success}, r^{buyer}_{failure}) $の組を「商取引システム」から決定できれば、
+「倫理ある商取引ゲーム」において不正を防止することができる。

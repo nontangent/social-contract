@@ -1,0 +1,90 @@
+本節ではシミュレーションを実装するにあたって必要となる商取引システムの仕様の詳細の一部を紹介する。
+完全な実装については、GitHubのソースコードを参照。
+
+\subsection{ReputationWeight}
+最低信頼度$ T^{player} $を求めるためには、
+$ ReportedSuccessRate(p, q) $に係る任意の重み$ w^{player} $を決定する必要がある．
+この重み$ w^{player} $は、
+任意の$ player $が誠実な戦略をであろう主観確率を考える際に
+その$ player $と取引相手$ opportunity $との間での報告された成功率
+$ ReportedSuccessRate(player, opportunity) $をどの程度信頼するかを表している。
+本論では、保有している通貨の全体に占める割合をReputationWeight$ w^{player} $
+任意の$player$の通貨保有量を$ b^{player} $としたとき、
+
+\begin{equation*}
+  w^{player} \equiv \frac{b^{player}}{\sum^{players}_{i}b^{i}}
+\end{equation*}
+
+\subsection{「成功」が報告された場合の通貨保有量の変化}
+「商取引ゲーム」において、$buyer$から成功が報告された場合、
+$ buyer $は商品$ goods $の価格$ price $だけ通貨保有量が減り、
+$ seller $は$ price $だけ通貨保有量が増えるものとする．
+
+そのため商取引前後では$ seller $と$ buyer $の残高の合計は変化しない．
+ここから，$ r^{seller}_{success} $と$ r^{buyer}_{success} $は以下のように記せる．\\
+
+\begin{gather*}
+  r^{seller}_{success} = price \\
+  r^{buyer}_{success} = -price \\
+  r^{seller}_{success} + r^{buyer}_{success} = 0
+\end{gather*}
+
+
+\subsection{EscrowCost}
+まずは「失敗」が報告された時に$ seller $と$ buyer $から失われる通貨の量の合計を$ EscrowCost $とおいて考え，
+同時に商品価格$ price $にエスクロー係数$ E $を掛けたものとする．(ここで$ price $は$ goods $の価格である) \\
+
+\begin{equation}
+  \begin{split}
+    EscrowCost \equiv (r^{buyer}_{success} - r^{buyer}_{failure}) + (r^{seller}_{success} - r^{seller}_{failure}) \\
+    = E \cdot price
+  \end{split}
+\end{equation}
+
+\subsection{EscrowCostの負担比率}
+$ EscrowCost $の負担比率は$ seller $と$ buyer $の最低信頼度$ T^{player} $を用いる．\\
+
+\begin{equation}
+  (r^{buyer}_{success} - r^{buyer}_{failure}):(r^{seller}_{success} - r^{seller}_{failure}) = T^{buyer}:T^{seller}
+\end{equation}
+
+\subsection{EscrowCostの分配}
+「失敗」が報告されたときに$ EscrowCost $が消失すると、全体の通貨量が減少して通貨の価値が上がり商品価格が下がる。
+商品価格の変動を防ぐために本実験では$seller$と$buyer$以外の全てのプレイヤーに、
+そのプレイヤーの通貨保有量に応じて$ EscrowCost $を分配する。
+$seller$と$buyer$を含まないのは、分配によって「商取引ゲーム」のインセンティブ設計が変化しないようにするためである。
+
+% \subsection{謎の条件}
+% $ \frac{w(T^{buyer}_1)E \cdot price}{w(T^{buyer}_1) + w(T^{seller}_1)} \geq \frac{price}{T^{buyer}} \geq \frac{goods}{p^{buyer}_1} $ \\
+
+% 上記の条件式から$ \frac{price}{ T^{buyer} } $でうまくいくはずだったが何故かうまく行かず，$ \frac{price}{ \min(T^{buyer}, T^{seller})} $をもちいたらうまくいったのでこちらを採用することとした．$ p^{buyer} $と$ P^{player}_1 $の関係性に問題があるためだと思われる． \\
+
+% $ \frac{w(T^{buyer}_1)E \cdot price}{w(T^{buyer}_1) + w(T^{seller}_1)} \geq \frac{price}{ \min(T^{buyer}, T^{seller})} $ \\
+
+
+% \subsection{残高の変化量の組$ (r^{seller}_{success}, r^{seller}_{failure}, r^{buyer}_{success}, r^{buyer}_{failure}) $}
+% 上記の条件群を用いて残高の変化量の組$ (r^{seller}_{success}, r^{seller}_{failure}, r^{buyer}_{success}, r^{buyer}_{failure}) $を決定する． \\
+
+% $ r^{seller}_{success}+r^{buyer}_{success} = 0 $ \\
+
+% $ r^{seller}_{failure}+r^{buyer}_{failure} = -E \cdot price $ \\
+
+% $ r^{seller}_{success} - r^{seller}_{failure} = \frac{w(T^{buyer}_1)E \cdot price}{w(T^{buyer}_1) + w(T^{seller}_1)} \geq \frac{price}{T^{buyer}} $ \\
+
+% $ r^{buyer}_{success} - r^{buyer}_{failure} = \frac{w(T^{seller}_1)E \cdot price}{w(T^{buyer}_1) + w(T^{seller}_1)} \geq 0 $ \\
+
+% $ \frac{w(T^{buyer})E \cdot price}{w(T^{buyer}) + w(T^{seller})} = \frac{price}{\min(T^{buyer}, T^{seller})} $ \\
+
+% $ E $ = $ \frac{w(T^{buyer})+w(T^{seller})}{w(T^{buyer}) \cdot \min(T^{buyer}, T^{seller})} $ \\
+
+% $ r^{seller}_{success}-r^{seller}_{failure} = \frac{price}{min(T^{buyer}, T^{seller})} $ \\
+
+% $ r^{buyer}_{success} - r^{buyer}_{failure} = \frac{w(T^{seller}) \cdot price}{w(T^{buyer}) \cdot \min(T^{buyer}, T^{seller})} $ \\
+
+% $ r^{seller}_{success} = price $ \\
+
+% $ r^{buyer}_{success} = -price $ \\
+
+% $ r^{seller}_{failure} = price \cdot (1 - \frac{1}{min(T^{buyer}, T^{seller})}) $\\
+
+% $ r^{buyer}_{failure} = - price \cdot (\frac{T^{seller}}{T^{buyer} \cdot \min(T^{buyer}, T^{seller})} + 1) $ \\
