@@ -4,5 +4,7 @@
 *.log
 *.dvi
 *.synctex.gz
+*.bbl
+*.blg
 # *.pdf
 *.toc
