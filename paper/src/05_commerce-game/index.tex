@@ -1,75 +1,240 @@
-\chapter{商取引ゲーム}
-本章では、外部の強制執行力によって商取引契約の履行が保証されない商取引を「商取引ゲーム」としてモデリングし、
-合理的な集団を仮定した場合に、そのゲームにおいて不正が生じないようなインセンティブを設計が不可能なことを示す。
+\chapter{約束・評判ゲーム}
+本章では、\ref{hypothesis}節で定義した補題１を検証する。
 
-% 社会契約が商取引の連鎖と捉えられることを示す
-% \section{商取引の連鎖}
-% 商取引とは、買い手と売り手の2者間で行われる通貨と商品(財もしくはサービスの提供)の交換である。
-% この定義に従うと、この社会の複数人で行われる通貨や商品のやり取りは、全て商取引に分解することができる。
-% 例えば1章の初めに述べたコーヒーの購入はもちろん、あなたとあなたと店主との間で行われるコーヒーと通貨の交換であるし、
-% 警察が不正を取り締まるのも、あなたと警察官と政府の3者間で行われる商取引である。
-% より詳細に考えるならば、あなたと政府との間で行われる通貨と公共サービスの交換と、
-% 政府と警察官との間で行われる給料としての通貨と警察官業務というサービスの交換、2つの商取引である。
-% 仮にイギリス人の金とインド人の胡椒の物々交換であったとしても、両者の通貨に価値を換算することで、
-% 金と通貨の交換と通貨と胡椒の交換の2つの商取引といったように。
-% それゆえ、1章1節で述べたような信頼の連鎖も複数の商取引に分解することができ、
-% 本当に商取引契約が履行される強制力が存在しているならば、
-% そのその連鎖の根源には必ず、他の商取引によって保証されることなく必ず履行される商取引が存在しているはずである。
+\section{補題１}
+\firstLemma
+% 成員の行動を観察できない外部の強制執行力が存在すると仮定した上で、
+% 完全に合理的な成員達に 合意された約束を履行させるインセンティブ設計は不可能である。
 
+\section{検証方法}
+成員の行動を観察できない外部の強制執行力として「評判システム」(\ref{reputationSystem}節)の存在を仮定し、
+２人の成員が、そのシステムを用いて約束を交わす「約束・評判ゲーム」(\ref{promiseReputationGame})について考える。
+このとき、各成員が約束によって生じる価値と「評判スコア」の合計を最大化しようとする場合、
+約束が履行されるような「評判スコア」を「評判システム」から決定できないことを示す。
 
-% コンヴェンション
-% \section{コンヴェンションと囚人のジレンマ}
-% デイビッドヒュームは社会契約をコンヴェンションという概念を用いて説明しようとした。
-% これは社会契約が果たされるのは、商取引によって両者の自分の欲しい物が手に入るためだとした。
+% \begin{description}
+%   \item[仮定１] 報告者は約諾者が約束を履行したか観察できる。
+%   \item[仮定２] 報告者以外の成員は約諾者が約束を履行したか観察できない。 
+%   \item[仮定３] 「評判システム」は約諾者が約束を履行したか観察できない。
+% \end{description}
 
+\section{評判システム}
+\label{reputationSystem}
+「評判システム」とは、初期の各成員の「評判スコア」と報告された約束の記録に基づいて、各成員の「評判スコア」を決定するシステムである。
+約束の記録とは、約諾者が約束を履行したかについての情報であり、約諾者、報告者、結果(「成功」か「失敗」)からなる。
+このシステムから成員の行動を観察することはできないため、約諾者が真に約束を履行したか否かと報告された結果が同じとは限らない。
+このシステムは、「約束・評判ゲーム」(\ref{promiseReputationGame}節)において、強制執行力としての役割を果たす。
 
-% 両者に利益があるから守られている？本当にそうだろうか？
-% デイビッドヒュームのコンベンションと似た事例として、〇〇の研究を紹介する。
-% すたぐハントゲームを紹介する。
-% しかし、我々は2者の戦略の結果が両者にとって最善になるからといって、
-% 必ずしもそこに行きつけるわけではないことを囚人のジレンマから学んでいる。
+% \subsection{約束の記録}
 
+\section{約束・評判ゲーム}
+\label{promiseReputationGame}
+「約束・評判ゲーム」とは、約諾者($promisor$)と報告者($reporter$)の2人によって行われるゲームである。
+約諾者は2者間で合意された約束を履行する、もしくは反故にする。
+それに対して報告者は約束の結果(「成功」か「失敗」)を決定し、約束の記録を「評判システム」に報告する。
 
-外部の強制執行力が存在すると仮定した上で、歴史と社会指標の計算方法を定義することで、社会契約が成立するかを確かめるため、
-
-% 問題提起
-\section{本章の問題提起}
-通貨を社会指標ととらえ、商取引の結果を
-合理的な人々が商取引を成功させるようなインセンティブ設計ができるか？
-
-仮にそれをなし得る外部の強制力が存在していたとして、
-１章の初めに述べたように、その存在というのは堂々巡りになっていく。
-警察も、裁判所も、税金を支払うことによって受けているサービスという点で、
-商取引だと考えれば、この商取引の依存関係を紐解いたさきに、
-必ず１つは他の商取引に依存せずとも、契約が履行される商取引が存在しているはずである。
-果たしてそんな商取引のメカニズムはデザイン可能なのか？
-
-\section{本章の仮説}
-
-\section{提案手法}
-\subsection{社会指標}
-
-\subsection{歴史}
-
-\subsection{商取引システム}
-
-% 全員が行動は観察することができない
-\subsection{観察不可}
-
-% TODO: 商取引システムについての概要をまとめる
+\begin{description}
+  % \centering
+  \item[step1]  $promisor$は合意された約束を履行する、もしくは反故にする．
+  \item[step2]  $reporter$は「成功」か「失敗」を「評判システム」に報告する．
+\end{description}
 
 
-% \input{./05_commerce-game/system.tex}
-% \input{./05_commerce-game/unobservable.tex}
-% \input{./05_commerce-game/commerce-system.tex}
-\input{./05_commerce-game/commerce-game.tex}
-\input{./05_commerce-game/proof.tex}
-\input{./05_commerce-game/conclusion.tex}
+\subsection{展開型ゲーム}
+\label{prgame-by-extensive-form}
+
+これは図\ref{prgametree}のゲームの木のような展開型ゲームとして表せる．
+各変数については下記の通りである。
+
+\textbf{step1}で$promisor$が約束を履行するか反故にするかと、
+\textbf{step2}で$reporter$が「成功」を報告するか「失敗」を報告するかで４つの結果がある。
+また，「評判システム」からは$promisor$と$reporter$の行動を観察できないため，
+\textbf{step2}での$reporter$の報告に基づいて$promisor$と$reporter$の「評判スコア」が決定しなければならない．
+それ故、①と③，②と④はそれぞれ$c_k$($k$は任意)を除いて同じ利得でなくてはならない．
+
+\subsubsection{各変数の定義}
+\label{prgamePayoffVariables}
+\begin{description}
+  % \centering
+  \item[$c_{p1}$]… 約束が履行された場合の$promisor$の「評判スコア」の変化量以外の効用
+  \item[$c_{p2}$]… 約束が反故にされた場合の$promisor$の「評判スコア」の変化量以外の効用
+  \item[$c_{r1}$]… 約束が履行された場合の$reporter$の「評判スコア」の変化量以外の効用
+  \item[$c_{r2}$]… 約束が反故にされた場合の$reporter$の「評判スコア」の変化量以外の効用
+  \item[$r_{ps}$]… 「成功」が報告された場合の$promisor$の「評判スコア」の変化量
+  \item[$r_{pf}$]… 「失敗」が報告された場合の$promisor$の「評判スコア」の変化量
+  \item[$r_{rs}$]… 「成功」が報告された場合の$reporter$の「評判スコア」の変化量
+  \item[$r_{rf}$]… 「失敗」が報告された場合の$reporter$の「評判スコア」の変化量
+\end{description}
+
+\input{05_commerce-game/gametree.tex}
+
+\subsection{各プレイヤーの戦略}
+この展開型ゲームにおける$promisor$と$reporter$の行動は、下記のような戦略として表せる。
+
+\subsubsection{$promisor$の戦略}
+\begin{description}
+  \item[$s_{p1}$]… 約束を履行する
+  \item[$s_{p2}$]… 約束を反故にする
+\end{description}
+
+\subsubsection{$reporter$の戦略}
+\begin{description}
+  \item[$s_{r1}$]… $promisor$が約束を履行した場合は「成功」，反故にした場合は「失敗」を報告する
+  \item[$s_{r2}$]… $promisor$が約束を履行した場合は「成功」，反故にした場合は「成功」を報告する
+  \item[$s_{r3}$]… $promisor$が約束を履行した場合は「失敗」，反故にした場合は「失敗」を報告する
+  \item[$s_{r4}$]… $promisor$が約束を履行した場合は「失敗」，反故にした場合は「成功」を報告する
+\end{description}
+
+\subsection{非協力戦略型ゲーム}
+これらの戦略を用いて、先に述べた展開型ゲームは表\ref{prgametable}のような非協力戦略型ゲームとして書き換えられる．
+\input{05_commerce-game/gametable.tex}
+
+\section{補題１の検証}
+\subsection{不正が防止される条件}
+表\ref{prgametable}より，「約束・評判ゲーム」において、約束が履行されるためには、
+$promisor$と$reporter$のとる戦略組が$ (s_{p1}, s_{r1})$もしくは$(s_{p1}, s_{r2})$のいずれかになる必要がある．
+各プレイヤーが戦略$s$をとったときの利得を$R$とし、その期待値を$E(R|s)$とする。
+全てのプレイヤーが完全に合理的な場合、$(s_{p1}, s_{r1})$か$(s_{p1}, s_{r2})$のいづれかの戦略組に帰着させるためには，
+
+\begin{description}
+  \centering
+  \item[条件①] $E(R|s_{p1})>E(R|s_{p2})$かつ$E(R|s_{r1})>\max\{E(R|s_{r2}), E(R|s_{r3}), E(R|s_{r4}) \}$
+  \item[条件②] $E(R|s_{p1})>E(R|s_{p2})$かつ$E(R|s_{r2})>\max\{E(R|s_{r1}), E(R|s_{r3}), E(R|s_{r4}) \}$
+\end{description}
+
+のいづれかを満たす$(r_{ps}, r_{pf}, r_{rs}, r_{rf})$の組を「評判システム」から決定できる必要がある．
+本章ではこれが不可能であることを示す．
+
+\subsection{命題}
+条件①か条件②のいづれかを満たす$(r_{ps}, r_{pf}, r_{rs}, r_{rf})$の組を「評判システム」から決定することはできない．
+  
+\subsection{証明}
+各プレイヤーが戦略$s_{k}$をとる確率を$p_{k}$とする．
+
+\begin{gather}
+  0 \leq p_{k} \leq 1 \nonumber \\
+  p_{p1} + p_{p2} = 1 \nonumber \\
+  p_{r1} + p_{r2} + p_{r3} + p_{r4} = 1 \label{condition1}
+\end{gather}
+
+\subsubsection{各戦略の期待利得}
+$promisor$と$reporter$の各戦略の期待利得は次のように表せる．
+\begin{eqnarray}
+  E(R|s_{p1}) &=& p_{r1} (c_{p1} + r_{ps}) + p_{r2} (c_{p1} + r_{ps}) + p_{r3} (c_{p1} + r_{pf}) + p_{r4} (c_{p1} + r_{pf}) \nonumber \\
+              &=& c_{p1} + p_{r1} r_{ps} + p_{r2} r_{ps} + p_{r3} r_{pf} + p_{r4} r_{pf} \because\eqref{condition1} \label{expectedA} \\
+  E(R|s_{p2}) &=& p_{r1} (c_{p2} + r_{pf}) + p_{r2} (c_{p2} + r_{ps}) + p_{r3} (c_{p2} + r_{pf} ) + p_{r4} (c_{p2} + r_{ps}) \nonumber \\
+              &=& c_{p2} + p_{r1} r_{pf} + p_{r2} r_{ps} + p_{r3} r_{pf} + p_{r4} r_{ps} \because\eqref{condition1} \label{expectedB} \\
+  E(R|s_{r1}) &=& p_{p1} (c_{r1} + r_{rs}) + p_{p2} (c_{r2} + r_{rf}) \label{expectedR1} \\
+  E(R|s_{r2}) &=& p_{p1} (c_{r1} + r_{rs}) + p_{p2} (c_{r2} + r_{rs}) \label{expectedR2} \\
+  E(R|s_{r3}) &=& p_{p1} (c_{r1} + r_{rf}) + p_{p2} (c_{r2} + r_{rf}) \label{expectedR3} \\
+  E(R|s_{r4}) &=& p_{p1} (c_{r1} + r_{rf}) + p_{p2} (c_{r2} + r_{rs}) \label{expectedR4} \nonumber
+\end{eqnarray}
+
+\subsubsection{条件①が成り立たないことの証明}
+
+条件①が成り立たないことを示すために、その必要条件である下記の2つの条件について考える。
+
+\begin{gather}
+  E(R|s_{r1}) > E(R|s_{r2}) \label{conditionA} \\
+  E(R|s_{r1}) > E(R|s_{r3}) \label{conditionB}
+\end{gather}
+
+\eqref{conditionA}を満たすためには、
+\begin{eqnarray*}
+  &&E(R|s_{r1}) > E(R|s_{r2}) \\
+  &\therefore& p_{p1} (c_{r1} + r_{rs}) + p_{p2} (c_{r2} + r_{rf}) > p_{p1} (c_{r1} + r_{rs}) + p_{p2} (c_{r2} + r_{rs}) \because\eqref{expectedR1}\eqref{expectedR2}  \\
+  &\therefore& p_{p2} r_{rf} - p_{p2} r_{rs} > 0 \\
+  &\therefore& p_{p2} (r_{rf} - r_{rs}) > 0 \\
+\end{eqnarray*}
+
+つまり、
+
+\begin{equation}
+  p_{p2} > 0 \nonumber
+\end{equation}
+
+かつ
+
+\begin{equation}
+\label{quad1}
+  0 > r_{rs} - r_{rf}
+\end{equation}
+
+を満たす必要がある。\\
 
 
-社会契約は複数の商取引の連鎖と捉えることができる。
-デイビッドヒュームは同じように考えて、商取引において双方にメリットがあるから社会契約は成立すると考えた。
-囚人のジレンマから必ずしもパレート最適な答えにたどり着くわけではないことがわかる。
-商取引において、不正を防止するインセンティブ設計は可能か？
-無法地帯での無人売買機問題
-商取引システム
+\eqref{conditionB}を満たすためには、
+\begin{eqnarray*}
+  &&E(R|s_{r1}) > E(R|s_{r3}) \\
+  &\therefore& p_{p1} (c_{r1} + r_{rs}) + p_{p2} (c_{r2} + r_{rf}) > c_{p2} + p_{r1} r_{pf} + p_{r2} r_{ps} + p_{r3} r_{pf} + p_{r4} r_{ps}) \because\eqref{expectedR1}\eqref{expectedR3}\\
+  &\therefore& p_{p1} r_{rs} + p_{p2} r_{rf} > p_{p1} r_{rf} + p_{p2} r_{rf} \\
+  &\therefore& p_{p1} (r_{rs} - r_{rf}) > 0
+\end{eqnarray*}
+
+つまり，
+
+\begin{equation}
+   p_{p1} > 0 \nonumber
+\end{equation}
+
+かつ
+
+\begin{equation}
+   \label{quad2}
+   r_{rs} - r_{rf} > 0
+\end{equation}
+
+を満たす必要がある。\\
+
+ここで(\ref{quad1})と(\ref{quad2})を同時に満たすことはできないため，条件①は成り立たない．\\
+
+
+\subsubsection{条件②が成り立たないことの証明}
+次に、条件②の必要条件である
+
+\begin{gather}
+  E(R |s_{p1}) > E(R |s_{p2}) \label{conditionC}
+\end{gather}
+
+について考える。\\
+
+\eqref{conditionC}を満たすためには，
+\begin{eqnarray*}
+  &&E(R |s_{p1}) > E(R |s_{p2}) \\
+  &\therefore& c_{p1} + p_{r1} r_{ps} + p_{r2} r_{ps} + p_{r3} r_{pf} + p_{r4} r_{pf} > c_{p2} + p_{r1} r_{pf} + p_{r2} r_{ps} + p_{r3} r_{pf} + p_{r4} r_{ps} \\
+  &\therefore& c_{p1} + p_{r1} r_{ps} + p_{r4} r_{pf} > c_{p2} + p_{r1} r_{pf} + p_{r4} r_{ps} \\
+  &\therefore& c_{p1} - c_{p2} + p_{r1} r_{ps} + p_{r4} r_{pf} + p_{r1} r_{pf} - p_{r4} r_{ps} > 0 \\
+  &\therefore& p_{r1}(r_{ps} - r_{pf}) - p_{r4}(r_{ps} - r_{pf}) + c_{p1} - c_{p2} > 0 \\
+  &\therefore& (p_{r1} - p_{r4})(r_{ps} - r_{pf}) + c_{p1} - c_{p2} > 0 \\
+  &\therefore& (p_{r1} - p_{r4})(r_{ps} - r_{pf} + \frac{ c_{p1} - c_{p2} }{p_{r1} - p_{r4}}) > 0
+\end{eqnarray*}
+
+を満たす必要がある．つまり，\\
+
+$p_{r1} > p_{r4}$のとき， 
+\begin{eqnarray}
+  &&r_{ps} - r_{pf} + \frac{ c_{p1} - c_{p2} }{p_{r1} - p_{r4}} > 0\nonumber \\
+  &\therefore&r_{ps} - r_{pf} > \frac{ c_{p2} - c_{p1} }{ p_{r1} - p_{r4} } \nonumber
+\end{eqnarray}
+
+$p_{r1} < p_{r4}$のとき， 
+\begin{eqnarray}
+  &&r_{ps} - r_{pf} + \frac{ c_{p1} - c_{p2} }{p_{r1} - p_{r4}} < 0 \nonumber \\
+  &\therefore&r_{ps} - r_{pf} < \frac{ c_{p2} - c_{p1} }{ p_{r1} - p_{r4} } \nonumber
+\end{eqnarray}
+
+を満たせばよい．\\
+
+ここで、$E(R|s_{r2})>\max\{E(R|s_{r1}), E(R|s_{r3}), E(R|s_{r4}) \}$が成り立つと仮定する。\\
+
+このとき全ての合理的なプレイヤーは戦略$s_r2$をとり、必ず「成功」を報告するため、
+「評判システム」から$p_{r1}$と$p_{r4}$を推定することはできない。\\
+
+ゆえに、「評判システム」の記録からは条件②を満たすような$(r_{ps}, r_{pf})$の組を決定できない．\\
+
+以上より，条件①と条件②のいづれかを満たす
+$(r_{ps}, r_{pf},r_{rs},r_{rf})$の組を「評判システム」から決定することはできない．Q.E.D.
+
+
+メモ：後で$c_{p1} - c_{p2} \neq 0$の仮定を追加？
+
