@@ -2,89 +2,88 @@
 完全な実装については、GitHubのソースコードを参照。
 
 \subsection{ReputationWeight}
-最低信頼度$ T^{player} $を求めるためには、
-$ ReportedSuccessRate(p, q) $に係る任意の重み$ w^{player} $を決定する必要がある．
-この重み$ w^{player} $は、
-任意の$ player $が誠実な戦略をであろう主観確率を考える際に
-その$ player $と取引相手$ opportunity $との間での報告された成功率
-$ ReportedSuccessRate(player, opportunity) $をどの程度信頼するかを表している。
-本論では、保有している通貨の全体に占める割合をReputationWeight$ w^{player} $
-任意の$player$の通貨保有量を$ b^{player} $としたとき、
+最低信頼度$ T_i $を求めるためには、$ ReportedSuccessRate(i, j) $に係る任意の重み$ w_j $を決定する必要がある．
+この重み$ w_j $は、任意の成員が戦略$s_{p1}$をであろう主観確率を考える際に
+その成員$i$と相手$j$との間で報告された成功率$ ReportedSuccessRate(i, j) $をどの程度信頼するかを表している。
+ここでは、成員$j$の「評判スコア」が全体に占める割合をReputationWeight$w_j$とする。
+任意の成員$k$の「評判スコア」を$ b_{k} $としたとき、$w_k$は次のように表せる。
 
 \begin{equation*}
-  w^{player} \equiv \frac{b^{player}}{\sum^{players}_{i}b^{i}}
+  w_k \equiv \frac{b_k}{\sum^{members}_{k}b_k}
 \end{equation*}
 
-\subsection{「成功」が報告された場合の通貨保有量の変化}
-「商取引ゲーム」において、$buyer$から成功が報告された場合、
-$ buyer $は商品$ goods $の価格$ price $だけ通貨保有量が減り、
-$ seller $は$ price $だけ通貨保有量が増えるものとする．
+\subsection{報告された結果に基づく「評判スコア」の変化}
+$ reporter $が「成功」を報告した場合、
+$ reporter $は商品$ goods $の価格$ price $だけ「評判スコア」が減り、
+$ promisor $は$ price $だけ「評判スコア」が増加し．
+両者の「評判スコア」の合計は変化しないものとする．
 
-そのため商取引前後では$ seller $と$ buyer $の残高の合計は変化しない．
-ここから，$ r^{seller}_{success} $と$ r^{buyer}_{success} $は以下のように記せる．\\
+ここから，$ r_{ps} $と$ r_{rs} $は以下のように記せる．\\
 
 \begin{gather*}
-  r^{seller}_{success} = price \\
-  r^{buyer}_{success} = -price \\
-  r^{seller}_{success} + r^{buyer}_{success} = 0
+  r_{ps} = price \\
+  r_{rs} = -price \\
+  r_{ps} + r_{rs} = 0
 \end{gather*}
 
 
 \subsection{EscrowCost}
-まずは「失敗」が報告された時に$ seller $と$ buyer $から失われる通貨の量の合計を$ EscrowCost $とおいて考え，
+まずは「失敗」が報告された時に$ promisor $と$ reporter $から失われる通貨の量の合計を$ EscrowCost $とおいて考え，
 同時に商品価格$ price $にエスクロー係数$ E $を掛けたものとする．(ここで$ price $は$ goods $の価格である) \\
 
 \begin{equation}
   \begin{split}
-    EscrowCost \equiv (r^{buyer}_{success} - r^{buyer}_{failure}) + (r^{seller}_{success} - r^{seller}_{failure}) \\
+    EscrowCost \equiv (r_{rs} - r_{rf}) + (r_{ps} - r_{pf}) \\
     = E \cdot price
   \end{split}
 \end{equation}
 
 \subsection{EscrowCostの負担比率}
-$ EscrowCost $の負担比率は$ seller $と$ buyer $の最低信頼度$ T^{player} $を用いる．\\
+$ EscrowCost $の負担比率は$ promisor $と$ reporter $の最低信頼度$ T^{player} $を用いる．\\
 
 \begin{equation}
-  (r^{buyer}_{success} - r^{buyer}_{failure}):(r^{seller}_{success} - r^{seller}_{failure}) = T^{buyer}:T^{seller}
+  (r_{rs} - r_{rf}):(r_{ps} - r_{pf}) = T^{reporter}:T^{promisor}
 \end{equation}
 
 \subsection{EscrowCostの分配}
-「失敗」が報告されたときに$ EscrowCost $が消失すると、全体の通貨量が減少して通貨の価値が上がり商品価格が下がる。
-商品価格の変動を防ぐために本実験では$seller$と$buyer$以外の全てのプレイヤーに、
-そのプレイヤーの通貨保有量に応じて$ EscrowCost $を分配する。
-$seller$と$buyer$を含まないのは、分配によって「商取引ゲーム」のインセンティブ設計が変化しないようにするためである。
+「失敗」が報告されたときに$ EscrowCost $が消失すると、
+「評判スコア」の価値が上がり約束の価値が下がる。
+ここでは$promisor$と$reporter$以外の全てのプレイヤーに、
+その$ReputationWeight$に応じて$EscrowCost$を分配する。
+$promisor$と$reporter$を含まないのは、
+分配によって「約束・評判ゲーム」のインセンティブ設計が変化しないようにするためである。
 
 % \subsection{謎の条件}
-% $ \frac{w(T^{buyer}_1)E \cdot price}{w(T^{buyer}_1) + w(T^{seller}_1)} \geq \frac{price}{T^{buyer}} \geq \frac{goods}{p^{buyer}_1} $ \\
+% $ \frac{w(T^{reporter}_1)E \cdot price}{w(T^{reporter}_1) + w(T^{promisor}_1)} \geq \frac{price}{T^{reporter}} \geq \frac{goods}{p^{reporter}_1} $ \\
 
-% 上記の条件式から$ \frac{price}{ T^{buyer} } $でうまくいくはずだったが何故かうまく行かず，$ \frac{price}{ \min(T^{buyer}, T^{seller})} $をもちいたらうまくいったのでこちらを採用することとした．$ p^{buyer} $と$ P^{player}_1 $の関係性に問題があるためだと思われる． \\
+% 上記の条件式から$ \frac{price}{ T^{reporter} } $でうまくいくはずだったが何故かうまく行かず，$ \frac{price}{ \min(T^{reporter}, T^{promisor})} $をもちいたらうまくいったのでこちらを採用することとした．$ p^{reporter} $と$ P^{player}_1 $の関係性に問題があるためだと思われる． \\
 
-% $ \frac{w(T^{buyer}_1)E \cdot price}{w(T^{buyer}_1) + w(T^{seller}_1)} \geq \frac{price}{ \min(T^{buyer}, T^{seller})} $ \\
+% $ \frac{w(T^{reporter}_1)E \cdot price}{w(T^{reporter}_1) + w(T^{promisor}_1)} \geq \frac{price}{ \min(T^{reporter}, T^{promisor})} $ \\
 
 
-% \subsection{残高の変化量の組$ (r^{seller}_{success}, r^{seller}_{failure}, r^{buyer}_{success}, r^{buyer}_{failure}) $}
-% 上記の条件群を用いて残高の変化量の組$ (r^{seller}_{success}, r^{seller}_{failure}, r^{buyer}_{success}, r^{buyer}_{failure}) $を決定する． \\
+% \subsection{残高の変化量の組$ (r_{ps}, r_{pf}, r_{rs}, r_{rf}) $}
+% 上記の条件群を用いて残高の変化量の組$ (r_{ps}, r_{pf}, r_{rs}, r_{rf}) $を決定する． \\
 
-% $ r^{seller}_{success}+r^{buyer}_{success} = 0 $ \\
+% $ r_{ps}+r_{rs} = 0 $ \\
 
-% $ r^{seller}_{failure}+r^{buyer}_{failure} = -E \cdot price $ \\
+% $ r_{pf}+r_{rf} = -E \cdot price $ \\
 
-% $ r^{seller}_{success} - r^{seller}_{failure} = \frac{w(T^{buyer}_1)E \cdot price}{w(T^{buyer}_1) + w(T^{seller}_1)} \geq \frac{price}{T^{buyer}} $ \\
+% $ r_{ps} - r_{pf} = \frac{w(T^{reporter}_1)E \cdot price}{w(T^{reporter}_1) + w(T^{promisor}_1)} \geq \frac{price}{T^{reporter}} $ \\
 
-% $ r^{buyer}_{success} - r^{buyer}_{failure} = \frac{w(T^{seller}_1)E \cdot price}{w(T^{buyer}_1) + w(T^{seller}_1)} \geq 0 $ \\
+% $ r_{rs} - r_{rf} = \frac{w(T^{promisor}_1)E \cdot price}{w(T^{reporter}_1) + w(T^{promisor}_1)} \geq 0 $ \\
 
-% $ \frac{w(T^{buyer})E \cdot price}{w(T^{buyer}) + w(T^{seller})} = \frac{price}{\min(T^{buyer}, T^{seller})} $ \\
+% $ \frac{w(T^{reporter})E \cdot price}{w(T^{reporter}) + w(T^{promisor})} = \frac{price}{\min(T^{reporter}, T^{promisor})} $ \\
 
-% $ E $ = $ \frac{w(T^{buyer})+w(T^{seller})}{w(T^{buyer}) \cdot \min(T^{buyer}, T^{seller})} $ \\
+% $ E $ = $ \frac{w(T^{reporter})+w(T^{promisor})}{w(T^{reporter}) \cdot \min(T^{reporter}, T^{promisor})} $ \\
 
-% $ r^{seller}_{success}-r^{seller}_{failure} = \frac{price}{min(T^{buyer}, T^{seller})} $ \\
+% $ r_{ps}-r_{pf} = \frac{price}{min(T^{reporter}, T^{promisor})} $ \\
 
-% $ r^{buyer}_{success} - r^{buyer}_{failure} = \frac{w(T^{seller}) \cdot price}{w(T^{buyer}) \cdot \min(T^{buyer}, T^{seller})} $ \\
+% $ r_{rs} - r_{rf} = \frac{w(T^{promisor}) \cdot price}{w(T^{reporter}) \cdot \min(T^{reporter}, T^{promisor})} $ \\
 
-% $ r^{seller}_{success} = price $ \\
+% $ r_{ps} = price $ \\
 
-% $ r^{buyer}_{success} = -price $ \\
+% $ r_{rs} = -price $ \\
 
-% $ r^{seller}_{failure} = price \cdot (1 - \frac{1}{min(T^{buyer}, T^{seller})}) $\\
+% $ r_{pf} = price \cdot (1 - \frac{1}{min(T^{reporter}, T^{promisor})}) $\\
 
-% $ r^{buyer}_{failure} = - price \cdot (\frac{T^{seller}}{T^{buyer} \cdot \min(T^{buyer}, T^{seller})} + 1) $ \\
+% $ r_{rf} = - price \cdot (\frac{T^{promisor}}{T^{reporter} \cdot \min(T^{reporter}, T^{promisor})} + 1) $ \\
