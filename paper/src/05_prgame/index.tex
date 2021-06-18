@@ -90,9 +90,7 @@
 これらの戦略を用いて、先に述べた展開型ゲームは表\ref{prgametable}のような非協力戦略型ゲームとして書き換えられる．
 \input{05_prgame/gametable.tex}
 
-\section{補題１の検証}
-\label{verification1}
-\subsection{不正が防止される条件}
+\section{不正が防止される条件}
 表\ref{prgametable}より，「約束・評判ゲーム」において、約束が履行されるためには、
 $promisor$と$reporter$のとる戦略組が$ (s_{p1}, s_{r1})$もしくは$(s_{p1}, s_{r2})$のいずれかになる必要がある．
 各プレイヤーが戦略$s$をとったときの利得を$R$とし、その期待値を$E(R|s)$とする。
@@ -107,10 +105,11 @@ $promisor$と$reporter$のとる戦略組が$ (s_{p1}, s_{r1})$もしくは$(s_{
 のいづれかを満たす$(r_{ps}, r_{pf}, r_{rs}, r_{rf})$の組を「評判システム」から決定できる必要がある．
 本章ではこれが不可能であることを示す．
 
-\subsection{命題}
+\section{命題}
 条件①か条件②のいづれかを満たす$(r_{ps}, r_{pf}, r_{rs}, r_{rf})$の組を「評判システム」から決定することはできない．
   
-\subsection{証明}
+\section{証明}
+\label{verification1}
 各プレイヤーが戦略$s_{k}$をとる確率を$p_{k}$とする．
 
 \begin{gather}

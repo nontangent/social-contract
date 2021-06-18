@@ -1,89 +1,85 @@
-本節ではシミュレーションを実装するにあたって必要となる商取引システムの仕様の詳細の一部を紹介する。
+本節ではシミュレーションに用いる「評判システム」の仕様の詳細を紹介する。
 完全な実装については、GitHubのソースコードを参照。
 
+\subsection{約束の価値$C$}
+\begin{eqnarray}
+  C &\equiv& 1 \\
+    &=& c_{p2} - c_{p1} \\
+    &=& c_{r1} - c_{r2}
+\end{eqnarray}
+
 \subsection{ReputationWeight}
-最低信頼度$ T_i $を求めるためには、$ ReportedSuccessRate(i, j) $に係る任意の重み$ w_j $を決定する必要がある．
-この重み$ w_j $は、任意の成員が戦略$s_{p1}$をであろう主観確率を考える際に
-その成員$i$と相手$j$との間で報告された成功率$ ReportedSuccessRate(i, j) $をどの程度信頼するかを表している。
-ここでは、成員$j$の「評判スコア」が全体に占める割合をReputationWeight$w_j$とする。
-任意の成員$k$の「評判スコア」を$ b_{k} $としたとき、$w_k$は次のように表せる。
+最低信頼度$ T_i $を求めるため、$ReportedSuccessRate(i, j)$の荷重総和に用いる重み$ w_k $を定義する．
+この重み$w_k$は、任意の成員$i$が戦略$s_{p1}$をとる確率$p_{p1}$を推定する際に、
+成員$i$と他の成員$j$における$ReportedSuccessRate(i, j)$をどの程度信頼するかを表している。
+本実験では、成員$j$の「評判スコア」が全体に占める割合をReputationWeight$w_j$と定義する。
+任意の成員$k$の「評判スコア」を$b_k$としたとき、$w_k$は次のように表せる。($n$は成員の人数)
 
 \begin{equation*}
-  w_k \equiv \frac{b_k}{\sum^{members}_{k}b_k}
+  w_k \equiv \frac{b_k}{\sum^{\{1,2,...,n\}}_{k}b_k}
 \end{equation*}
 
-\subsection{報告された結果に基づく「評判スコア」の変化}
+\subsection{「成功」が報告された場合の「評判スコア」の変化}
 $ reporter $が「成功」を報告した場合、
-$ reporter $は商品$ goods $の価格$ price $だけ「評判スコア」が減り、
-$ promisor $は$ price $だけ「評判スコア」が増加し．
-両者の「評判スコア」の合計は変化しないものとする．
+$ reporter $は約束の価値$C$だけ減り、$ promisor $は$C$だけ増加するものとする。
 
-ここから，$ r_{ps} $と$ r_{rs} $は以下のように記せる．\\
-
-\begin{gather*}
-  r_{ps} = price \\
-  r_{rs} = -price \\
+\begin{gather}
+  r_{ps} = C \\
+  r_{rs} = -C \\
   r_{ps} + r_{rs} = 0
-\end{gather*}
+\end{gather}
 
 
 \subsection{EscrowCost}
-まずは「失敗」が報告された時に$ promisor $と$ reporter $から失われる通貨の量の合計を$ EscrowCost $とおいて考え，
-同時に商品価格$ price $にエスクロー係数$ E $を掛けたものとする．(ここで$ price $は$ goods $の価格である) \\
+「失敗」が報告されたとき、$promisor$と$reporter$が失う「評判スコア」の合計を$EscrowCost$とする。
+約束の価値$C$にエスクロー係数$E$を掛けたものとする．
 
-\begin{equation}
-  \begin{split}
-    EscrowCost \equiv (r_{rs} - r_{rf}) + (r_{ps} - r_{pf}) \\
-    = E \cdot price
-  \end{split}
-\end{equation}
+\begin{eqnarray}
+  EscrowCost  &\equiv& (r_{rs} - r_{rf}) + (r_{ps} - r_{pf}) \\
+              &=& E \cdot C
+\end{eqnarray}
 
 \subsection{EscrowCostの負担比率}
-$ EscrowCost $の負担比率は$ promisor $と$ reporter $の最低信頼度$ T^{player} $を用いる．\\
+成員$j$が$promiser$、成員$k$が$reporter$として「約束・評判ゲーム」を行うとき、
+$ EscrowCost $の負担比率は両者の最低信頼度$T_i$を用いる．\\
 
 \begin{equation}
-  (r_{rs} - r_{rf}):(r_{ps} - r_{pf}) = T^{reporter}:T^{promisor}
+  (r_{rs} - r_{rf}):(r_{ps} - r_{pf}) = T_k:T_j
 \end{equation}
 
 \subsection{EscrowCostの分配}
-「失敗」が報告されたときに$ EscrowCost $が消失すると、
-「評判スコア」の価値が上がり約束の価値が下がる。
-ここでは$promisor$と$reporter$以外の全てのプレイヤーに、
-その$ReputationWeight$に応じて$EscrowCost$を分配する。
-$promisor$と$reporter$を含まないのは、
-分配によって「約束・評判ゲーム」のインセンティブ設計が変化しないようにするためである。
+「失敗」が報告されたときに$EscrowCost$が消失すると、
+「評判スコア」の総量が下がり、約束の価値$C$
 
-% \subsection{謎の条件}
-% $ \frac{w(T^{reporter}_1)E \cdot price}{w(T^{reporter}_1) + w(T^{promisor}_1)} \geq \frac{price}{T^{reporter}} \geq \frac{goods}{p^{reporter}_1} $ \\
-
-% 上記の条件式から$ \frac{price}{ T^{reporter} } $でうまくいくはずだったが何故かうまく行かず，$ \frac{price}{ \min(T^{reporter}, T^{promisor})} $をもちいたらうまくいったのでこちらを採用することとした．$ p^{reporter} $と$ P^{player}_1 $の関係性に問題があるためだと思われる． \\
-
-% $ \frac{w(T^{reporter}_1)E \cdot price}{w(T^{reporter}_1) + w(T^{promisor}_1)} \geq \frac{price}{ \min(T^{reporter}, T^{promisor})} $ \\
+総量を一定に保つために、$promisor$と$reporter$以外の全てのプレイヤーに、
+$ReputationWeight$に応じて$EscrowCost$を分配する。
+$promisor$と$reporter$を含まないのは、分配によるインセンティブ設計への影響をなくすためである。
 
 
 % \subsection{残高の変化量の組$ (r_{ps}, r_{pf}, r_{rs}, r_{rf}) $}
+% 成員$i$を$promisor$、$j$を$reporter$とする。
 % 上記の条件群を用いて残高の変化量の組$ (r_{ps}, r_{pf}, r_{rs}, r_{rf}) $を決定する． \\
 
 % $ r_{ps}+r_{rs} = 0 $ \\
 
-% $ r_{pf}+r_{rf} = -E \cdot price $ \\
+% $ r_{pf}+r_{rf} = -E \cdot C $ \\s
 
-% $ r_{ps} - r_{pf} = \frac{w(T^{reporter}_1)E \cdot price}{w(T^{reporter}_1) + w(T^{promisor}_1)} \geq \frac{price}{T^{reporter}} $ \\
+% $ r_{ps} - r_{pf} = \frac{C}{T_j} $ \\
 
-% $ r_{rs} - r_{rf} = \frac{w(T^{promisor}_1)E \cdot price}{w(T^{reporter}_1) + w(T^{promisor}_1)} \geq 0 $ \\
+% $ r_{rs} - r_{rf} = \frac{C}{T_i} \geq 0 $ \\
 
-% $ \frac{w(T^{reporter})E \cdot price}{w(T^{reporter}) + w(T^{promisor})} = \frac{price}{\min(T^{reporter}, T^{promisor})} $ \\
+% $ \frac{T_j E \cdot C}{T_j + T_i} = \frac{C}{T_i} $ \\
 
-% $ E $ = $ \frac{w(T^{reporter})+w(T^{promisor})}{w(T^{reporter}) \cdot \min(T^{reporter}, T^{promisor})} $ \\
+% $ E $ = $ \frac{T_j+T_i}{T_j \cdot T_i} $ \\
 
-% $ r_{ps}-r_{pf} = \frac{price}{min(T^{reporter}, T^{promisor})} $ \\
+% $ r_{ps}-r_{pf} = \frac{C}{min(T_j, T_i)} $ \\
 
-% $ r_{rs} - r_{rf} = \frac{w(T^{promisor}) \cdot price}{w(T^{reporter}) \cdot \min(T^{reporter}, T^{promisor})} $ \\
+% $ r_{rs} - r_{rf} = \frac{T_i \cdot C}{T_j \cdot T_i} $ \\
 
-% $ r_{ps} = price $ \\
+% $ r_{ps} = C $ \\
 
-% $ r_{rs} = -price $ \\
+% $ r_{rs} = -C $ \\
 
-% $ r_{pf} = price \cdot (1 - \frac{1}{min(T^{reporter}, T^{promisor})}) $\\
+% $ r_{pf} = - C \cdot (\frac{1 - T_i}{T_i}) $\\
 
-% $ r_{rf} = - price \cdot (\frac{T^{promisor}}{T^{reporter} \cdot \min(T^{reporter}, T^{promisor})} + 1) $ \\
+% $ r_{rf} = - C \cdot (\frac{1}{T_j} + 1) $ \\
