@@ -34,11 +34,11 @@ export abstract class BaseCommerceSystem implements ICommerceSystem {
     return {
       seller: {
         success: this.price,
-        failure: this.price - (sellerW * E * this.price),
+        failure: this.price * (1 - sellerW * E),
       },
       buyer: {
-        success: -1 * this.price,
-        failure: this.price - (buyerW * E * this.price),
+        success: - this.price,
+        failure: this.price * (- 1 - buyerW * E),
       }
     }
   }
@@ -156,5 +156,5 @@ export abstract class BaseCommerceSystem implements ICommerceSystem {
   abstract getNormalizedBurdenWeights(t: number, sellerId: PlayerId, buyerId: PlayerId): [number, number];
   abstract getEscrowCost(t: number, sellerId: PlayerId, buyerId: PlayerId): number;
   // abstract getEscrowWeights(t: number, balances: Balances, excludeIds: PlayerId[]): EscrowWeights;
-  abstract getSuccessRate(t: number, playerId: PlayerId, opportunityId: PlayerId): [number, number];
+  abstract getReportedSuccessRate(t: number, playerId: PlayerId, opportunityId: PlayerId, role: 'seller' | 'buyer'): [number, number];
 }

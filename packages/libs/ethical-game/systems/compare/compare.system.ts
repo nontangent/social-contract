@@ -60,8 +60,8 @@ export class CompareSystem implements ICommerceSystem {
     return this.compare(system => system.setTransaction(transaction));
   }
 
-  getSuccessRate(t: number, playerId: PlayerId, opportunityId: PlayerId): [number, number] {
-    return this.compare(system => system.getSuccessRate(t, playerId, opportunityId));
+  getReportedSuccessRate(t: number, playerId: PlayerId, opportunityId: PlayerId, role: 'seller' | 'buyer'): [number, number] {
+    return this.compare(system => system.getReportedSuccessRate(t, playerId, opportunityId, role));
   }
 
 }

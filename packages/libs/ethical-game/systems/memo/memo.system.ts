@@ -23,12 +23,12 @@ export class MemoCommerceSystem extends CommerceSystem {
   }
 
   // 過去の商取引ゲームで成功が報告された割合を取得
-  getSuccessRate(t: number, playerId: PlayerId, opportunityId: PlayerId): [number, number] {
-    const key = this.buildKey({t, playerId, opportunityId});
+  getReportedSuccessRate(t: number, playerId: PlayerId, opportunityId: PlayerId, role: 'seller' | 'buyer'): [number, number] {
+    const key = this.buildKey({t, playerId, opportunityId, role});
     const cached = this.successRateCache.get(key);
     if (cached) return clone(cached);
 
-    const successRate = super.getSuccessRate(t, playerId, opportunityId);
+    const successRate = super.getReportedSuccessRate(t, playerId, opportunityId, role);
     this.successRateCache.set(key, clone(successRate));
     return clone(successRate);
   }

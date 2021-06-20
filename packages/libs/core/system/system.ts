@@ -17,6 +17,6 @@ export interface ICommerceSystem {
   getTransaction(t: number): Transaction | null;
   setTransaction(transaction: Transaction): void;
 
-  getSuccessRate(t: number, playerId: PlayerId, opportunityId: PlayerId): [number, number];
+  getReportedSuccessRate(t: number, playerId: PlayerId, opportunityId: PlayerId, role: 'seller' | 'buyer'): [number, number];
   getCombination(t: number): [PlayerId, PlayerId];
 }
