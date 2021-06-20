@@ -36,15 +36,15 @@ $ reporter $は約束の価値$C$だけ減り、$ promisor $は$C$だけ増加�
 
 \begin{eqnarray}
   EscrowCost  &\equiv& (r_{rs} - r_{rf}) + (r_{ps} - r_{pf}) \\
-              &=& E \cdot C
+              &=& E \cdot C \label{escrowCost}
 \end{eqnarray}
 
 \subsection{EscrowCostの負担比率}
-成員$j$が$promiser$、成員$k$が$reporter$として「約束・評判ゲーム」を行うとき、
-$ EscrowCost $の負担比率は両者の最低信頼度$T_i$を用いる．\\
+成員$i$を$promiser$、$j$を$reporter$とする。
+「約束・評判ゲーム」を行うとき、$EscrowCost$の負担比率を両者の最低信頼度$T_i$を用いる．\\
 
 \begin{equation}
-  (r_{rs} - r_{rf}):(r_{ps} - r_{pf}) = T_k:T_j
+  (r_{ps} - r_{pf}):(r_{rs} - r_{rf}) = T_j:T_i
 \end{equation}
 
 \subsection{EscrowCostの分配}
@@ -55,31 +55,25 @@ $ EscrowCost $の負担比率は両者の最低信頼度$T_i$を用いる．\\
 $ReputationWeight$に応じて$EscrowCost$を分配する。
 $promisor$と$reporter$を含まないのは、分配によるインセンティブ設計への影響をなくすためである。
 
+\subsection{不正が防止される条件を満たす定義}
+成員$j$を$promiser$、$k$を$reporter$とする。
+このとき、\eqref{condition6-1}と\eqref{condition6-2}を満たす$r_{ps} - r_{pf}$と$r_{rs} - r_{rf}$を下記のように定義する。
 
-% \subsection{残高の変化量の組$ (r_{ps}, r_{pf}, r_{rs}, r_{rf}) $}
-% 成員$i$を$promisor$、$j$を$reporter$とする。
-% 上記の条件群を用いて残高の変化量の組$ (r_{ps}, r_{pf}, r_{rs}, r_{rf}) $を決定する． \\
+\begin{eqnarray}
+  r_{ps} - r_{pf} &\equiv& \frac{C}{T_i} \label{condition6-3} \\
+                  &\geq& \frac{c_{p2} - c_{p1}}{T_i} \nonumber \\
+  r_{rs} - r_{rf} &\equiv& \frac{C}{T_j} \label{condition6-4} \\
+                  &\geq& 0 \nonumber
+\end{eqnarray}
 
-% $ r_{ps}+r_{rs} = 0 $ \\
+\subsection{残高の変化量の組$ (r_{ps}, r_{pf}, r_{rs}, r_{rf}) $}
+上記の定義からエスクロー係数$E$と残高の変化量の組$ (r_{ps}, r_{pf}, r_{rs}, r_{rf}) $は次のように求まる． \\
+成員$i$を$promisor$、$j$を$reporter$とする。
 
-% $ r_{pf}+r_{rf} = -E \cdot C $ \\s
-
-% $ r_{ps} - r_{pf} = \frac{C}{T_j} $ \\
-
-% $ r_{rs} - r_{rf} = \frac{C}{T_i} \geq 0 $ \\
-
-% $ \frac{T_j E \cdot C}{T_j + T_i} = \frac{C}{T_i} $ \\
-
-% $ E $ = $ \frac{T_j+T_i}{T_j \cdot T_i} $ \\
-
-% $ r_{ps}-r_{pf} = \frac{C}{min(T_j, T_i)} $ \\
-
-% $ r_{rs} - r_{rf} = \frac{T_i \cdot C}{T_j \cdot T_i} $ \\
-
-% $ r_{ps} = C $ \\
-
-% $ r_{rs} = -C $ \\
-
-% $ r_{pf} = - C \cdot (\frac{1 - T_i}{T_i}) $\\
-
-% $ r_{rf} = - C \cdot (\frac{1}{T_j} + 1) $ \\
+\begin{eqnarray}
+  E &=& - \frac{T_i + T_j}{T_i T_j} \\
+  r_{ps} &=& 1 \\
+  r_{pf} &=& 1 - \frac{1}{T_j} \\
+  r_{rs} &=& -1 \\
+  r_{rf} &=& 1 - \frac{1}{T_i}
+\end{eqnarray}

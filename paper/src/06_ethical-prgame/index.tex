@@ -191,21 +191,27 @@ $ P_i $を$FulfillStrategyRate(i, j)$と$\sum^{\{1, 2, ..., n\}}_{k}w_k = 1$を�
 \eqref{inequalityFR}より、$ P_i \geq T_i $がいえるため、\eqref{conditionByPr1}について
 
 \begin{eqnarray}
-  r_{ps} - r_{pf} &\geq& \frac{c_{p2} - c_{p1}}{T_i} \\
-                  &\geq& \frac{c_{p2} - c_{p1}}{P_i} = \frac{c_{p2} - c_{p1}}{p_{r1}} \nonumber
+  \frac{c_{p2} - c_{p1}}{T_i} \geq \frac{c_{p2} - c_{p1}}{P_i} = \frac{c_{p2} - c_{p1}}{p_{r1}} \nonumber
 \end{eqnarray}
 
-がいえる．\\
+がいえる．ゆえに、
 
-「評判システム」から最低信頼度$T_i$は既知のため、
+\begin{eqnarray}
+  r_{ps} - r_{pf} &\geq& \frac{c_{p2} - c_{p1}}{T_i} \label{condition6-1} \\
+  r_{rs} - r_{rf} &\geq& 0 \label{condition6-2}
+\end{eqnarray}
+
+を満たせばよい、「告発する信用・評判ゲーム」で不正を防止できる。\\
+
+ここで、「評判システム」から最低信頼度$T_i$は既知のため、
 $p_{r1} > 0$かつ $p_{p1} > 0$かつ$ \epsilon_p > \lambda_p $かつ$ \epsilon_r > \lambda_r $を仮定した上で，
-「告発する信用・評判ゲーム」において、不正を防止する$ (r_{ps}, r_{pf}, r_{rs}, r_{rf}) $の組を「評判システム」から決定できる。
+$ (r_{ps}, r_{pf}, r_{rs}, r_{rf}) $の組を決定できる。
 
 \section{評判システムの詳細}
 \input{./06_ethical-prgame/detail.tex}
 
 \section{実験方法}
-先の不正が防止される条件を満たすインセンティブ設計を行う「評判システム」と
+「評判システムの詳細」に基づく「評判システム」と
 次の8タイプのエージェントから重複問わずランダムに選んだ8体のエージェントを用意し試行を実施する。
 これをタイプAのエージェントが0〜7体を占める場合について、それぞれ8000回づつ繰り返し、
 エージェントの構成とstep13で求まる「報告された成功率」と「真の成功率」を記録する。
