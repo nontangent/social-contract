@@ -1,5 +1,5 @@
 import { IPlayer } from "@social-contract/libs/core/player";
-import { ICommerceSystem } from "@social-contract/libs/core/system";
+import { IReputationSystem } from "@social-contract/libs/core/system";
 import { f2 } from "@social-contract/libs/utils/helpers";
 
 const AsciiTable = require('ascii-table');
@@ -15,14 +15,14 @@ export interface BalancesData {
 }
 
 export class BalancesPresenter {
-  buildBalancesString(systemMap: Map<MapKey, ICommerceSystem>, t: number, n: number): string {
+  buildBalancesString(systemMap: Map<MapKey, IReputationSystem>, t: number, n: number): string {
     const data = this.buildBalancesData(systemMap, t, n);
     return this.formatBalancesData(data);
   }
 
-  buildBalancesData(systemMap: Map<MapKey, ICommerceSystem>, t: number, n: number): BalancesData {
+  buildBalancesData(systemMap: Map<MapKey, IReputationSystem>, t: number, n: number): BalancesData {
     const balances = [...systemMap.keys()].reduce((pre, key, i) => {
-      return pre.set(key, [...Array(n)].map((_, j) => systemMap.get(key)!.getBalance(j, t)));
+      return pre.set(key, [...Array(n)].map((_, j) => systemMap.get(key)!.getScore(j, t)));
     }, new Map() as BalancesMap);
     return {t, n, balances};
   }

@@ -24,8 +24,8 @@ export class PlayerB extends BasePlayer {
     return `Player ${this.id}(Contract ${this.type})`;
   }
 
-  determineResult(sellerId: PlayerId, start: number, end: number): Result {
-    const result = super.determineResult(sellerId, start, end);
+  decideResult(sellerId: PlayerId): Result {
+    const result = super.decideResult(sellerId);
     return result === Result.SUCCESS ? Result.FAILED : Result.SUCCESS;
   }
 }

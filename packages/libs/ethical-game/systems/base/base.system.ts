@@ -1,5 +1,5 @@
 import { 
-  PlayerId, Balances, ICommerceSystem, InitialState, IStore, Result, Rewards, Transaction 
+  PlayerId, Balances, IReputationSystem, InitialState, IStore, Result, Rewards, Transaction 
 } from '@social-contract/libs/core';
 import { Store } from '@social-contract/libs/ethical-game';
 import { permutation, sum } from '@social-contract/libs/utils/helpers';
@@ -9,7 +9,7 @@ const logger = getLogger(__filename);
 
 export type EscrowWeights = Record<PlayerId, number>;
 
-export abstract class BaseCommerceSystem implements ICommerceSystem {
+export abstract class BaseReputationSystem implements IReputationSystem {
   public price = 1;
   store: IStore = new Store();
 
@@ -51,13 +51,13 @@ export abstract class BaseCommerceSystem implements ICommerceSystem {
     return this.store.setTransaction(transaction);
   }
 
-  getBalances(t: number): Balances {
+  getScores(t: number): Balances {
 
     // 時刻が0の場合は初期状態のbalancesを返す
     if (t === 0) return this.store.getInitialState()!.balances;
 
     // 時刻t-1のbalancesを取得する
-    const balances = this.getBalances(t-1);
+    const balances = this.getScores(t-1);
     
     // 時刻tの商取引を取得する
     const transaction = this.getTransaction(t);
@@ -106,8 +106,8 @@ export abstract class BaseCommerceSystem implements ICommerceSystem {
     return balances
   }
 
-  getBalance(playerId: PlayerId, t: number): number {
-    return this.getBalances(t)[playerId];
+  getScore(playerId: PlayerId, t: number): number {
+    return this.getScores(t)[playerId];
   }
 
   get n(): number {

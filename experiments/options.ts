@@ -11,8 +11,8 @@ export interface Options {
 
 export const defaultOption: Options = {
   laps: 20,
-  interval: 100,
-  n: 16,
+  interval: 0,
+  n: 8,
   presentation: true,
   sample: 1,
   multi: 1,

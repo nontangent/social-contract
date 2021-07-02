@@ -1,8 +1,8 @@
 import { Player } from './player';
-import { CommerceSystem, Transaction, Result } from '../system';
+import { ReputationSystem, Transaction, Result } from '../system';
 
 describe('Player Class Test', () => {
-  const systemFactory = () =>  new CommerceSystem({balances: {}});
+  const systemFactory = () =>  new ReputationSystem({balances: {}});
 
   it('Initialize Player', () => {
     const player = new Player(0, systemFactory());

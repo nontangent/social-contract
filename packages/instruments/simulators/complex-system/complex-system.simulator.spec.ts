@@ -1,9 +1,9 @@
 import { Player } from './player';
 import { Simulator } from './simulator';
-import { CommerceSystem } from './system';
+import { ReputationSystem } from './system';
 
 describe('Simulator Test', () => {
-  const systemFactory = () => new CommerceSystem({balances: {}});
+  const systemFactory = () => new ReputationSystem({balances: {}});
   const playerFactory = (i: number) => new Player(i, systemFactory());
 
   it('Simulator initialize Test', () => {

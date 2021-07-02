@@ -26,9 +26,9 @@ if (require?.main === module) {
     interval: 0,
     n: 8,
     presentation: false,
-    sample: 800,
+    sample: 7200,
     multi: cpus().length,
-    honestNum: 5,
+    honestNum: 7,
   };
   if (options.sample % options.multi !== 0) throw new Error('the number of sample is divisible by options.multi');
   multi(options);

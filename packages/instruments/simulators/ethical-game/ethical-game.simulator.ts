@@ -1,4 +1,4 @@
-import { ICommerceSystem, Result, Transaction } from '@social-contract/libs/core';
+import { IReputationSystem, Result, Transaction } from '@social-contract/libs/core';
 import { IEthicalGamePlayer } from '@social-contract/libs/ethical-game';
 import { sleep } from '@social-contract/libs/utils/helpers';
 import { IPresenter } from '@social-contract/instruments/presenters';
@@ -11,7 +11,7 @@ export abstract class BaseEthicalGameSimulator extends BaseSimulator<IEthicalGam
 
   constructor(
     public players: IEthicalGamePlayer[],
-    public system: ICommerceSystem,
+    public system: IReputationSystem,
     public presenter: IPresenter,
     public logger = new EthicalGameLogger(),
     ) {
@@ -62,7 +62,7 @@ export abstract class BaseEthicalGameSimulator extends BaseSimulator<IEthicalGam
     return condition ? Result.SUCCESS : Result.FAILED;
   }
 
-  getRecorderKey(system: ICommerceSystem): IEthicalGamePlayer | string {
+  getRecorderKey(system: IReputationSystem): IEthicalGamePlayer | string {
     return system.id;
   }
 

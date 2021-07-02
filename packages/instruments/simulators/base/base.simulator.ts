@@ -1,6 +1,6 @@
 import { permutation } from '@social-contract/libs/utils/helpers';
 import { PlayerId } from '@social-contract/libs/core/player';
-import { ICommerceSystem, Result, Transaction } from '@social-contract/libs/core/system';
+import { IReputationSystem, Result, Transaction } from '@social-contract/libs/core/system';
 import { SuccessRateRecorder } from '@social-contract/instruments/recorders';
 import { ISimulator } from '@social-contract/instruments/simulators';
 import { ISimulatorLogger } from '@social-contract/instruments/loggers';
@@ -20,9 +20,9 @@ export abstract class BaseSimulator<IPlayer extends {id: PlayerId}> implements I
     return this.players.find(p => p.id === playerId)!;
   }
 
-  recordResult(system: ICommerceSystem, transaction: Transaction): void {
+  recordResult(system: IReputationSystem, transaction: Transaction): void {
     // 商取引ゲームが行われた場合(バランスに変化があった場合)、真の結果と報告された結果を記録する
-    const balances = system.getBalances(transaction.t);
+    const balances = system.getScores(transaction.t);
     const key = this.getRecorderKey(system);
     const recorder = this.recorderMap.get(key)!;
     if (!recorder.isSameWithPreBalances(balances)) {
@@ -49,7 +49,7 @@ export abstract class BaseSimulator<IPlayer extends {id: PlayerId}> implements I
   abstract run(): Promise<void>;
   
   abstract getTrueResult(seller: IPlayer, buyer: IPlayer): Result;
-  abstract getRecorderKey(system: ICommerceSystem): IPlayer | string;
+  abstract getRecorderKey(system: IReputationSystem): IPlayer | string;
 
   abstract render(simulator: BaseSimulator<IPlayer>, transaction: Transaction): Promise<void>;
   abstract log(): Promise<void>;

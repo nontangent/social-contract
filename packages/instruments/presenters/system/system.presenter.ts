@@ -1,5 +1,5 @@
 import { IPlayer } from '@social-contract/libs/core/player';
-import { ICommerceSystem } from '@social-contract/libs/core/system';
+import { IReputationSystem } from '@social-contract/libs/core/system';
 import { f2, p100 } from '@social-contract/libs/utils/helpers';
 import { SuccessRateRecorder } from '@social-contract/instruments/recorders';
 import { BalancesData, BalancesPresenter, RecorderData, RecorderPresenter } from '@social-contract/instruments/presenters';
@@ -18,7 +18,7 @@ export class SystemPresenter {
   recorder = new RecorderPresenter();
 
   buildSystemString(    
-    systemMap: Map<MapKey, ICommerceSystem>, 
+    systemMap: Map<MapKey, IReputationSystem>, 
     recorderMap: Map<MapKey, SuccessRateRecorder>,
     t: number, 
     n: number
@@ -28,7 +28,7 @@ export class SystemPresenter {
   }
 
   buildSystemData(
-    systemMap: Map<MapKey, ICommerceSystem>, 
+    systemMap: Map<MapKey, IReputationSystem>, 
     recorderMap: Map<MapKey, SuccessRateRecorder>,
     t: number, 
     n: number

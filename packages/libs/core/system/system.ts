@@ -3,7 +3,7 @@ import { Balances, Transaction } from './models';
 import { State } from './state';
 import { IStore } from './store';
 
-export interface ICommerceSystem {
+export interface IReputationSystem {
   id: string;
   n: number;
   store: IStore<State>;
@@ -11,8 +11,8 @@ export interface ICommerceSystem {
 
   getPlayerIds(excludes?: PlayerId[]): PlayerId[];
 
-  getBalances(t: number): Balances;
-  getBalance(playerId: PlayerId, t: number): number;
+  getScores(t: number): Balances;
+  getScore(playerId: PlayerId, t: number): number;
 
   getTransaction(t: number): Transaction | null;
   setTransaction(transaction: Transaction): void;

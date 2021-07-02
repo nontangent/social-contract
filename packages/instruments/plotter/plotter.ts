@@ -23,6 +23,10 @@ import { MySQLRepository } from "../repositories";
       const result = this.isSuccess(simulation);
       counts[key] = counts?.[key] ?? [];
       counts[key].push(result);
+
+      if (honest === 5 && result === false) {
+        console.debug(simulation);
+      } 
     }
 
     const dataset = Object.entries(counts).reduce((pre, [key, results]) => ({

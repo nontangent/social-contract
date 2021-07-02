@@ -16,11 +16,11 @@ export class Presenter implements IPresenter {
 
   async render(simulator: IContractSimulator, transaction: Transaction, sleepTime: number = 0): Promise<void> {
     const { t, n, recorderMap } = simulator; 
-    let determinedT = t - 2 * n * (n - 1);
-    determinedT = determinedT < 0 ? 0 : determinedT;
+    // const determinedT = Math.max(0, t - 2 * n * (n - 1));
+    const determinedT = t;
 
     const systems = simulator.players.reduce((c, p) => c.set(p, p.system), new Map() as SystemMap);
-    const padding = - n * (n-1) - 2;
+    const padding = 1;
     const historyTable = this.historyPresenter.buildHistoryString(systems, t, {maxSize: 16, padding});
     const balancesTable = this.systemPresenter.buildSystemString(systems, recorderMap, determinedT, n);
 
@@ -31,7 +31,7 @@ export class Presenter implements IPresenter {
     logger.info(`=== History === `);
     logger.info(historyTable);
     logger.info(`\n`);
-    logger.info(`=== Balances and Success Rate (t=${Math.max(t - 2 * n * (n - 1), 0)}) ===`);
+    logger.info(`=== Balances and Success Rate (t=${determinedT}) ===`);
     logger.info(balancesTable);
     logger.info('==============================================================');
 

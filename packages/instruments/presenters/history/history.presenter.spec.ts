@@ -1,9 +1,9 @@
 import { PlayerId } from "@social-contract/libs/core/player";
-import { Balances, ICommerceSystem, InitialState, IStore, Result, Rewards, Transaction } from "@social-contract/libs/core/system";
+import { Balances, IReputationSystem, InitialState, IStore, Result, Rewards, Transaction } from "@social-contract/libs/core/system";
 // import { Store } from "@social-contract/libs/core";
 import { HistoryPresenter } from "./history.presenter";
 
-export class TestCommerceSystem implements ICommerceSystem {
+export class TestReputationSystem implements IReputationSystem {
   public price = 1;
   n = 0;
   store: IStore = new Store();
@@ -28,11 +28,11 @@ export class TestCommerceSystem implements ICommerceSystem {
     return this.store.setTransaction(transaction);
   }
 
-  getBalances(t: number): Balances {
+  getScores(t: number): Balances {
     return {} as Balances
   }
 
-  getBalance() {
+  getScore() {
     return 0;
   }
 }
@@ -43,7 +43,7 @@ describe('History Presenter Test', () => {
   it('', () => {
     const results = ['S', 'S', 'S', 'S', 'S', 'S'];
     const initialState = {balances: {}};
-    const system = new TestCommerceSystem(initialState);
+    const system = new TestReputationSystem(initialState);
 
     results.forEach((result, i) => {
       system.setTransaction({
@@ -61,7 +61,7 @@ describe('History Presenter Test', () => {
   it(`expected: ['S', ' ', ' ', ' ']`, () => {
     const results = ['S'];
     const initialState = {balances: {}};
-    const system = new TestCommerceSystem(initialState);
+    const system = new TestReputationSystem(initialState);
 
     results.forEach((result, i) => {
       system.setTransaction({
@@ -79,7 +79,7 @@ describe('History Presenter Test', () => {
   it(`expected: ['S', 'S', 'S', 'F']`, () => {
     const results = ['S', 'S', 'S', 'S', 'S', 'F'];
     const initialState = {balances: {}};
-    const system = new TestCommerceSystem(initialState);
+    const system = new TestReputationSystem(initialState);
 
     results.forEach((result, i) => {
       system.setTransaction({

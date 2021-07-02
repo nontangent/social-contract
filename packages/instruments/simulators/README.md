@@ -14,7 +14,7 @@ Social Contract Model as a Complex System and Analytics of its Chaos
 
 ## 現状の課題
 - [x] Historyが上書きされるバグ <- Storeの導入
-- [x] CommerceSystemの逐次化
+- [x] ReputationSystemの逐次化
 - [ ] ComplexSystemでのTrueSuccessRateとReportedSuccessRateの記録
 
 ## 実験内容

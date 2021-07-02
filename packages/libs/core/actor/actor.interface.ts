@@ -8,6 +8,8 @@ export interface Message<T, K> {
 }
 
 export interface IActor<MessageType> {
+  id: ActorId;
+  addressBook: Map<ActorId, IActor<MessageType>>;
   messageHandlers: Map<MessageType, Function>;
 
   sendMessage<K>(receiver: IActor<MessageType>, message: Message<MessageType, K>): any;

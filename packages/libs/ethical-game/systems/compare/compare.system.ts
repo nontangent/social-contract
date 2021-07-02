@@ -1,12 +1,12 @@
 import { PlayerId } from '@social-contract/libs/core/player';
-import { Balances, ICommerceSystem, IStore, Transaction } from "@social-contract/libs/core/system";
+import { Balances, IReputationSystem, IStore, Transaction } from "@social-contract/libs/core/system";
 
 import { getLogger } from 'log4js';
 const logger = getLogger(__filename);
 
-export class CompareSystem implements ICommerceSystem {
+export class CompareSystem implements IReputationSystem {
   constructor(
-    private systems: ICommerceSystem[] = [], 
+    private systems: IReputationSystem[] = [], 
     public id: string = 'system'
   ) { }
 
@@ -22,7 +22,7 @@ export class CompareSystem implements ICommerceSystem {
     return this.compare<[PlayerId, PlayerId][]>(system => system.combinations);
   }
 
-  private compare<T = any>(func: (system: ICommerceSystem) => T) {
+  private compare<T = any>(func: (system: IReputationSystem) => T) {
     let same!: T;
     this.systems.map(func).forEach((res: T) => {
       if (!same || JSON.stringify(same) === JSON.stringify(res)) {
@@ -40,12 +40,12 @@ export class CompareSystem implements ICommerceSystem {
     return this.compare(system => system.getPlayerIds(excludes));
   }
 
-  getBalances(t: number): Balances {
-    return this.compare(system => system.getBalances(t));
+  getScores(t: number): Balances {
+    return this.compare(system => system.getScores(t));
   }
 
-  getBalance(playerId: number, t: number): number {
-    return this.compare(system => system.getBalance(playerId, t));
+  getScore(playerId: number, t: number): number {
+    return this.compare(system => system.getScore(playerId, t));
   }
 
   getCombination(t: number): [PlayerId, PlayerId] {

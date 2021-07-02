@@ -1,5 +1,5 @@
 import { Actor, ActorId } from '../actor';
-import { History, ICommerceSystem } from '../system';
+import { History, IReputationSystem } from '../system';
 
 export type SellerStrategy = 1 | 2;
 export type BuyerStrategy = 1 | 2 | 3 | 4;
@@ -20,5 +20,5 @@ export interface IPlayer<T> extends Actor<T> {
 }
 
 export interface SystemOwner {
-  system: ICommerceSystem;
+  system: IReputationSystem;
 }

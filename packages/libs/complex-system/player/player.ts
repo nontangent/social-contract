@@ -1,169 +1,117 @@
-import { ICommerceSystem, Transaction, History, Result } from '@social-contract/libs/core/system';
+import { IReputationSystem, Transaction, Result } from '@social-contract/libs/core/system';
 import { Action, Actor } from '@social-contract/libs/core/actor';
-import { PlayerId, Reports } from '@social-contract/libs/core/player'
-import { range, b10, z4, clone } from '@social-contract/libs/utils/helpers';
+import { PlayerId } from '@social-contract/libs/core/player'
 import { IContractPlayer, MessageType, ContractMessage } from './player.interface';
 import { getLogger } from 'log4js';
 const logger = getLogger('@social-contract/implements/scp/player');
 
 export abstract class BaseContractPlayer extends Actor<MessageType> implements IContractPlayer {
   t: number = 0;
-  private reports: Reports = {};
-
-  constructor (
-    public id: PlayerId,
-    public system: ICommerceSystem,
-  ) {
-    super(id);
-  }
-
   abstract name: string;
+  addressBook = new Map<PlayerId, BaseContractPlayer>();
+
+  constructor (public id: PlayerId, public system: IReputationSystem) {
+    super(id);
+    this.initializeVariables();
+  }
 
   // 商取引ゲームでsellerの場合に商品を送る
-  // 時刻t-n(n-1)から時刻t-1までに報告されたRecordをbuyerに送信
-  sendGoods(buyer: IContractPlayer): ContractMessage<Transaction[]> {
-    // プレイヤー数を取得する
-    const n = this.system.n;
-    
-    // 報告された商取引の結果を取得する
-    const start = this.t - n * (n - 1);
-    const end = this.t - 1;
-    const transactions = this.getReportedTransactions(start, end);
-    
-    // 報告された商取引の結果を送信する
-    return this.sendGoodsMessage(buyer, transactions);
-  }
+  sendGoods(buyer: IContractPlayer): void { }
 
-  sendGoodsMessage(receiver: IContractPlayer, transactions: Transaction[]): ContractMessage<any> {
-    // 報告された商取引の結果を送信する
-    const message = { type: MessageType.GOODS, data: transactions };
-    this.sendMessage(receiver, message);
-    return message;
-  }
-
-  // 商取引ゲームの結果を報告する
-  // たぶん、ここのアルゴリズムが難しい。
-  // ①自分が支持するレコードと前回、送信されたレコードが一致しているか
-  // ②自分が支持するレコードと違う結果を報告したPlayerであるか
-
-  // 時刻t-2n(n-1)~時刻t-n(n-1)までのトランザクションは全員から一度づつ報告されているので、
-  // 時刻t-2n(n-1)~時刻t-n(n-1)までの支持する歴史は決定できる
-  // 時刻t-2n(n-1)~時刻t-n(n-1)までの間にbuyerが報告したTransactionが支持する歴史の結果と一つでも一致しないならば失敗を報告する
+  // 約束を履行していたか確認
   reportResult(seller: IContractPlayer, escrows: IContractPlayer[]): Result {
-    // プレイヤー数を取得する
-    const n = this.system.n;
-
-    // 支持する歴史を決定する
-    const start = this.t - 2 * n * (n - 1) + 1;
-    const end = this.t - n * (n - 1) + 1;
-    this.determineSupportingTransactions(start, end);
-    
     // 商取引の結果を決定する
-    const result = this.determineResult(seller.id, start, end);
+    const result = this.decideResult(seller.id);
 
-    // 全体に結果を報告
-    this.broadcastResult(seller.id, escrows, result);
+    // Transactionを作成
+    const transaction = this.buildTransaction(this.t, seller.id, this.id, result);
+
+    // Transactionを全員に送信
+    this.multicastRecord(escrows.map(e => e.id).filter(id => id!==this.id), transaction);
 
     // テストのために商取引の結果を返す
     return result;
   }
 
-  // 商取引ゲームで受け取ったTransactionsを記録する
+  // 時刻tの記録を署名して送信する。
+  protected multicastRecord(escrowIds: PlayerId[] , transaction: Transaction, signs: PlayerId[] = [this.id]) {
+    const message = this.buildMessage(transaction, signs);
+    this.multicastMessage(escrowIds, message);
+  }
+
+  // 商品は存在しないので何もしない
   @Action(MessageType.GOODS)
-  receiveGoods(data: any, senderId: PlayerId): Record<number, History> {
-    const transactions: Transaction[] = data;
-    return this.setReportedTransactions(transactions.map(r => ({...r, reporterId: senderId})));
+  receiveGoods(_: any, senderId: PlayerId) { }
+
+  traitors = new Set<PlayerId>();
+  signers: Map<Result, Set<PlayerId>> = new Map();
+  reporters: Map<Result, Set<PlayerId>> = new Map();
+  V = new Set<Result>();
+
+  protected initializeVariables() {
+    this.signers = new Map().set(Result.SUCCESS, new Set()).set(Result.FAILED, new Set());
+    this.reporters = new Map().set(Result.SUCCESS, new Set()).set(Result.FAILED, new Set());
+    this.V = new Set<Result>();
   }
 
-  // 報告された商取引ゲームの結果を記録する
+  // 報告された記録を評判システムに入力
   @Action(MessageType.RESULT)
-  receiveResult(transaction: Transaction, senderId: PlayerId): void {
-    this.setReportedTransaction({...transaction, reporterId: senderId});
-  }
+  receiveResult({transaction, signs}: {transaction: Transaction, signs: PlayerId[]}, senderId: PlayerId): void {
+    const v = transaction.result;
+    const [_, buyerId] = this.system.getCombination(this.t);
 
-  private buildRecord(sellerId: PlayerId, result: Result): Transaction {
-    return { t: this.t, sellerId, buyerId: this.id, result };
-  }
-
-  private broadcastMessage<K>(players: IContractPlayer[], message: ContractMessage<K>) {
-    for (const player of players) this.sendMessage(player, message);
-  }
-
-  // 商取引ゲームの結果を確定する
-  determineResult(sellerId: PlayerId, start: number, end: number): Result {
-    // 時刻startからendまでの商取引システムに記録されたトランザクションの結果と比較する
-    for (const t of range(start, end-1).filter(t => t > 0)) {
-      const transaction = this.system.getTransaction(t);
-      if (!transaction) throw new Error('transaction is null');
-      if (transaction.result !== this.getReportedTransaction(sellerId, t)!.result) return Result.FAILED;
+    if (signs.length === 1 && signs[signs.length-1] === buyerId && this.V.size === 0) {
+      this.V = new Set([v]);
+      const escrowIds = this.system.getPlayerIds().filter(id => signs.includes(id));
+      this.multicastRecord(escrowIds, transaction, [...signs, this.id]);
+    } else if (signs[0] === buyerId && signs[signs.length] !== buyerId && !this.V.has(v as Result)) {
+      this.V.add(v);
+      const escrowIds = this.system.getPlayerIds().filter(id => signs.includes(id));
+      this.multicastRecord(escrowIds, transaction, [...signs, this.id]);
     }
-    return Result.SUCCESS;
+
+    // 署名付きの値を受け取ったが、それを本人から受け取っていない成員を記録する
+    signs.forEach(sign => this.signers.get(v as Result)!.add(sign));
+    this.reporters.get(v as Result)!.add(senderId);
   }
 
-  // 支持する歴史を決定する
-  private determineSupportingTransactions(start: number, end: number): void{
-    // 時刻startからendまでのhistoryを確定する
-    for (let t = start; t < end; t++) {
-      if (t <= 0 || this.system.getTransaction(t)) continue;
-      this.determineSupportingTransaction(t);
+  commitRecord(): void {
+    const [sellerId, buyerId] = this.system.getCombination(this.t);
+
+    if (this.V.size === 0) this.traitors.add(buyerId);
+    const result = this.V.size === 1 ? [...this.V.values()][0] : Result.FAILED;
+    
+    this.system.setTransaction({t: this.t, sellerId, buyerId, result});
+
+    for (const [key, values] of this.signers.entries()) {
+      for (const id of [...values].filter(id => !this.reporters.get(key)!.has(id))) {
+        this.traitors.add(id)
+      }
+    }
+
+    this.initializeVariables();
+  }
+
+  decide(sellerId: PlayerId): boolean {
+    return !this.traitors.delete(sellerId);
+  }
+
+  decideResult(sellerId: PlayerId): Result {
+    return this.decide(sellerId) ? Result.SUCCESS : Result.FAILED;
+  }
+  
+  protected buildTransaction(t: number, sellerId: PlayerId, buyerId: PlayerId, result: Result): Transaction {
+    return { t, sellerId, buyerId, result};
+  }
+
+  protected multicastMessage<K>(playerIds: PlayerId[], message: ContractMessage<K>) {
+    for (const playerId of playerIds) {
+      const player = this.addressBook.get(playerId)!;
+      this.sendMessage(player, message);
     }
   }
 
-  // 報告されたトランザクションから支持するトランザクションを決定する
-  private determineSupportingTransaction(t: number): void {
-    // 自分がreporterの場合はそのトランザクションを正しい歴史とする
-    const transaction = this.getReportedTransaction(this.id, t);
-    if (transaction) return this.system.setTransaction(transaction);
-
-    // 時刻tの商取引ゲームのsellerとbuyerを取得する
-    const [sellerId, buyerId] = this.system.getCombination(t);
-
-    // 重みとなるbalanceを取得する
-    const n = this.system.n;
-    const balances = this.system.getBalances(Math.max(0, t - 2 * n * (n - 1) + 1));
-
-    // 各プレイヤーが報告した結果からスコアを計算する
-    const score = this.system.getPlayerIds([this.id]).reduce((score, id) => {
-      const transaction = this.getReportedTransaction(id, t);
-      if (!transaction) throw new Error('transaction is null!');
-      return score + (transaction.result === Result.SUCCESS ? 1 : -1) * balances[id];
-    }, 0);
-
-    // scoreから時刻tの支持するトランザクションの結果を決定する
-    const result = score > 0 ? Result.SUCCESS : Result.FAILED;
-    return this.system.setTransaction({ sellerId, buyerId, t, result });
+  protected buildMessage(transaction: Transaction, signs: PlayerId[]) {
+    return { type: MessageType.RESULT, data: {transaction, signs} };
   }
-
-  // 報告されたトランザクションを記録する
-  protected setReportedTransactions(transactions: Transaction[]) {
-    for (let transaction of transactions) this.setReportedTransaction(transaction);
-    return this.reports;
-  }
-
-  // 報告されたトランザクションを記録する
-  private setReportedTransaction(transaction: Transaction) {
-    this.reports[transaction.reporterId!] = this.reports[transaction.reporterId!] || {};
-    this.reports[transaction.reporterId!][transaction.t] = clone(transaction);
-  }
-
-  // 時刻startから時刻endまでに報告されたトランザクションを取得する
-  private getReportedTransactions(start: number, end: number): Transaction[] {
-    const timeRange = range(start, end);
-    return Object.values(this.reports).map(history => Object.values(history)).flat()
-      .filter(transaction => timeRange.includes(transaction.t))
-      .filter(transaction => transaction.reporterId === transaction.buyerId);
-  }
-
-  // 報告されたトランザクションを取得する
-  private getReportedTransaction(reporterId: PlayerId, t: number): Transaction | null {
-    return this.reports?.[reporterId]?.[t] || null;
-  }
-
-  private broadcastResult(sellerId: PlayerId, escrows: IContractPlayer[], result: Result): void {
-    this.broadcastMessage<Transaction>(escrows, {
-      type: MessageType.RESULT,
-      data: this.buildRecord(sellerId, result)
-    });
-  }
-
 }

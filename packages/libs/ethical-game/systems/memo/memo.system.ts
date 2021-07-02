@@ -1,23 +1,23 @@
 import { PlayerId } from "@social-contract/libs/core/player";
 import { Balances } from "@social-contract/libs/core/system";
 import { clone } from "@social-contract/libs/utils/helpers";
-import { CommerceSystem } from '@social-contract/libs/ethical-game/systems/commerce';
+import { ReputationSystem } from '@social-contract/libs/ethical-game/systems/commerce';
 
 import { getLogger } from 'log4js';
 const logger = getLogger(__filename);
 
 
-export class MemoCommerceSystem extends CommerceSystem {
+export class MemoReputationSystem extends ReputationSystem {
   balancesCache = new Map<number, Balances>();
   balanceCache: {[key: number]: {[key: number]: number}} = {};
 
   successRateCache = new Map<string, [number, number]>();
 
-  getBalances(t: number): Balances {
+  getScores(t: number): Balances {
     const cached = this.balancesCache.get(t);
     if (cached) return {...cached};
 
-    const balances = super.getBalances(t);
+    const balances = super.getScores(t);
     this.balancesCache.set(t, {...balances});
     return {...balances};
   }

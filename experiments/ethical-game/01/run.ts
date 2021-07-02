@@ -31,5 +31,5 @@ export async function run(options: Options = defaultOption) {
 }
 
 if (require?.main === module) {
-  run();
+  run({...defaultOption, laps: 1000, playersCode: 'CFFAAAAA'});
 }

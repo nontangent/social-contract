@@ -27,7 +27,8 @@ const playerFactory = (type: PlayerType, i: number, n: number) => {
 
 export async function run(options: Options = defaultOption) {
   const fixed = options?.honestNum ? {type: 'A', n: options.honestNum} : undefined;
-  const playersCode = randomPlayersCode(PLAYER_TYPES.map(c => c), options.n, fixed);
+  const playersCode = options.playersCode ?? randomPlayersCode(PLAYER_TYPES.map(c => c), options.n, fixed);
+
   console.debug('playersCode:', playersCode);
 
   const N = playersCode.length;
@@ -40,8 +41,10 @@ export async function run(options: Options = defaultOption) {
 
 if (require?.main === module) {
   run({...defaultOption, 
-    laps: 100,
-    interval: 50,
-    honestNum: 3,
+    laps: 10000,
+    interval: 0,
+    // honestNum: 3,
+    // n: 8,
+    playersCode: 'BBBE',
   });
 }

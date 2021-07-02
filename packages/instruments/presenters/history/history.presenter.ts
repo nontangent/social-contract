@@ -1,6 +1,6 @@
 import { IPlayer } from "@social-contract/libs/core/player";
 import { ISimulator } from "@social-contract/instruments/simulators";
-import { ICommerceSystem, Result, Transaction } from "@social-contract/libs/core/system";
+import { IReputationSystem, Result, Transaction } from "@social-contract/libs/core/system";
 import { b4, range } from "@social-contract/libs/utils/helpers";
 import { IPresenter } from "@social-contract/instruments/presenters";
 
@@ -29,7 +29,7 @@ export class HistoryPresenter implements IPresenter {
   }
 
   buildHistoryData(
-    systemMap: Map<MapKey, ICommerceSystem>, 
+    systemMap: Map<MapKey, IReputationSystem>, 
     t: number, 
     options: HistoryPresenterOptions = {maxSize: 24, padding: -4}
   ): HistoryData {

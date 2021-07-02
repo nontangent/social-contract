@@ -1,12 +1,12 @@
 import { PlayerId } from '@social-contract/libs/core/player';
 import { Balances, Result } from "@social-contract/libs/core/system";
 import { isSetsEqual, sum } from '@social-contract/libs/utils/helpers';
-import { BaseCommerceSystem } from '@social-contract/libs/ethical-game/systems/base';
+import { BaseReputationSystem } from '@social-contract/libs/ethical-game/systems/base';
 
 import { getLogger } from 'log4js';
 const logger = getLogger(__filename);
 
-export class CommerceSystem extends BaseCommerceSystem {
+export class ReputationSystem extends BaseReputationSystem {
 
   // エスクローコスト(失敗が報告された場合に没収される金額)の負担の重みを計算する
   getBurdenWeights(t: number, sellerId: PlayerId, buyerId: PlayerId): [number, number, number, number] {
@@ -61,7 +61,7 @@ export class CommerceSystem extends BaseCommerceSystem {
     if (!transaction) throw new Error(`A transaction at time(${t}) is none.`);
 
     // 時刻t-1のbalancesを取得
-    const balances = this.getBalances(t-1);
+    const balances = this.getScores(t-1);
 
     // 各opportunityとの商取引ゲームの成功率の荷重和をとる
     return this.getPlayerIds(excludeIds).reduce((trust, id) => {

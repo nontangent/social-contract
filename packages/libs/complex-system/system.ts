@@ -1,3 +1,3 @@
-// import { CommerceSystem, MemoCommerceSystem, CompareSystem } from '@social-contract/libs/ethical-game';
-// export { CommerceSystem, MemoCommerceSystem, CompareSystem };
+// import { ReputationSystem, MemoReputationSystem, CompareSystem } from '@social-contract/libs/ethical-game';
+// export { ReputationSystem, MemoReputationSystem, CompareSystem };
 export * from '@social-contract/libs/ethical-game/systems';

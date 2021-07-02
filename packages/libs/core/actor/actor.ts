@@ -1,6 +1,7 @@
 import { ActorId, IActor, Message } from './actor.interface';
 
 export class Actor<MessageType> implements IActor<MessageType> {
+  addressBook!: Map<ActorId, Actor<MessageType>>;
   messageHandlers!: Map<MessageType, Function>;
 
   constructor(public id: ActorId) { }

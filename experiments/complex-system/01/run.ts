@@ -14,7 +14,7 @@ const playerFactoryB = (i: number, n: number) => new PlayerB(i, systemFactory(in
 
 export async function run() {
   const N = 8;
-  const K = 1;
+  const K = 2;
 
   const players = [
     ...[...Array(N-K)].map((_, i) => playerFactoryA(i, N)),
@@ -24,7 +24,7 @@ export async function run() {
   const presenter = new Presenter();
   const simulator = new Simulator(players, presenter);
 
-  await simulator.run(20, 0);
+  await simulator.run(100, 100);
 }
 
 
