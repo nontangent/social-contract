@@ -1,52 +1,74 @@
 ~ \\
-% 背景
-% 社会契約とは
-  Social contract is a process that gives rise to "the power to compel each member to fulfill an agreed promise" in a group.
-% 先行研究
-  % この力がどのようにして生じるのかについては、交渉理論や進化ゲーム理論を用いて研究されきた(Verbeek Bruno Christopher 2020)\cite{sep-game-ethics}が、
-  % 大半の研究は、そのゲームにおける利得の分配を強制執行する力の存在が暗黙的に仮定されている。
-  How this power arises has been studied using bargaining theory and evolutionary game theory (Verbeek Bruno Christopher 2020)\cite{sep-game-ethics}, 
-  but Most studies implicitly assume the existence of an enforcement the distribution of gains in the game.
-
-  % この強制執行力が集団の外部に存在することを仮定する場合、それは別の社会契約が成立していることを意味するため、
-  % 社会契約を完全に説明することはできない。
-  If we assume that this enforcement exists outside the group, 
-  it means that another social contract is in place, and thus we cannot fully explain the social contract.
-  % 逆に、外部に強制執行力の存在を仮定しない場合、過去の歴史とそこから決定される社会指標を用いることで社会契約は成立する(Binmore 2005)。
-  On the contrary, when the existence of external enforcement is not assumed, 
-  the social contract is established by using past history and social indicators determined from it (Binmore 2005).
-% 問題
-  % しかしながら、その研究では内部的に強制執行力を生じさせるメカニズムについては還元主義的にしか説明されておらず、
-  % その強制執行力を生じさせる成員の振る舞いを明確に記述することはできなかった。
-  However, that study only explained the mechanism of internal enforcement in a reductionist way, 
-  and failed to clearly describe the behavior of the members that generate the enforcement.
-% 提案手法
-  % 本研究では、
-  % まず、外部の強制執行力として、「各成員から報告された約束の結果(歴史)を記録し、それに基づいて各成員の評判(社会指標)を決定するシステム」の存在を仮定し、
-  % そのシステムが各成員に合意された約束の履行を強制する条件について考えた。
-  % 次に、そのシステムを、ビザンチン将軍問題の署名付きの解法を用い、各成員の振る舞いによって自己組織化された分散システムとして設計した。
-  In this study. 
-  First, we assume the existence of "a system that records the results of promises reported by each member (history) 
-  and determines each member's reputation (social index) based on these records" as an external enforcement force. 
-  We considered the conditions under which the system would force each member to fulfill the agreed-upon promise.
-% 実験結果
-  % この分散システムを、マルチエージェントシミュレーションを用いて検証した結果、
-  % 成員の構成によっては、一部の成員が想定されない振る舞いを行った場合でも、最終的に合意された約束が必ず履行される状況を作り出せることがわかった。
-  We have verified this distributed system using multi-agent simulation. 
-  We found that, depending on the composition of the members, 
-  it is possible to create a situation in which the agreed-upon promise is always fulfilled, 
-  even if some members behave in unexpected ways.
-% 結論
-  % これにより、外部の強制執行力が存在しない場合でも、成員の構成次第で社会契約が成立することを示せ、
-  % 社会契約の成立に必要となる歴史の定義や社会指標の計算方法、各成員の振る舞いを計算可能なレベルで明確に定義することができた。
-  This allows us to show that even in the absence of external enforcement, 
-  a social contract can be established depending on the composition of the members.
-  The definition of history, the method of calculating social indicators, and the behavior of each member, 
-  which are necessary for the establishment of a social contract, can be clearly defined at a computable level.
-% 貢献
-  % もし将来、コンピューターを用いた人々の社会契約が必要とされる時が来るならば、
-  % 今回の研究がその実現に何らかの形で貢献することを願う。
-  If there is ever a time in the future when a computer-based social contract between people is needed. 
-I hope that this research will contribute in some way to its realization.
+% 背景(分野外の研究者でも理解できる内容)
+% インターネットのグローバル化やBitcoin\cite{nakamoto2008bitcoin}を始めとするブロックチェーン技術の登場により、
+% インターネット上のサービスの正当性を特定の国家の法によって保証することは困難になりつつある。
+% 我々は、社会契約の概念をインターネットに適用することがこの問題の解決に繋がると考え、
+% それを計算可能なレベルまで抽象化することを試みている。
+With the globalization of the Internet and the emergence of blockchain technologies such as Bitcoin\cite{nakamoto2008bitcoin},
+it is becoming increasingly difficult to guarantee the legitimacy of services on the Internet through the laws of a particular nation.
+We believe that applying the concept of social contract to the Internet will help solve this problem, 
+and we are attempting to abstract it to a computable level.
+% 背景(関連分野の)
+% 社会契約とは、ある集団においてその成員達が合意された約束を必ず履行する状態に至るプロセスである。
+% 現代においては、この概念は交渉理論や進化ゲーム理論を用い、
+% 正義や倫理、道徳といった概念とともに研究がなされている\cite{sep-game-ethics}が、
+% その多くは利得の分配を強制執行する力の存在が暗黙的に仮定されている。
+The social contract is the process by which a group of people reach a state in which they always fulfill their agreed-upon promises. 
+In modern times, this concept has been studied using bargaining theory and evolutionary game theory, 
+along with concepts such as justice, ethics, and morality\cite{sep-game-ethics}. 
+Many of them implicitly assume the existence of the \emph{enforcement} to the distribution of payoff.
+% この強制執行力は、それ自身が利得を分配する約束であるため、
+% 集団の外部にその存在を仮定することは別の社会契約の成立を仮定することに等しい。
+% それゆえ、社会契約全体をモデリングするためには、強制執行力が集団の内部で生じるメカニズムを解明する必要がある。
+% Binmoreの2005年の研究\cite{binmore2005}はこれを試みているが、
+% このアプローチは還元主義的なため強制執行力を生じさせる成員の振る舞いが具体的にどういったものか明確でない。
+Since this \emph{enforcement} is itself a promise to distribute payoff, 
+assuming its existence outside the group is equivalent to assuming the formation of another social contract.
+Therefore, in order to model the social contract as a whole, 
+it is necessary to elucidate the mechanisms by which \emph{enforcement} arises within a group.
+Binmore's 2005\cite{binmore2005} study attempts to solve this problem, 
+but because this approach is reductionist, 
+it is not clear what exactly are the behaviors of members that give rise to \emph{enforcement}.
+% 問題(1文)
+% 本研究では、強制執行力が集団の外部に存在しない場合に社会契約が成立するのかという問いに取り組む。
+In this study, we research the question of whether a social contract can be established 
+when the \emph{enforcement} does not exist outside the group.
+% 論文の趣旨
+% ここで我々は、強制執行力を自己組織化させる成員の振る舞いがビザンチン将軍問題の署名付きの解法\cite{lamport1982}によって説明でき、
+% 集団の一部のみがそのように振る舞う場合であっても社会契約が成立することを示す。
+Here we show that the behavior of members who self-organize \emph{enforcement} can be explained 
+by the signed solution to the Byzantine Generals Problem\cite{lamport1982}, 
+and that a social contract can be established even when only a part of the group behaves in this way.
+% 結果(先行研究との比較を含める)
+% そのために我々はゲーム理論とビザンチン将軍問題の解法を用いて社会契約を成員の振る舞いによる複雑系としてモデリングし、
+% ランダムな8体のエージェント(8種類・重複あり)の相互作用の果てに社会契約が成立するか確かめるシミュレーションを行った。
+% 64000回の施行の結果、誠実に振る舞うエージェントが過半数を超える場合、サンプリングした全てのケースで社会契約は成功した。
+For this purpose, we modeled the social contract as a complex system with members' behavior 
+using game theory and the solution of the Byzantine General Problem. 
+We conducted a simulation to see if a social contract can be established 
+after the interaction of eight random agents (eight types, with overlaps).
+As a result of 64,000 runs, the social contract was successful in all the cases sampled 
+when the majority of agents behaved honestly.
+% まとめ
+% これにより、社会契約の成立に必要となる歴史の定義や社会指標の決定方法、各成員の振る舞いを計算可能なレベルで明確にし、
+% 同時に、強制執行力が集団の外部に存在しない場合でも過半数の成員が誠実であれば社会契約が必ず成立することを示した。
+In this way, we have been able to define the history required for the formation of a social contract, 
+determine the social indicators, and clarify the behavior of each member on a computable level. At the same time, 
+it showed that a social contract can always be established if the majority of members are sincere, 
+even if there is no \emph{enforcement} outside the group.
+% 今後について
+% この誠実な成員と社会契約の成立の関係性はヒューリスティックな解であるため、
+% より厳密な解を得るには大規模な総当り実験を行うか理論的な解明がなされる必要がある。
+Since the relationship between sincere members and the formation of a social contract is a heuristic solution, 
+a large-scale brute force experiment or theoretical clarification is needed to obtain a more rigorous solution.
+% 仮に$3f+1$よりゆるい条件で合意された約束が必ず履行される状態に到れるならば、
+% 時間経過とともに$f$が増加する場合に$3f+1$以下の人数でフォールトトレラントを達成できる実用的なBFTアルゴリズムを示せる可能性がある。
+If we can reach a state in which promises agreed to under looser conditions than $3f+1$ are always fulfilled, 
+then We may be able to show a practical BFT algorithm that can achieve fault-tolerance 
+with less than $3f+1$ people when $f$ increases with time.
+% また、現実の社会を考えたとき、集団の人数は時間経過とともに変化するものであるため、それを考慮して社会契約を更新するモデルの構築が必要である。
+% 本研究がそういった新たな研究の足がかりになることを願う。
+In addition, when we consider real society, the number of people in a group changes over time, and it is necessary to construct a model that takes this into account and updates the social contract.
+I hope that this research will serve as a stepping stone for such new research.
 ~ \\
 
