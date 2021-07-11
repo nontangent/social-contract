@@ -6,33 +6,36 @@
 % 成員の行動を観察できない外部の強制執行力が存在すると仮定した上で、集団を構成する成員達の性質によっては、
 % 成員達に合意された約束を履行させるインセンティブ設計が可能である。
 
-\section{提案手法}
-不正行為にあった場合に必ず「失敗」を報告する行動を「告発」と呼び、
-「告発」するプレイヤーのみが参加する「約束・評判ゲーム」を「告発する約束・評判ゲーム」とする。
-この「告発する約束・評判ゲーム」において、不正が防止される条件を導き出す。
-そして、その条件を満たす「評判システム」を通常の「約束・評判ゲーム」に適用し、
-様々な戦略をとるエージェントをランダムに用意したマルチエージェントシミュレーションを行ことで、
-「告発」するプレイヤーが一定以上存在していれば成員達に合意された約束を履行させることができることを示す。
+\section{検証方法}
+約束を反故にされた場合に「反故」を報告する行動を「告発」と呼び、
+「告発」する成員のみが参加する「約束・評判ゲーム」を「告発する約束・評判ゲーム」とする。
+この「告発する約束・評判ゲーム」において、不正が防止される条件を導き出し、
+その条件を満たす「評判システム」を通常の「約束・評判ゲーム」に適用することで、
+誠実な成員が一定以上存在していれば合意された約束が履行させる状態に至れることを示す。
+検証にはマルチエージェントシミュレーションを用い、
+様々な戦略をとるエージェントをランダムに生成して施行を行わせることで、
+誠実な成員の人数と社会契約の成立の関係性を導き出す。
 
 
 \section{告発}
 \ref{verification1}節の検証では、
-「評判システム」は$reporter$が戦略$s_{r1}$と$s_{r4}$をとる確率$p_{r1}$と$p_{r4}$を推定できないため、
+「評判システム」は$reporter$が戦略$s_{r1}$と$s_{r3}$をとる確率$p_{r1}$と$p_{r3}$を推定できないため、
 不正を防止する「評判スコア」の変化量の組$(r_{ps}, r_{pf}, r_{ps}, r_{pf})$を決定できなかった。
 これは$reporter$が報告する約束の結果と真の約束の結果が一致している保証がないためである。
-そこで、本論では、$promiser$が約束を反故にした場合に「失敗」を報告する行動を「告発」とする。
+そこで、本論では、$promiser$が約束を反故にした場合に「反故」を報告する行動を「告発」とする。
 この行動をとる成員が多数いれば、先の確率を近似することが可能であると考えられる。
 % これまでの研究においても、こうした報復的な行動が道徳的規範の出現に関係することがわかっている。(TODO: 要出典)
 
 
 \section{告発する約束・評判ゲーム}
 「告発」する成員のみで行われる「約束・評判ゲーム」を「告発する約束・評判ゲーム」とする。
-このゲームにおいては、step1で$promisor$が約束を履行しなかった場合、$reporter$は必ず「失敗」を報告するため、
+このゲームにおいては、step1で$promisor$が約束を履行しなかった場合、$reporter$は必ず「反故」を報告するため、
 図\ref{ethical-gametree}のゲームの木のような展開型ゲームとして表せる。
 また、\ref{playersStrategy}節で示した$reporter$の戦略のうち$s_{r2}$と$s_{r4}$がとられないため、
 非協力戦略型ゲームとして表したときの利得は表\ref{ethical-gametable}のようになる。
 注意すべき点としては、報告された約束の結果が次回以降のゲームで意味のある情報となるため、
-「成功」と「失敗」が報告された場合の将来の期待利得$\epsilon$と$\lambda$について考慮する必要がある。
+「履行」と「反故」が報告された場合の将来の期待利得$\epsilon_k$と$\lambda_k$について考慮する必要がある($k$は任意の添字)。
+ここでは「履行」が報告された場合の期待利得$\epsilon_k$が「反故」が報告された場合の期待利得$\lambda_k$以上であることを仮定する($\epsilon_k > \lambda_k$)。
 
 \clearpage
 \input{./06_ethical-prgame/gametree.tex}
@@ -49,8 +52,8 @@
 
 \subsubsection{$reporter$の戦略}
 \begin{description}
-  \item[$s_{r1}$]… $promisor$が約束を履行した場合は「成功」，反故にした場合は「失敗」を報告する
-  \item[$s_{r3}$]… $promisor$が約束を履行した場合は「失敗」，反故にした場合は「失敗」を報告する
+  \item[$s_{r1}$]… $promisor$が約束を履行した場合は「履行」，反故にした場合は「反故」を報告する
+  \item[$s_{r4}$]… $promisor$が約束を履行した場合は「反故」，反故にした場合は「反故」を報告する
 \end{description}
 
 \input{./06_ethical-prgame/gametable.tex}
@@ -59,33 +62,35 @@
 % \label{prgamePayoffVariables}
 \begin{description}
   % \centering
-  \item[$\epsilon_p$]… 「成功」が報告された場合の$promisor$の将来期待利得
-  \item[$\epsilon_r$]… 「成功」が報告された場合の$reporter$の将来期待利得
-  \item[$\lambda_p$]… 「失敗」が報告された場合の$promisor$の将来期待利得
-  \item[$\lambda_r$]… 「失敗」が報告された場合の$reporter$の将来期待利得
+  \item[$\epsilon_p$]… 「履行」が報告された場合の$promisor$の将来期待利得
+  \item[$\epsilon_r$]… 「履行」が報告された場合の$reporter$の将来期待利得
+  \item[$\lambda_p$]… 「反故」が報告された場合の$promisor$の将来期待利得
+  \item[$\lambda_r$]… 「反故」が報告された場合の$reporter$の将来期待利得
   \item[$c_{p2}$]… 約束が反故にされた場合の$promisor$の「評判スコア」の変化量以外の効用
   \item[$c_{p1}$]… 約束が履行された場合の$promisor$の「評判スコア」の変化量以外の効用
   \item[$c_{p2}$]… 約束が反故にされた場合の$promisor$の「評判スコア」の変化量以外の効用
   \item[$c_{r1}$]… 約束が履行された場合の$reporter$の「評判スコア」の変化量以外の効用
   \item[$c_{r2}$]… 約束が反故にされた場合の$reporter$の「評判スコア」の変化量以外の効用
-  \item[$r_{ps}$]… 「成功」が報告された場合の$promisor$の「評判スコア」の変化量
-  \item[$r_{pf}$]… 「失敗」が報告された場合の$promisor$の「評判スコア」の変化量
-  \item[$r_{rs}$]… 「成功」が報告された場合の$reporter$の「評判スコア」の変化量
-  \item[$r_{rf}$]… 「失敗」が報告された場合の$reporter$の「評判スコア」の変化量
+  \item[$r_{ps}$]… 「履行」が報告された場合の$promisor$の「評判スコア」の変化量
+  \item[$r_{pf}$]… 「反故」が報告された場合の$promisor$の「評判スコア」の変化量
+  \item[$r_{rs}$]… 「履行」が報告された場合の$reporter$の「評判スコア」の変化量
+  \item[$r_{rf}$]… 「反故」が報告された場合の$reporter$の「評判スコア」の変化量
 \end{description}
 
 \section{不正が防止される条件}
-表\ref{prgametable}より，「告発する約束・評判ゲーム」において、約束が履行され「成功」が報告されるためには、
-$promisor$と$reporter$のとる戦略組が$ (s_{p1}, s_{r1})$になる必要がある．
+表\ref{prgametable}より，「告発する約束・評判ゲーム」において、約束が履行され「履行」が報告されるためには、
+$promisor$と$reporter$のとる戦略組が$ (s_{p1}, s_{r1})$、$(s_{p1}, s_{p4})$のいづれかになる必要がある．
 各プレイヤーが戦略$s$をとったときの利得を$R$とし、その期待値を$E(R|s)$とする。
-全てのプレイヤーが完全に合理的な場合、戦略組$(s_{p1}, s_{r1})$に帰着させるためには，
+全てのプレイヤーが完全に合理的な場合、戦略組$(s_{p1}, s_{r1})$、$(s_{p1}, s_{p4})$のいづれかに帰着させるためには，
 
 \begin{description}
   \centering
-  \item[条件③] $E(r|s_{p1}) > E(r|s_{p2})$かつ$E(r|s_{r1}) > E(r|s_{r3})$
+  \item[条件⑤] $E(r|s_{p1}) > E(r|s_{p2})$かつ$E(r|s_{r1}) > E(r|s_{r4})$
+  \item[条件⑥] $E(r|s_{p1}) > E(r|s_{p2})$かつ$E(r|s_{r4}) > E(r|s_{r1})$ 
 \end{description}
 
-を満たす「評判スコア」の変化量の組$(r_{ps}, r_{pf}, r_{rs}, r_{rf})$を「評判システム」から決定できる必要がある．
+のいづれかを満たす「評判スコア」の変化量の組$(r_{ps}, r_{pf}, r_{rs}, r_{rf})$を「評判システム」から決定できる必要がある．
+本節では条件⑤について考える。
 
 \subsection{各戦略のとられる確率}
 各プレイヤーが戦略$s_{k}$をとる確率を$p_{k}$とする．
@@ -155,55 +160,59 @@ $p_{r1} > 0$かつ $p_{p1} > 0$かつ$ \epsilon_p > \lambda_p $かつ$ \epsilon_
 
 を満たせば，「告発する約束約束・評判ゲーム」で不正を防止することができる．
 
-\subsection{戦略$s_{p1}$をとった割合と成功が報告される割合の関係}
-% メモ：要修正
-全ての成員は「告発」するため、
-任意の成員$i$と$j$のこれまでの「約束・評判ゲーム」で$s_{p1}$をとってきた割合$FulfillStrategyRate(i, j)$と、
-「評判システム」に報告された約束の記録のうち
-$promisor$が成員$i$で$reporter$が成員$j$である記録の「成功」の割合$ReportedSuccessRate(i, j)$について、次の関係がいえる。
 
-\begin{equation}
-  FulfillStrategyRate(i, j) \geq ReportedSuccessRate(i, j) \label{inequalityFR}
-\end{equation}
-
-
-\subsection{信頼度 $ P_i $}
-
-ここで、成員$i$が$promisor$のときに$s_{p1}$をとる確率$ p_{p1} $を成員$i$の信頼度$P_i$と定義し，
-$ P_i $を$FulfillStrategyRate(i, j)$と$\sum^{\{1, 2, ..., n\}}_{k}w_k = 1$を満たす
-任意の重み$ w_k $ ($k \in \{1, 2, ..., n\}$)を用いた荷重総和として次のように表す． \\
+\subsection{過去にとった戦略の割合と履行が報告された割合の関係性}
+過去に任意の成員$i$と$j$の間で行われた「約束・評判ゲーム」にて、
+成員$i$が戦略$s$をとった割合を$StrategyRate(i, j, s)$、
+成員$j$が「履行」を報告した割合を$ReportedFulfillRate(i, j)$とする。
+ここで「告発する約束約束・評判ゲーム」において全ての成員は「告発」するため、次の関係性が成り立つ。
 
 \begin{eqnarray}
-  P_i &\equiv& p_{p1} \\
-      &\equiv& \sum^{\{1,2,..., n\}}_{j} w_{j} \cdot FulfillStrategyRate(i, j)
+  StrategyRate(i, j, s_{p1}) \geq ReportedFulfillRate(i, j) \label{inequalityFR} \\
+  StrategyRate(j, i, s_{r1}) \geq ReportedFulfillRate(i, j)
 \end{eqnarray}
 
 
-\subsection{最低信頼度 $ T_i $}
-また、$ ReportedSuccessRate(i, j)$に、同じ重み$ w_k $を用いた荷重総和を最低信頼度$ T_i $と定義する． \\
+\subsection{信頼度 $ P(i, s) $}
 
-\begin{equation}
-  T_i \equiv \sum^{\{1,2,..., n\}}_{j} w_j \cdot ReportedSuccessRate(i, j) \label{conditionT_i}
-\end{equation}
-
-\subsection{最低信頼度$T_i$を用いた条件}
-\label{conditionByTrustScore}
-\eqref{inequalityFR}より、$ P_i \geq T_i $がいえるため、\eqref{conditionByPr1}について
+成員$i$が戦略$s_k$($k$は任意の添字)をとる確率$p_k$を$P(i, s_k)$とする。
+ここで$P(i, s_{p1})$と$P(i, s_{r1})$は$StrategyRate(i, j, s)$と$\sum^{\{1, 2, ..., n\}}_{k}w_k = 1$を満たす
+任意の重み$ w_k $ ($k \in \{1, 2, ..., n\}$, $n$は成員の人数)を用いた荷重総和として次のように表すことができる． \\
 
 \begin{eqnarray}
-  \frac{c_{p2} - c_{p1}}{T_i} \geq \frac{c_{p2} - c_{p1}}{P_i} = \frac{c_{p2} - c_{p1}}{p_{r1}} \nonumber
+  P(i, s_{p1}) &\equiv& \sum^{\{1,2,..., n\}}_{j} w_{j} \cdot StrategyRate(i, j, s_{p1}) \\
+  P(i, s_{r1}) &\equiv& \sum^{\{1,2,..., n\}}_{j} w_{j} \cdot StrategyRate(i, j, s_{r1})
+  % P_i &\equiv& p_{p1} \\
+  %     &\equiv& \sum^{\{1,2,..., n\}}_{j} w_{j} \cdot FulfillStrategyRate(i, j)
+\end{eqnarray}
+
+
+\subsection{最低信頼度 $ T(i, s) $}
+また、$ ReportedFulfillRate(i, j)$に、同様の重み$ w_k $を用いた荷重総和を最低信頼度$ T(i, s) $と定義する． \\
+
+\begin{eqnarray}
+  T(i, s_{p1}) &\equiv& \sum^{\{1,2,..., n\}}_{j} w_j \cdot ReportedFulfillRate(i, j) \label{conditionT_i} \\
+  T(i, s_{r1}) &\equiv& \sum^{\{1,2,..., n\}}_{j} w_j \cdot ReportedFulfillRate(j, i)
+\end{eqnarray}
+
+\subsection{最低信頼度$T(i, s_{p1})$を用いた条件}
+\label{conditionByTrustScore}
+\eqref{inequalityFR}より、$ P(i, s_{p1}) \geq T(i, s_{p1}) $がいえるため、\eqref{conditionByPr1}について
+
+\begin{eqnarray}
+  \frac{c_{p2} - c_{p1}}{T(i, s_{r1})} \geq \frac{c_{p2} - c_{p1}}{P(i, s_{r1})} = \frac{c_{p2} - c_{p1}}{p_{r1}} \nonumber
 \end{eqnarray}
 
 がいえる．ゆえに、
 
 \begin{eqnarray}
-  r_{ps} - r_{pf} &\geq& \frac{c_{p2} - c_{p1}}{T_i} \label{condition6-1} \\
+  r_{ps} - r_{pf} &\geq& \frac{c_{p2} - c_{p1}}{T(i, s_{r1})} \label{condition6-1} \\
   r_{rs} - r_{rf} &\geq& 0 \label{condition6-2}
 \end{eqnarray}
 
-を満たせばよい、「告発する信用・評判ゲーム」で不正を防止できる。\\
+を満たせば、「告発する信用・評判ゲーム」で約束は履行される。\\
 
-ここで、「評判システム」から最低信頼度$T_i$は既知のため、
+ここで、「評判システム」から最低信頼度$T(i, s_{r1})$は既知のため、
 $p_{r1} > 0$かつ $p_{p1} > 0$かつ$ \epsilon_p > \lambda_p $かつ$ \epsilon_r > \lambda_r $を仮定した上で，
 $ (r_{ps}, r_{pf}, r_{rs}, r_{rf}) $の組を決定できる。
 
@@ -214,19 +223,19 @@ $ (r_{ps}, r_{pf}, r_{rs}, r_{rf}) $の組を決定できる。
 「評判システムの詳細」に基づく「評判システム」と
 次の8タイプのエージェントから重複問わずランダムに選んだ8体のエージェントを用意し試行を実施する。
 これをタイプAのエージェントが0〜7体を占める場合について、それぞれ8000回づつ繰り返し、
-エージェントの構成とstep13で求まる「報告された成功率」と「真の成功率」を記録する。
+エージェントの構成とstep13で求まる「報告された履行率」と「真の履行率」を記録する。
 
 \subsection{エージェントの種類}
 下記のA~Hの8タイプのエージェントを用意する。
 \begin{description}
-  \item [A] 約束を履行し、$promisor$が約束を履行したとき「成功」、反故にしたとき「失敗」を報告する。
-  \item [B] 約束を履行し、$promisor$が約束を履行したとき「成功」、反故にしたとき「成功」を報告する。
-  \item [C] 約束を履行し、$promisor$が約束を履行したとき「失敗」、反故にしたとき「成功」を報告する。
-  \item [D] 約束を履行し、$promisor$が約束を履行したとき「失敗」、反故にしたとき「失敗」を報告する。
-  \item [E] 約束を反故にし、$promisor$が約束を履行したとき「成功」、反故にしたとき「失敗」を報告する。
-  \item [F] 約束を反故にし、$promisor$が約束を履行したとき「成功」、反故にしたとき「成功」を報告する。
-  \item [G] 約束を反故にし、$promisor$が約束を履行したとき「失敗」、反故にしたとき「成功」を報告する。
-  \item [H] 約束を反故にし、$promisor$が約束を履行したとき「失敗」、反故にしたとき「失敗」を報告する。
+  \item [A] 約束を履行し、$promisor$が約束を履行したとき「履行」、反故にしたとき「反故」を報告する。
+  \item [B] 約束を履行し、$promisor$が約束を履行したとき「履行」、反故にしたとき「履行」を報告する。
+  \item [C] 約束を履行し、$promisor$が約束を履行したとき「反故」、反故にしたとき「履行」を報告する。
+  \item [D] 約束を履行し、$promisor$が約束を履行したとき「反故」、反故にしたとき「反故」を報告する。
+  \item [E] 約束を反故にし、$promisor$が約束を履行したとき「履行」、反故にしたとき「反故」を報告する。
+  \item [F] 約束を反故にし、$promisor$が約束を履行したとき「履行」、反故にしたとき「履行」を報告する。
+  \item [G] 約束を反故にし、$promisor$が約束を履行したとき「反故」、反故にしたとき「履行」を報告する。
+  \item [H] 約束を反故にし、$promisor$が約束を履行したとき「反故」、反故にしたとき「反故」を報告する。
 \end{description}
 
 \subsection{試行}
@@ -236,29 +245,29 @@ $ (r_{ps}, r_{pf}, r_{rs}, r_{rf}) $の組を決定できる。
   \item[step 3] 全てのエージェントが$promisor$と$reporter$として1度ずつ総当りする順序を決定する。(順序の長さは56となる)
   \item[step 4] 時刻tを1進める。
   \item[step 5] step 3で決定した順序を周期として、$promisor$と$reporter$を決定する。
-  \item[step 6] 「評判システム」は「成功」と「失敗」が報告された場合の$promisor$と$reporter$の「評判スコア」を計算する。
+  \item[step 6] 「評判システム」は「履行」と「反故」が報告された場合の$promisor$と$reporter$の「評判スコア」を計算する。
   \item[step 7] $promisor$は自身の戦略に基づいて約束を履行するか反故にする。
   \item[step 8] $reporter$は自身の戦略とstep 6の$promisor$の行動に基づいて結果を決定する。
   \item[step 9] $reporter$は決定した結果を「評判システム」に報告する。 
   \item[step 10] 「評判システム」はstep6で計算した「評判スコア」がいずれの場合にも0未満にならない場合、 reporterから報告された結果を記録する。
   \item[step 11] step6で計算した「評判スコア」がいずれの場合にも0未満にならない場合、真の結果を記録する。
   \item[step 12] 時刻tが1120未満なら、step4に戻る。
-  \item[step 13] 過去56回の約束・評判ゲームにおいて、step10と11で記録された結果を集計し、それぞれ「報告された成功率」と「真の成功率」を記録する。
+  \item[step 13] 過去56回の約束・評判ゲームにおいて、step10と11で記録された結果を集計し、それぞれ「報告された履行率」と「真の履行率」を記録する。
 \end{description}
 
 \section{評価}
-先の実験の結果、「報告された成功率」と「真の成功率」の両方が100\%になった場合を「不正防止の成功」とし、
-誠実なエージェント(タイプA)の数と「不正防止の成功」に至った割合をプロットしたものが、図\ref{ethical-game-001}である。
+先の実験の結果、「報告された履行率」と「真の履行率」の両方が100\%になった場合を「不正防止の履行」とし、
+誠実なエージェント(タイプA)の数と「不正防止の履行」に至った割合をプロットしたものが、図\ref{ethical-game-001}である。
 (エージェント数8の場合は、エージェントの組み合わせが1通りしか存在しないため、個別に試行を行い結果を集計している。)
 誠実なエージェントの数が0体の場合であっても不正が防止される構成が存在し、
-6体以上の場合はサンプリングした全ての構成で不正の防止が成功していた。
+6体以上の場合はサンプリングした全ての構成で不正の防止が履行していた。
 
 \begin{figure}[h]
   \begin{tabular}{cc}
     \begin{minipage}[t]{1\hsize}
       \centering
       \includegraphics[keepaspectratio, width=1\linewidth]{./06_ethical-prgame/figure01.png}
-      \caption{誠実なエージェントの数と「不正防止の成功」に至った割合}
+      \caption{誠実なエージェントの数と「不正防止の履行」に至った割合}
       \label{ethical-game-001}
     \end{minipage}
   \end{tabular}
@@ -269,4 +278,4 @@ $ (r_{ps}, r_{pf}, r_{rs}, r_{rf}) $の組を決定できる。
 成員の構成によっては「約束・評判ゲーム」において不正を防止することができるとわかった。
 これによって、成員の行動を観察できない外部の強制執行力が存在すると仮定した上で、
 集団を構成する成員達の性質によっては、成員達に合意された約束を履行させられることがわかった。
-また、成員の構成と不正防止の成功成功の関係性については、先の実験の図\ref{ethical-game-001}のとおりである。
+また、成員の構成と不正防止の履行履行の関係性については、先の実験の図\ref{ethical-game-001}のとおりである。

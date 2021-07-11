@@ -1,7 +1,10 @@
 本節ではシミュレーションに用いる「評判システム」の仕様の詳細を紹介する。
-完全な実装については、GitHubのソースコードを参照。
+完全な実装については、GitHubのソースコード\cite{mitamoto2021}を参照。
 
 \subsection{約束の価値$C$}
+約束が履行されることによる$promiser$が失う効用と$reporter$が得られる効用が等しいと仮定し、
+それを約束の価値$C$とおき、$1$とした。
+
 \begin{eqnarray}
   C &\equiv& 1 \\
     &=& c_{p2} - c_{p1} \\
@@ -9,9 +12,9 @@
 \end{eqnarray}
 
 \subsection{ReputationWeight}
-最低信頼度$ T_i $を求めるため、$ReportedSuccessRate(i, j)$の荷重総和に用いる重み$ w_k $を定義する．
+最低信頼度$T(i, s)$を求めるため、$ReportedFulfillRate(i, j)$の荷重総和に用いる重み$w_k$を定義する．
 この重み$w_k$は、任意の成員$i$が戦略$s_{p1}$をとる確率$p_{p1}$を推定する際に、
-成員$i$と他の成員$j$における$ReportedSuccessRate(i, j)$をどの程度信頼するかを表している。
+成員$i$と他の成員$j$における$ReportedFulfillRate(i, j)$をどの程度信頼するかを表している。
 本実験では、成員$j$の「評判スコア」が全体に占める割合をReputationWeight$w_j$と定義する。
 任意の成員$k$の「評判スコア」を$b_k$としたとき、$w_k$は次のように表せる。($n$は成員の人数)
 
@@ -19,8 +22,8 @@
   w_k \equiv \frac{b_k}{\sum^{\{1,2,...,n\}}_{k}b_k}
 \end{equation*}
 
-\subsection{「成功」が報告された場合の「評判スコア」の変化}
-$ reporter $が「成功」を報告した場合、
+\subsection{「履行」が報告された場合の「評判スコア」の変化}
+$ reporter $が「履行」を報告した場合、
 $ reporter $は約束の価値$C$だけ減り、$ promisor $は$C$だけ増加するものとする。
 
 \begin{gather}
@@ -60,9 +63,9 @@ $promisor$と$reporter$を含まないのは、分配によるインセンティ
 このとき、\eqref{condition6-1}と\eqref{condition6-2}を満たす$r_{ps} - r_{pf}$と$r_{rs} - r_{rf}$を下記のように定義する。
 
 \begin{eqnarray}
-  r_{ps} - r_{pf} &\equiv& \frac{C}{T_i} \label{condition6-3} \\
-                  &\geq& \frac{c_{p2} - c_{p1}}{T_i} \nonumber \\
-  r_{rs} - r_{rf} &\equiv& \frac{C}{T_j} \label{condition6-4} \\
+  r_{ps} - r_{pf} &\equiv& \frac{C}{T(i, s_{p1})} \label{condition6-3} \\
+                  &\geq& \frac{c_{p2} - c_{p1}}{T(i, s_{p1})} \nonumber \\
+  r_{rs} - r_{rf} &\equiv& \frac{C}{T(j, s_{r1})} \label{condition6-4} \\
                   &\geq& 0 \nonumber
 \end{eqnarray}
 
@@ -71,9 +74,9 @@ $promisor$と$reporter$を含まないのは、分配によるインセンティ
 成員$i$を$promisor$、$j$を$reporter$とする。
 
 \begin{eqnarray}
-  E &=& - \frac{T_i + T_j}{T_i T_j} \\
+  E &=& - \frac{T(i, s_{p1}) + T(j, s_{r1})}{T(i, s_{p1}) \cdot T(j, s_{r1})} \\
   r_{ps} &=& 1 \\
-  r_{pf} &=& 1 - \frac{1}{T_j} \\
+  r_{pf} &=& 1 - \frac{1}{T(j, s_{r1})} \\
   r_{rs} &=& -1 \\
-  r_{rf} &=& -1 - \frac{1}{T_i}
+  r_{rf} &=& -1 - \frac{1}{T(i, s_{p1})}
 \end{eqnarray}
