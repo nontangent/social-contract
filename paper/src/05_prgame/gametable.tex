@@ -7,13 +7,14 @@
 \newcommand{\tabularc}[1]{\begin{tabular}{c} #1 \end{tabular}}
 
 \begin{table*}[h]
+  \centering
   \begin{tabular}{|l|l|l|l|l|l|}
   \hline
   \multicolumn{2}{|l|}{\multirow{2}{*}{}} & \multicolumn{4}{l|}{$Reporter$} \\ \cline{3-6}
   \multicolumn{2}{|l|}{}                  &$s_{r1}$&$s_{r2}$&$s_{r3}$&$s_{r4}$\\ \hline
   \multirow{2}{*}{$Promisor$}
   &$s_{p1}$&\tabularc{\SROS}&\tabularc{\SROS}&\tabularc{\FROS}&\tabularc{\FROS}\\ \cline{2-6}
-  &$s_{p2}$&\tabularc{\FROF}&\tabularc{\SROF}&\tabularc{\FROF}&\tabularc{\SROF}\\ \hline
+  &$s_{p2}$&\tabularc{\FROF}&\tabularc{\SROF}&\tabularc{\SROF}&\tabularc{\FROF}\\ \hline
   \end{tabular}
   \caption{「約束・評判ゲーム」の利得票表}
   \label{prgametable}

@@ -84,8 +84,8 @@ $reporter$にとっては約束が履行されることによって生じる効�
 \begin{description}
   \item[$s_{r1}$]… $promisor$が約束を履行した場合は「履行」，反故にした場合は「反故」を報告する
   \item[$s_{r2}$]… $promisor$が約束を履行した場合は「履行」，反故にした場合は「履行」を報告する
-  \item[$s_{r3}$]… $promisor$が約束を履行した場合は「反故」，反故にした場合は「反故」を報告する
-  \item[$s_{r4}$]… $promisor$が約束を履行した場合は「反故」，反故にした場合は「履行」を報告する
+  \item[$s_{r3}$]… $promisor$が約束を履行した場合は「反故」，反故にした場合は「履行」を報告する
+  \item[$s_{r4}$]… $promisor$が約束を履行した場合は「反故」，反故にした場合は「反故」を報告する
 \end{description}
 
 \subsection{非協力戦略型ゲーム}
@@ -127,12 +127,12 @@ $promisor$と$reporter$の各戦略の期待利得は次のように表せる．
 \begin{eqnarray}
   E(R|s_{p1}) &=& p_{r1} (c_{p1} + r_{ps}) + p_{r2} (c_{p1} + r_{ps}) + p_{r3} (c_{p1} + r_{pf}) + p_{r4} (c_{p1} + r_{pf}) \nonumber \\
               &=& c_{p1} + p_{r1} r_{ps} + p_{r2} r_{ps} + p_{r3} r_{pf} + p_{r4} r_{pf} \because\eqref{condition1} \label{expectedA} \\
-  E(R|s_{p2}) &=& p_{r1} (c_{p2} + r_{pf}) + p_{r2} (c_{p2} + r_{ps}) + p_{r3} (c_{p2} + r_{pf} ) + p_{r4} (c_{p2} + r_{ps}) \nonumber \\
-              &=& c_{p2} + p_{r1} r_{pf} + p_{r2} r_{ps} + p_{r3} r_{pf} + p_{r4} r_{ps} \because\eqref{condition1} \label{expectedB} \\
+  E(R|s_{p2}) &=& p_{r1} (c_{p2} + r_{pf}) + p_{r2} (c_{p2} + r_{ps}) + p_{r3} (c_{p2} + r_{ps} ) + p_{r4} (c_{p2} + r_{pf}) \nonumber \\
+              &=& c_{p2} + p_{r1} r_{pf} + p_{r2} r_{ps} + p_{r3} r_{ps} + p_{r4} r_{pf} \because\eqref{condition1} \label{expectedB} \\
   E(R|s_{r1}) &=& p_{p1} (c_{r1} + r_{rs}) + p_{p2} (c_{r2} + r_{rf}) \label{expectedR1} \\
   E(R|s_{r2}) &=& p_{p1} (c_{r1} + r_{rs}) + p_{p2} (c_{r2} + r_{rs}) \label{expectedR2} \\
-  E(R|s_{r3}) &=& p_{p1} (c_{r1} + r_{rf}) + p_{p2} (c_{r2} + r_{rf}) \label{expectedR3} \\
-  E(R|s_{r4}) &=& p_{p1} (c_{r1} + r_{rf}) + p_{p2} (c_{r2} + r_{rs}) \label{expectedR4} \nonumber
+  E(R|s_{r3}) &=& p_{p1} (c_{r1} + r_{rf}) + p_{p2} (c_{r2} + r_{rs}) \label{expectedR4} \nonumber \\
+  E(R|s_{r4}) &=& p_{p1} (c_{r1} + r_{rf}) + p_{p2} (c_{r2} + r_{rf}) \label{expectedR3}
 \end{eqnarray}
 
 \subsubsection{条件①が成り立たないことの証明}
@@ -141,7 +141,7 @@ $promisor$と$reporter$の各戦略の期待利得は次のように表せる．
 
 \begin{gather}
   E(R|s_{r1}) > E(R|s_{r2}) \label{conditionA} \\
-  E(R|s_{r1}) > E(R|s_{r3}) \label{conditionB}
+  E(R|s_{r1}) > E(R|s_{r4}) \label{conditionB}
 \end{gather}
 
 \eqref{conditionA}を満たすためには、
@@ -170,8 +170,8 @@ $promisor$と$reporter$の各戦略の期待利得は次のように表せる．
 
 \eqref{conditionB}を満たすためには、
 \begin{eqnarray*}
-  &&E(R|s_{r1}) > E(R|s_{r3}) \\
-  &\therefore& p_{p1} (c_{r1} + r_{rs}) + p_{p2} (c_{r2} + r_{rf}) > c_{p2} + p_{r1} r_{pf} + p_{r2} r_{ps} + p_{r3} r_{pf} + p_{r4} r_{ps}) \because\eqref{expectedR1}\eqref{expectedR3}\\
+  &&E(R|s_{r1}) > E(R|s_{r4}) \\
+  &\therefore& p_{p1} (c_{r1} + r_{rs}) + p_{p2} (c_{r2} + r_{rf}) > p_{p1} (c_{r1} + r_{rf}) + p_{p2} (c_{r2} + r_{rf}) \because\eqref{expectedR1}\eqref{expectedR3}\\
   &\therefore& p_{p1} r_{rs} + p_{p2} r_{rf} > p_{p1} r_{rf} + p_{p2} r_{rf} \\
   &\therefore& p_{p1} (r_{rs} - r_{rf}) > 0
 \end{eqnarray*}
@@ -208,39 +208,39 @@ $promisor$と$reporter$の各戦略の期待利得は次のように表せる．
 \eqref{conditionC}を満たすためには，
 \begin{eqnarray*}
   &&E(R |s_{p1}) > E(R |s_{p2}) \\
-  &\therefore& c_{p1} + p_{r1} r_{ps} + p_{r2} r_{ps} + p_{r3} r_{pf} + p_{r4} r_{pf} > c_{p2} + p_{r1} r_{pf} + p_{r2} r_{ps} + p_{r3} r_{pf} + p_{r4} r_{ps} \\
-  &\therefore& c_{p1} + p_{r1} r_{ps} + p_{r4} r_{pf} > c_{p2} + p_{r1} r_{pf} + p_{r4} r_{ps} \\
-  &\therefore& c_{p1} - c_{p2} + p_{r1} r_{ps} + p_{r4} r_{pf} + p_{r1} r_{pf} - p_{r4} r_{ps} > 0 \\
-  &\therefore& p_{r1}(r_{ps} - r_{pf}) - p_{r4}(r_{ps} - r_{pf}) + c_{p1} - c_{p2} > 0 \\
-  &\therefore& (p_{r1} - p_{r4})(r_{ps} - r_{pf}) + c_{p1} - c_{p2} > 0 \\
-  &\therefore& (p_{r1} - p_{r4})(r_{ps} - r_{pf} + \frac{ c_{p1} - c_{p2} }{p_{r1} - p_{r4}}) > 0
+  &\therefore& c_{p1} + p_{r1} r_{ps} + p_{r2} r_{ps} + p_{r3} r_{pf} + p_{r4} r_{pf} > c_{p2} + p_{r1} r_{pf} + p_{r2} r_{ps} + p_{r3} r_{ps} + p_{r4} r_{pf} \\
+  &\therefore& c_{p1} + p_{r1} r_{ps} + p_{r3} r_{pf} > c_{p2} + p_{r1} r_{pf} + p_{r3} r_{ps} \\
+  &\therefore& c_{p1} - c_{p2} + p_{r1} r_{ps} + p_{r3} r_{pf} - p_{r1} r_{pf} - p_{r3} r_{ps} > 0 \\
+  &\therefore& p_{r1}(r_{ps} - r_{pf}) - p_{r3}(r_{ps} - r_{pf}) + c_{p1} - c_{p2} > 0 \\
+  &\therefore& (p_{r1} - p_{r3})(r_{ps} - r_{pf}) + c_{p1} - c_{p2} > 0 \\
+  &\therefore& (p_{r1} - p_{r3})(r_{ps} - r_{pf} + \frac{ c_{p1} - c_{p2} }{p_{r1} - p_{r3}}) > 0
 \end{eqnarray*}
 
 を満たす必要がある．つまり，\\
 
-$p_{r1} > p_{r4}$のとき， 
+$p_{r1} > p_{r3}$のとき， 
 \begin{eqnarray}
-  &&r_{ps} - r_{pf} + \frac{ c_{p1} - c_{p2} }{p_{r1} - p_{r4}} > 0\nonumber \\
-  &\therefore&r_{ps} - r_{pf} > \frac{ c_{p2} - c_{p1} }{ p_{r1} - p_{r4} } \nonumber
+  &&r_{ps} - r_{pf} + \frac{ c_{p1} - c_{p2} }{p_{r1} - p_{r3}} > 0\nonumber \\
+  &\therefore&r_{ps} - r_{pf} > \frac{ c_{p2} - c_{p1} }{ p_{r1} - p_{r3} } \nonumber
 \end{eqnarray}
 
-$p_{r1} < p_{r4}$のとき， 
+$p_{r1} < p_{r3}$のとき， 
 \begin{eqnarray}
-  &&r_{ps} - r_{pf} + \frac{ c_{p1} - c_{p2} }{p_{r1} - p_{r4}} < 0 \nonumber \\
-  &\therefore&r_{ps} - r_{pf} < \frac{ c_{p2} - c_{p1} }{ p_{r1} - p_{r4} } \nonumber
+  &&r_{ps} - r_{pf} + \frac{ c_{p1} - c_{p2} }{p_{r1} - p_{r3}} < 0 \nonumber \\
+  &\therefore&r_{ps} - r_{pf} < \frac{ c_{p2} - c_{p1} }{ p_{r1} - p_{r3} } \nonumber
 \end{eqnarray}
 
 を満たせばよい．\\
 
 ここで、$E(R|s_{r2})>\max\{E(R|s_{r1}), E(R|s_{r3}), E(R|s_{r4}) \}$が成り立つと仮定する。\\
 
-このとき全ての合理的なプレイヤーは戦略$s_r2$をとり必ず「履行」を報告するため、
-「評判システム」から$p_{r1}$と$p_{r4}$を推定することはできない。\\
+このとき全ての合理的なプレイヤーは戦略$s_{r2}$をとり必ず「履行」を報告するため、
+「評判システム」から$p_{r1}$と$p_{r3}$を推定することはできない。\\
 
 ゆえに、「評判システム」から条件②を満たすような$(r_{ps}, r_{pf})$の組を決定できない．\\
 
 \subsubsection{条件③が成り立たないことの証明}
-また、同様に条件③も成り立たない。
+また、同様に条件③も成り立たない。\\
 
 以上より，条件①と条件②のいづれかを満たす
 $(r_{ps}, r_{pf},r_{rs},r_{rf})$の組を「評判システム」から決定することはできない．\\
