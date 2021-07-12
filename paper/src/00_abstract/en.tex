@@ -2,7 +2,7 @@
 % 背景(分野外の研究者でも理解できる内容)
 % インターネットのグローバル化やBitcoin\cite{nakamoto2008bitcoin}を始めとするブロックチェーン技術の登場により、
 % インターネット上のサービスの正当性を特定の国家の法によって保証することは困難になりつつある。
-% 我々は、社会契約の概念をインターネットに適用することがこの問題の解決に繋がると考え、
+% 筆者は、社会契約の概念をインターネットに適用することがこの問題の解決に繋がると考え、
 % それを計算可能なレベルまで抽象化することを試みている。
 With the globalization of the Internet and the emergence of blockchain technologies such as Bitcoin\cite{nakamoto2008bitcoin},
 it is becoming increasingly difficult to guarantee the legitimacy of services on the Internet through the laws of a particular nation.
@@ -34,13 +34,13 @@ it is not clear what exactly are the behaviors of members that give rise to \emp
 In this study, we research the question of whether a social contract can be established 
 when the \emph{enforcement} does not exist outside the group.
 % 論文の趣旨
-% ここで我々は、強制執行力を自己組織化させる成員の振る舞いがビザンチン将軍問題の署名付きの解法\cite{lamport1982}によって説明でき、
+% ここで筆者は、強制執行力を自己組織化させる成員の振る舞いがビザンチン将軍問題の署名付きの解法\cite{lamport1982}によって説明でき、
 % 集団の一部のみがそのように振る舞う場合であっても社会契約が成立することを示す。
 Here we show that the behavior of members who self-organize \emph{enforcement} can be explained 
 by the signed solution to the Byzantine Generals Problem\cite{lamport1982}, 
 and that a social contract can be established even when only a part of the group behaves in this way.
 % 結果(先行研究との比較を含める)
-% そのために我々はゲーム理論とビザンチン将軍問題の解法を用いて社会契約を成員の振る舞いによる複雑系としてモデリングし、
+% そのために筆者はゲーム理論とビザンチン将軍問題の解法を用いて社会契約を成員の振る舞いによる複雑系としてモデリングし、
 % ランダムな8体のエージェント(8種類・重複あり)の相互作用の果てに社会契約が成立するか確かめるシミュレーションを行った。
 % 64000回の施行の結果、誠実に振る舞うエージェントが過半数を超える場合、サンプリングした全てのケースで社会契約は成功した。
 For this purpose, we modeled the social contract as a complex system with members' behavior 
@@ -50,7 +50,7 @@ after the interaction of eight random agents (eight types, with overlaps).
 As a result of 64,000 runs, the social contract was successful in all the cases sampled 
 when the majority of agents behaved honestly.
 % まとめ
-% これにより、社会契約の成立に必要となる歴史の定義や社会指標の決定方法、各成員の振る舞いを計算可能なレベルで明確にし、
+% これにより、社会契約の成立に必要となる履歴の定義や社会指標の決定方法、各成員の振る舞いを計算可能なレベルで明確にし、
 % 同時に、強制執行力が集団の外部に存在しない場合でも過半数の成員が誠実であれば社会契約が必ず成立することを示した。
 In this way, we have been able to define the history required for the formation of a social contract, 
 determine the social indicators, and clarify the behavior of each member on a computable level. At the same time, 
@@ -62,7 +62,7 @@ even if there is no \emph{enforcement} outside the group.
 Since the relationship between sincere members and the formation of a social contract is a heuristic solution, 
 a large-scale brute force experiment or theoretical clarification is needed to obtain a more rigorous solution.
 % 仮に$3f+1$よりゆるい条件で合意された約束が必ず履行される状態に到れるならば、
-% 時間経過とともに$f$が増加する場合に$3f+1$以下の人数でフォールトトレラントを達成できる実用的なBFTアルゴリズムを示せる可能性がある。
+% 時間経過とともに$f$が増加する場合に$3f+1$以下の人数でフォールトトレランスを達成できる実用的なBFTアルゴリズムを示せる可能性がある。
 If we can reach a state in which promises agreed to under looser conditions than $3f+1$ are always fulfilled, 
 then We may be able to show a practical BFT algorithm that can achieve fault-tolerance 
 with less than $3f+1$ people when $f$ increases with time.

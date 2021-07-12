@@ -50,7 +50,7 @@ Rawls 1971\cite{rawls1971}、Gauthier 1986\cite{gauthier1986}などが挙げら�
 \section{強制執行力}
 これまでの社会契約の研究では、強制執行力と呼ばれる「合意された利得の分配を強制的に執り行っている力」の存在が暗黙的に仮定されている。
 先に紹介したスタグハントゲームでいうところの、二人で協力して鹿を狩った場合にその鹿を二人で分け合うという取り決めを守らせている力である。
-Rawlsの「自然の義務」\cite{rawls1971}やHarsanyiの「道徳的コミットメント」\cite{harsanyi1955}などがこれに当たるとされる。\cite{binmore2005}
+Rawlsの「自然の義務」\cite{rawls1971}やHarsanyiの「道徳的コミットメント」\cite{harsanyi1955}などがこれに当たる。\cite{binmore2005}
 
 \section{外部の強制執行力}
 強制執行力のうち、集団の外部の機関によってもたらされる力を外部の強制執行力と呼ぶ。
@@ -59,7 +59,7 @@ Binmoreは交渉理論と進化ゲーム理論を用いてこの外部の強制�
 
 \begin{description}
   \item 外部の強制執行力が存在する場合、合理的なプレイヤーが合意する可能性のある契約はどれも無限回の繰り返しゲームの均衡結果となり得る。
-  \item 外部の強制執行力が存在しない場合、過去の歴史が決定する社会指標を利用した平等主義的(ロールズ的)交渉解によって解決される。 
+  \item 外部の強制執行力が存在しない場合、過去の履歴が決定する社会指標を利用した平等主義的(ロールズ的)交渉解によって解決される。 
 \end{description}
 
 \section{複雑系}
@@ -119,7 +119,7 @@ $m+1$人以上の将軍がいれば下記のアルゴリズムでIC1とIC2を同
 \begin{enumerate}
   \item[1.] もし集合に単一の指令$v$しか存在しなければ、$choice(V) = v$とする。
   \item[2.] $choice(\emptyset) = RETREAT$とする。$\emptyset$は空集合。
-  \item[3.] もとの論文で抜けてるけど、$V$が２つあるときは$RETREAT$?
+  \item[3.] もし集合に複数の指令が存在するとき、$choice(V) = RETREAT$とする。
 \end{enumerate}
 
 \subsection{アルゴリズム $SM(m)$}
@@ -131,7 +131,7 @@ $m+1$人以上の将軍がいれば下記のアルゴリズムでIC1とIC2を同
     \item もし$lineutenant_i$が$v:0$という形式のメッセージを受け取り、まだ何の命令も受けていない場合は、
     \begin{enumerate}
       \item $lineutenant_i$は$ V_i$を${v}$にする。 
-      \item $lineutenant_i$は他のすべての中尉にメッセージ$v:0:i$を送ります。
+      \item $lineutenant_i$は他のすべての中尉にメッセージ$v:0:i$を送る。
     \end{enumerate}
     \item もし$lieutenant_i$が$v:0:j_1:...:j_k$という形式のメッセージを受け取り、$v$が集合$V_i$に入っていない場合は
     \begin{enumerate}
