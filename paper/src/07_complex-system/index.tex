@@ -61,6 +61,14 @@
   \item $reporter$は$promisor$と新たな約束を交わす。
 \end{enumerate}
 
+\subsubsection{関数 $choice(V)$}
+関数$choice(V)$は集合$V$を引数にとって約束の結果(「履行」か「反故」)を返す関数である。
+\begin{enumerate}
+  \item[1.] もし集合に単一の約束の結果$v$しか存在しなければ、$choice(V) = v$とする。
+  \item[2.] $choice(\emptyset) = 反故$とする。$\emptyset$は空集合。
+  \item[3.] もし集合に約束の結果が存在するとき、$choice(V) = 反故$とする。
+\end{enumerate}
+
 \section{実験方法}
   「８種類のエージェント」(\ref{agentsForExperiments2}節)から重複問わずランダムに8体のエージェントを用意し
   「実験用の約束」(\ref{promiseForExperiments}節)を用いた試行を実施する。
